@@ -1,0 +1,10 @@
+language: php
+
+sudo: false
+
+php:
+  - 7.1
+  - hhvm
+
+before_script:
+  - composer install -n

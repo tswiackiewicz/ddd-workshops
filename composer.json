@@ -1,0 +1,33 @@
+{
+    "name": "tswiackiewicz/ddd-workshops",
+    "type": "project",
+    "description": "Sample application for DDD workshops",
+    "keywords": [
+        "events"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomasz Świacko-Świackiewicz",
+            "email": "tomasz.swiacko.swiackiewicz@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "TSwiackiewicz\\AwesomeApp\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TSwiackiewicz\\AwesomeApp\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.1"
+    }
+}
