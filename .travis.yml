@@ -2,16 +2,8 @@ language: php
 
 sudo: false
 
-matrix:
-  include:
-    - php: 7.1
-    - php: hhvm
-      env:
-        - HHVMPHP7="yes"
-    - php: hhvm-nightly
-      env:
-        - HHVMPHP7="yes"
+php:
+  - 7.1
 
 before_script:
-  - if [[ $HHVMPHP7 == "yes" ]]; then echo hhvm.php7.all=1 >> /etc/hhvm/php.ini; fi
   - composer install -n
