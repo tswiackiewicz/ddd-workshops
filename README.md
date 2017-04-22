@@ -4,6 +4,18 @@
 
 Domain Driven Design
 
+## TODO
+
+* Read Model
+* Domain Service (example)
+* Domain Events
+* ES + projection
+* Command Bus
+ 
+https://github.com/VaughnVernon/IDDD_Samples/
+https://github.com/codeliner/php-ddd-cargo-sample/
+ 
+
 ## License
 
 MIT
