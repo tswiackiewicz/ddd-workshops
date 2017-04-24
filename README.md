@@ -6,14 +6,16 @@ Domain Driven Design
 
 ## TODO
 
-* Read Model  --> IN PROGRESS
 * Domain Service (example)
+* Aggregate Root (example)
 * Domain Events
 * ES + projection
 * Command Bus
+
  
-https://github.com/VaughnVernon/IDDD_Samples/
-https://github.com/codeliner/php-ddd-cargo-sample/ 
+* https://github.com/VaughnVernon/IDDD_Samples/
+* https://github.com/codeliner/php-ddd-cargo-sample/
+* https://github.com/BottegaIT/ddd-leaven-v2/ 
 
 ## License
 
