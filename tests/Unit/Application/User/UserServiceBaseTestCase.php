@@ -66,12 +66,12 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
         /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder(UserRepository::class)
             ->setMethods([
-                'findByHash',
+                'getByHash',
                 'save'
             ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $repository->expects(self::once())->method('findByHash')->willReturn($user);
+        $repository->expects(self::once())->method('getByHash')->willReturn($user);
         $repository->expects(self::once())->method('save');
 
         return $repository;
@@ -99,12 +99,12 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
         /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder(UserRepository::class)
             ->setMethods([
-                'findByLogin',
+                'getByLogin',
                 'save'
             ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $repository->expects(self::once())->method('findByLogin')->willReturn($user);
+        $repository->expects(self::once())->method('getByLogin')->willReturn($user);
         $repository->expects(self::once())->method('save');
 
         return $repository;
@@ -131,12 +131,12 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
         /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder(UserRepository::class)
             ->setMethods([
-                'findByHash'
+                'getByHash'
             ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $repository->expects(self::once())
-            ->method('findByHash')
+            ->method('getByHash')
             ->willThrowException(UserNotFoundException::forUser($this->login));
 
         return $repository;
@@ -150,12 +150,12 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
         /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder(UserRepository::class)
             ->setMethods([
-                'findByLogin'
+                'getByLogin'
             ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $repository->expects(self::once())
-            ->method('findByLogin')
+            ->method('getByLogin')
             ->willThrowException(UserNotFoundException::forUser($this->login));
 
         return $repository;
@@ -171,12 +171,12 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
         /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder(UserRepository::class)
             ->setMethods([
-                'findByLogin',
+                'getByLogin',
                 'remove'
             ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $repository->expects(self::once())->method('findByLogin')->willReturn($user);
+        $repository->expects(self::once())->method('getByLogin')->willReturn($user);
         $repository->expects(self::once())->method('remove');
 
         return $repository;

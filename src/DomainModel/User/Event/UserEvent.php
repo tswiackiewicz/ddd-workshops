@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
@@ -18,16 +17,16 @@ abstract class UserEvent
     protected $id;
 
     /**
-     * @var UserLogin
+     * @var string
      */
     protected $login;
 
     /**
      * UserRemovedEvent constructor.
      * @param UserId $id
-     * @param UserLogin $login
+     * @param string $login
      */
-    public function __construct(UserId $id, UserLogin $login)
+    public function __construct(UserId $id, string $login)
     {
         $this->id = $id;
         $this->login = $login;
@@ -46,6 +45,6 @@ abstract class UserEvent
      */
     public function getLogin(): string
     {
-        return $this->login->getLogin();
+        return $this->login;
     }
 }

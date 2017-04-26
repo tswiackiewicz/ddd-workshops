@@ -7,7 +7,6 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     User, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
@@ -21,36 +20,34 @@ class InMemoryUserRepository implements UserRepository
      */
     public function nextIdentity(): UserId
     {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
         return UserId::nullInstance();
     }
 
     /**
-     * @param UserLogin $login
      * @param string $hash
      * @return User
      * @throws UserNotFoundException
      */
-    public function findByHash(UserLogin $login, string $hash): User
+    public function getByHash(string $hash): User
     {
-        // TODO: Implement findByHash() method.
+        // TODO: Implement getByHash() method.
     }
 
     /**
-     * @param UserLogin $login
+     * @param string $login
      * @return User
      * @throws UserNotFoundException
      */
-    public function findByLogin(UserLogin $login): User
+    public function getByLogin(string $login): User
     {
-        // TODO: Implement findByLogin() method.
+        // TODO: Implement getByLogin() method.
     }
 
     /**
-     * @param UserLogin $login
+     * @param string $login
      * @return bool
      */
-    public function exists(UserLogin $login): bool
+    public function exists(string $login): bool
     {
         // TODO: Implement exists() method.
     }
@@ -65,9 +62,9 @@ class InMemoryUserRepository implements UserRepository
     }
 
     /**
-     * @param User $user
+     * @param UserId $id
      */
-    public function remove(User $user): void
+    public function remove(UserId $id): void
     {
         // TODO: Implement remove() method.
     }

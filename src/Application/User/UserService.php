@@ -50,7 +50,7 @@ class UserService
      */
     public function register(RegisterUserCommand $command): void
     {
-        if ($this->repository->exists($command->getLogin())) {
+        if ($this->repository->exists((string)$command->getLogin())) {
             throw UserAlreadyExistsException::forUser((string)$command->getLogin());
         }
 
@@ -78,7 +78,7 @@ class UserService
     public function activate(ActivateUserCommand $command): void
     {
         /** @var RegisteredUser $user */
-        $user = $this->repository->findByHash($command->getLogin(), $command->getHash());
+        $user = $this->repository->getByHash($command->getHash());
         $user->activate();
 
         $this->repository->save($user);
@@ -132,7 +132,7 @@ class UserService
     public function enable(EnableUserCommand $command): void
     {
         /** @var LoggedInUser $user */
-        $user = $this->repository->findByLogin($command->getLogin());
+        $user = $this->repository->getByLogin((string)$command->getLogin());
         $user->enable();
 
         $this->repository->save($user);
@@ -163,9 +163,9 @@ class UserService
      */
     public function remove(RemoveUserCommand $command): void
     {
-        $user = $this->repository->findByLogin($command->getLogin());
+        $user = $this->repository->getByLogin((string)$command->getLogin());
 
-        $this->repository->remove($user);
+        $this->repository->remove($user->getId());
 
         $event = UserRemovedEvent::fromUser($user);
 

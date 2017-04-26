@@ -41,26 +41,26 @@ abstract class User
     }
 
     /**
-     * @return int
+     * @return UserId
      */
-    public function getId(): int
+    public function getId(): UserId
     {
-        return $this->id->getId();
+        return $this->id;
     }
 
     /**
-     * @return string
+     * @return UserLogin
      */
-    public function getLogin(): string
+    public function getLogin(): UserLogin
     {
-        return $this->login->getLogin();
+        return $this->login;
     }
 
     /**
-     * @return string
+     * @return UserPassword
      */
-    public function getPassword(): string
+    public function getPassword(): UserPassword
     {
-        return $this->password->getPassword();
+        return $this->password;
     }
 }

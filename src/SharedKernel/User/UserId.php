@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\SharedKernel\User;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 
 /**
  * Class UserId
@@ -47,8 +48,15 @@ class UserId
      */
     public static function nullInstance(): UserId
     {
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
-        return new self(self::NULL_ID);
+        try {
+            return new self(self::NULL_ID);
+        } catch (InvalidArgumentException $exception) {
+            throw new RuntimeException(
+                $exception->getMessage(),
+                $exception->getCode(),
+                $exception
+            );
+        }
     }
 
     /**

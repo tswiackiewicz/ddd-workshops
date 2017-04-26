@@ -18,25 +18,24 @@ interface UserRepository
     public function nextIdentity(): UserId;
 
     /**
-     * @param UserLogin $login
      * @param string $hash
      * @return User
      * @throws UserNotFoundException
      */
-    public function findByHash(UserLogin $login, string $hash): User;
+    public function getByHash(string $hash): User;
 
     /**
-     * @param UserLogin $login
+     * @param string $login
      * @return User
      * @throws UserNotFoundException
      */
-    public function findByLogin(UserLogin $login): User;
+    public function getByLogin(string $login): User;
 
     /**
-     * @param UserLogin $login
+     * @param string $login
      * @return bool
      */
-    public function exists(UserLogin $login): bool;
+    public function exists(string $login): bool;
 
     /**
      * @param User $user
@@ -45,7 +44,7 @@ interface UserRepository
     public function save(User $user): UserId;
 
     /**
-     * @param User $user
+     * @param UserId $id
      */
-    public function remove(User $user): void;
+    public function remove(UserId $id): void;
 }

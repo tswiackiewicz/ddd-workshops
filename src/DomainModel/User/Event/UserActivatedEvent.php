@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    User, UserLogin
-};
+use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
@@ -23,10 +21,10 @@ class UserActivatedEvent extends UserEvent
     /**
      * UserActivatedEvent constructor.
      * @param UserId $id
-     * @param UserLogin $login
+     * @param string $login
      * @param string $hash
      */
-    public function __construct(UserId $id, UserLogin $login, string $hash)
+    public function __construct(UserId $id, string $login, string $hash)
     {
         parent::__construct($id, $login);
         $this->hash = $hash;
@@ -41,8 +39,8 @@ class UserActivatedEvent extends UserEvent
     public static function fromUser(User $user, string $hash): UserActivatedEvent
     {
         return new static(
-            UserId::fromInt($user->getId()),
-            new UserLogin($user->getLogin()),
+            UserId::fromInt($user->getId()->getId()),
+            (string)$user->getLogin(),
             $hash
         );
     }
