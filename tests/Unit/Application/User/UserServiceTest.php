@@ -100,7 +100,7 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldGenerateResetPasswordToken(): void
     {
-        $this->markTestSkipped('TODO: Implement shouldGenerateResetPasswordToken() method test.');
+        self::markTestSkipped('TODO: Implement shouldGenerateResetPasswordToken() method test.');
     }
 
     /**
@@ -108,7 +108,7 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldResetPassword(): void
     {
-        $this->markTestSkipped('TODO: Implement shouldResetPassword() method test.');
+        self::markTestSkipped('TODO: Implement shouldResetPassword() method test.');
     }
 
     /**
@@ -116,7 +116,7 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldChangePassword(): void
     {
-        $this->markTestSkipped('TODO: Implement shouldChangePassword() method test.');
+        self::markTestSkipped('TODO: Implement shouldChangePassword() method test.');
     }
 
     /**
@@ -160,7 +160,7 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldDisableUser(): void
     {
-        $this->markTestSkipped('TODO: Implement shouldDisableUser() method test.');
+        self::markTestSkipped('TODO: Implement shouldDisableUser() method test.');
     }
 
     /**

@@ -6,7 +6,6 @@ Domain Driven Design
 
 ## TODO
 
-* Domain Service (example)
 * Aggregate Root (example)
 * Domain Events
 * ES + projection
