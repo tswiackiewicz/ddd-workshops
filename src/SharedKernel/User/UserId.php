@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
+namespace TSwiackiewicz\AwesomeApp\SharedKernel\User;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\InvalidArgumentException;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 
 /**
  * Class UserId
- * @package TSwiackiewicz\AwesomeApp\DomainModel\User
+ * @package TSwiackiewicz\AwesomeApp\SharedKernel\User
  */
 class UserId
 {

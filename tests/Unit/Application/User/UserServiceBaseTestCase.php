@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    LoggedInUser, RegisteredUser, UserId, UserLogin, UserPassword, UserRepository
+    LoggedInUser, RegisteredUser, UserLogin, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**

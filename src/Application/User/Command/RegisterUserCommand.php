@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace TSwiackiewicz\AwesomeApp\Application\User\Command;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserPassword;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 
 /**
  * Class RegisterUserCommand

@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserPasswordService;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPasswordService;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**

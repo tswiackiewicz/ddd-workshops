@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Exception;
 
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserDomainModelException;
+
 /**
  * Class UserException
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User\Exception

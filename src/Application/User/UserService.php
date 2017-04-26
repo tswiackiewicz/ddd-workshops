@@ -12,9 +12,8 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserActivatedEvent, UserEnabledEvent, UserRegisteredEvent, UserRemovedEvent
 };
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\{
-    UserAlreadyExistsException, UserDomainModelException
-};
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserAlreadyExistsException;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserDomainModelException;
 
 /**
  * Class UserService

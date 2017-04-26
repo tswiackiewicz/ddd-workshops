@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\InvalidArgumentException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserId;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**

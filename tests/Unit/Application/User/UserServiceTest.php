@@ -11,7 +11,7 @@ use TSwiackiewicz\AwesomeApp\Application\User\UserService;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserAlreadyExistsException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserPassword;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 
 /**
  * Class UserServiceTest

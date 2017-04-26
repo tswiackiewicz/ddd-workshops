@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\InvalidArgumentException;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 
 /**
  * Class UserLogin

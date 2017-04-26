@@ -1,12 +1,13 @@
 <?php
+declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
+namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Password;
 
 /**
  * Example of domain service - responsible for strong password generation and
  * verification whether password is weak, strong or very strong
  *
- * @package TSwiackiewicz\AwesomeApp\DomainModel\User
+ * @package TSwiackiewicz\AwesomeApp\DomainModel\User\Password
  */
 class UserPasswordService
 {

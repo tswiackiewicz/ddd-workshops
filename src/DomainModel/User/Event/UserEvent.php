@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserId;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class UserEvent

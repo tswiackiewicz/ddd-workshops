@@ -5,6 +5,7 @@ namespace TSwiackiewicz\AwesomeApp\Infrastructure\User;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserDTO;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserQuery;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserReadModelRepository;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class InMemoryUserReadModelRepository
@@ -32,13 +33,13 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
     }
 
     /**
-     * @param int $id
+     * @param UserId $id
      * @param array $user
      */
-    public static function setUser(int $id, array $user): void
+    public static function setUser(UserId $id, array $user): void
     {
-        $user['id'] = $id;
-        self::$users[$id] = $user;
+        $user['id'] = $id->getId();
+        self::$users[$id->getId()] = $user;
     }
 
     /**
@@ -50,12 +51,12 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
     }
 
     /**
-     * @param int $id
+     * @param UserId $id
      * @return null|UserDTO
      */
-    public function findById(int $id): ?UserDTO
+    public function findById(UserId $id): ?UserDTO
     {
-        return isset(self::$users[$id]) ? UserDTO::fromArray(self::$users[$id]) : null;
+        return isset(self::$users[$id->getId()]) ? UserDTO::fromArray(self::$users[$id->getId()]) : null;
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace TSwiackiewicz\AwesomeApp\ReadModel\User;
 
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+
 /**
  * Class UserReadModel
  * @package TSwiackiewicz\AwesomeApp\ReadModel\User
@@ -23,10 +25,10 @@ class UserReadModel
     }
 
     /**
-     * @param int $id
+     * @param UserId $id
      * @return null|UserDTO
      */
-    public function findById(int $id): ?UserDTO
+    public function findById(UserId $id): ?UserDTO
     {
         return $this->repository->findById($id);
     }
@@ -43,7 +45,7 @@ class UserReadModel
     /**
      * @return UserDTO[]
      */
-    public function getAllUsers() : array
+    public function getAllUsers(): array
     {
         return $this->repository->getAllUsers();
     }

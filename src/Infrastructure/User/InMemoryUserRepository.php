@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Infrastructure\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    User, UserId, UserLogin, UserRepository
+    User, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class InMemoryUserRepository

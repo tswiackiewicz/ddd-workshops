@@ -6,6 +6,7 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Unit\ReadModel\User;
 use TSwiackiewicz\AwesomeApp\Infrastructure\User\InMemoryUserReadModelRepository;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserQuery;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserReadModel;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
@@ -20,7 +21,7 @@ class UserReadModelTest extends UserBaseTestCase
     public function shouldFindUserById(): void
     {
         $readModel = new UserReadModel(new InMemoryUserReadModelRepository());
-        $userDTO = $readModel->findById(1);
+        $userDTO = $readModel->findById(UserId::fromInt(1));
 
         self::assertEquals(1, $userDTO->getId());
         self::assertEquals('first.user@domain.com', $userDTO->getLogin());
@@ -35,7 +36,7 @@ class UserReadModelTest extends UserBaseTestCase
     public function shouldReturnNullWhenUnableToFindUserById(): void
     {
         $readModel = new UserReadModel(new InMemoryUserReadModelRepository());
-        $userDTO = $readModel->findById(123);
+        $userDTO = $readModel->findById(UserId::fromInt(123));
 
         self::assertNull($userDTO);
     }
@@ -50,7 +51,7 @@ class UserReadModelTest extends UserBaseTestCase
         $userDTOCollection = $readModel->findByQuery(new UserQuery(true, true));
         self::assertCount(1, $userDTOCollection);
 
-        InMemoryUserReadModelRepository::setUser(2, [
+        InMemoryUserReadModelRepository::setUser(UserId::fromInt(2), [
             'login' => 'second.user@domain.com',
             'password' => 'test.password#2',
             'active' => true,

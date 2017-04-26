@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\LoggedInUser;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserId;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserPassword;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
