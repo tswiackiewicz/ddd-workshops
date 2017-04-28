@@ -63,4 +63,12 @@ abstract class User
     {
         return $this->password;
     }
+
+    /**
+     * @return string
+     */
+    public function hash(): string
+    {
+        return md5($this->id->getId() . '::' . $this->login);
+    }
 }

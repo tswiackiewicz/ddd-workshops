@@ -10,8 +10,9 @@ use TSwiackiewicz\AwesomeApp\Application\User\Command\RemoveUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\UserService;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserAlreadyExistsException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class UserServiceTest
@@ -83,7 +84,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new UserService(
-            $this->getUserRepositoryMockWhenUserByHashNotFound(),
+            $this->getUserRepositoryMockWhenRegisteredUserByHashNotFound(),
             $this->getUserNotifierMock()
         );
 
@@ -131,7 +132,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service->enable(
             new EnableUserCommand(
-                new UserLogin($this->login)
+                UserId::fromInt($this->userId)
             )
         );
     }
@@ -144,13 +145,13 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new UserService(
-            $this->getUserRepositoryMockWhenUserByLoginNotFound(),
+            $this->getUserRepositoryMockWhenActiveUserByIdNotFound(),
             $this->getUserNotifierMock()
         );
 
         $service->enable(
             new EnableUserCommand(
-                new UserLogin($this->login)
+                UserId::fromInt($this->userId)
             )
         );
     }
@@ -175,7 +176,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service->remove(
             new RemoveUserCommand(
-                new UserLogin($this->login)
+                UserId::fromInt($this->userId)
             )
         );
     }
@@ -188,13 +189,13 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new UserService(
-            $this->getUserRepositoryMockWhenUserByLoginNotFound(),
+            $this->getUserRepositoryMockWhenUserByIdNotFound(),
             $this->getUserNotifierMock()
         );
 
         $service->remove(
             new RemoveUserCommand(
-                new UserLogin($this->login)
+                UserId::fromInt($this->userId)
             )
         );
     }

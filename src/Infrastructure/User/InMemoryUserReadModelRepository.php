@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Infrastructure\User;
 
+use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserDTO;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserQuery;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserReadModelRepository;
@@ -13,42 +15,7 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
  */
 class InMemoryUserReadModelRepository implements UserReadModelRepository
 {
-    /**
-     * @var array
-     */
-    private static $users = [];
-
-    /**
-     * @var int
-     */
-    private static $nextUserIdentity = 1;
-
-    /**
-     * @param array $user
-     */
-    public static function addUser(array $user): void
-    {
-        $user['id'] = self::$nextUserIdentity;
-        self::$users[self::$nextUserIdentity++] = $user;
-    }
-
-    /**
-     * @param UserId $id
-     * @param array $user
-     */
-    public static function setUser(UserId $id, array $user): void
-    {
-        $user['id'] = $id->getId();
-        self::$users[$id->getId()] = $user;
-    }
-
-    /**
-     * Clear defined users' set
-     */
-    public static function clear(): void
-    {
-        self::$users = [];
-    }
+    private const USER_STORAGE_TYPE = 'user';
 
     /**
      * @param UserId $id
@@ -56,7 +23,9 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
      */
     public function findById(UserId $id): ?UserDTO
     {
-        return isset(self::$users[$id->getId()]) ? UserDTO::fromArray(self::$users[$id->getId()]) : null;
+        $users = InMemoryStorage::fetchAll(self::USER_STORAGE_TYPE);
+
+        return isset($users[$id->getId()]) ? UserDTO::fromArray($users[$id->getId()]) : null;
     }
 
     /**
@@ -65,29 +34,31 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
      */
     public function findByQuery(UserQuery $query): array
     {
-        $users = [];
+        $userDTOCollection = [];
 
-        foreach (self::$users as $user) {
+        $users = InMemoryStorage::fetchAll(self::USER_STORAGE_TYPE);
+        foreach ($users as $user) {
             if ($query->isActive() === $user['active'] && $query->isEnabled() === $user['enabled']) {
-                $users[] = UserDTO::fromArray($user);
+                $userDTOCollection[] = UserDTO::fromArray($user);
             }
         }
 
-        return $users;
+        return $userDTOCollection;
     }
 
     /**
      * @return UserDTO[]
      */
-    public function getAllUsers(): array
+    public function getUsers(): array
     {
-        $users = [];
+        $userDTOCollection = [];
 
-        foreach (self::$users as $user) {
-            $users[] = UserDTO::fromArray($user);
+        $users = InMemoryStorage::fetchAll(self::USER_STORAGE_TYPE);
+        foreach ($users as $user) {
+            $userDTOCollection[] = UserDTO::fromArray($user);
         }
 
-        return $users;
+        return $userDTOCollection;
     }
 
 }

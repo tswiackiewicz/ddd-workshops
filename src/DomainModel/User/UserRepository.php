@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
+    Exception\UserRepositoryException, UserId
+};
 
 /**
  * Interface UserRepository
@@ -18,28 +20,39 @@ interface UserRepository
     public function nextIdentity(): UserId;
 
     /**
-     * @param string $hash
-     * @return User
-     * @throws UserNotFoundException
-     */
-    public function getByHash(string $hash): User;
-
-    /**
-     * @param string $login
-     * @return User
-     * @throws UserNotFoundException
-     */
-    public function getByLogin(string $login): User;
-
-    /**
      * @param string $login
      * @return bool
      */
     public function exists(string $login): bool;
 
     /**
+     * @param UserId $id
+     * @return User
+     * @throws UserRepositoryException
+     * @throws UserNotFoundException
+     */
+    public function getById(UserId $id): User;
+
+    /**
+     * @param string $hash
+     * @return RegisteredUser
+     * @throws UserRepositoryException
+     * @throws UserNotFoundException
+     */
+    public function getRegisteredUserByHash(string $hash): RegisteredUser;
+
+    /**
+     * @param UserId $id
+     * @return ActiveUser
+     * @throws UserRepositoryException
+     * @throws UserNotFoundException
+     */
+    public function getActiveUserById(UserId $id): ActiveUser;
+
+    /**
      * @param User $user
      * @return UserId
+     * @throws UserRepositoryException
      */
     public function save(User $user): UserId;
 

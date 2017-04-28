@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\LoggedInUser;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\ActiveUser;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
@@ -20,7 +20,7 @@ class LoggedInUserTest extends UserBaseTestCase
      */
     public function shouldEnableUser(): void
     {
-        $user = new LoggedInUser(
+        $user = new ActiveUser(
             UserId::fromInt($this->userId),
             new UserLogin($this->login),
             new UserPassword($this->password),
@@ -36,7 +36,7 @@ class LoggedInUserTest extends UserBaseTestCase
      */
     public function shouldDisableUser(): void
     {
-        $user = new LoggedInUser(
+        $user = new ActiveUser(
             UserId::fromInt($this->userId),
             new UserLogin($this->login),
             new UserPassword($this->password),
@@ -52,7 +52,7 @@ class LoggedInUserTest extends UserBaseTestCase
      */
     public function shouldChangePassword(): void
     {
-        $user = new LoggedInUser(
+        $user = new ActiveUser(
             UserId::fromInt($this->userId),
             new UserLogin($this->login),
             new UserPassword($this->password),

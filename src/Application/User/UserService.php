@@ -7,7 +7,7 @@ use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, GenerateResetPasswordTokenCommand, RegisterUserCommand, RemoveUserCommand, ResetPasswordCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    LoggedInUser, RegisteredUser, UserNotifier, UserRepository
+    RegisteredUser, UserNotifier, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserActivatedEvent, UserEnabledEvent, UserRegisteredEvent, UserRemovedEvent
@@ -77,8 +77,7 @@ class UserService
      */
     public function activate(ActivateUserCommand $command): void
     {
-        /** @var RegisteredUser $user */
-        $user = $this->repository->getByHash($command->getHash());
+        $user = $this->repository->getRegisteredUserByHash($command->getHash());
         $user->activate();
 
         $this->repository->save($user);
@@ -131,8 +130,7 @@ class UserService
      */
     public function enable(EnableUserCommand $command): void
     {
-        /** @var LoggedInUser $user */
-        $user = $this->repository->getByLogin((string)$command->getLogin());
+        $user = $this->repository->getActiveUserById($command->getUserId());
         $user->enable();
 
         $this->repository->save($user);
@@ -163,7 +161,7 @@ class UserService
      */
     public function remove(RemoveUserCommand $command): void
     {
-        $user = $this->repository->getByLogin((string)$command->getLogin());
+        $user = $this->repository->getById($command->getUserId());
 
         $this->repository->remove($user->getId());
 

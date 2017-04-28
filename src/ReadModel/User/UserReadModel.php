@@ -47,6 +47,6 @@ class UserReadModel
      */
     public function getAllUsers(): array
     {
-        return $this->repository->getAllUsers();
+        return $this->repository->getUsers();
     }
 }

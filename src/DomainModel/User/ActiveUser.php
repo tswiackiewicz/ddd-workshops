@@ -7,10 +7,10 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
- * Class LoggedInUser
+ * Class ActiveUser
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-class LoggedInUser extends User
+class ActiveUser extends User
 {
     /**
      * @var bool
@@ -18,7 +18,7 @@ class LoggedInUser extends User
     private $enabled;
 
     /**
-     * LoggedInUser constructor.
+     * ActiveUser constructor.
      * @param UserId $id
      * @param UserLogin $login
      * @param UserPassword $password

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\ReadModel\User;
 
+use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\Infrastructure\User\InMemoryUserReadModelRepository;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserQuery;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserReadModel;
@@ -16,12 +17,16 @@ use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 class UserReadModelTest extends UserBaseTestCase
 {
     /**
+     * @var UserReadModel
+     */
+    private $readModel;
+
+    /**
      * @test
      */
     public function shouldFindUserById(): void
     {
-        $readModel = new UserReadModel(new InMemoryUserReadModelRepository());
-        $userDTO = $readModel->findById(UserId::fromInt(1));
+        $userDTO = $this->readModel->findById(UserId::fromInt(1));
 
         self::assertEquals(1, $userDTO->getId());
         self::assertEquals('first.user@domain.com', $userDTO->getLogin());
@@ -35,8 +40,7 @@ class UserReadModelTest extends UserBaseTestCase
      */
     public function shouldReturnNullWhenUnableToFindUserById(): void
     {
-        $readModel = new UserReadModel(new InMemoryUserReadModelRepository());
-        $userDTO = $readModel->findById(UserId::fromInt(123));
+        $userDTO = $this->readModel->findById(UserId::fromInt(123));
 
         self::assertNull($userDTO);
     }
@@ -46,19 +50,21 @@ class UserReadModelTest extends UserBaseTestCase
      */
     public function shouldFindUsersByQuery(): void
     {
-        $readModel = new UserReadModel(new InMemoryUserReadModelRepository());
-
-        $userDTOCollection = $readModel->findByQuery(new UserQuery(true, true));
+        $userDTOCollection = $this->readModel->findByQuery(new UserQuery(true, true));
         self::assertCount(1, $userDTOCollection);
 
-        InMemoryUserReadModelRepository::setUser(UserId::fromInt(2), [
-            'login' => 'second.user@domain.com',
-            'password' => 'test.password#2',
-            'active' => true,
-            'enabled' => true
-        ]);
+        InMemoryStorage::save(
+            InMemoryStorage::TYPE_USER,
+            [
+                'id' => 2,
+                'login' => 'second.user@domain.com',
+                'password' => 'test.password#2',
+                'active' => true,
+                'enabled' => true
+            ]
+        );
 
-        $userDTOCollection = $readModel->findByQuery(new UserQuery(true, true));
+        $userDTOCollection = $this->readModel->findByQuery(new UserQuery(true, true));
         self::assertCount(2, $userDTOCollection);
     }
 
@@ -67,8 +73,7 @@ class UserReadModelTest extends UserBaseTestCase
      */
     public function shouldReturnEmptyArrayWhenUnableToFindUsersByQuery(): void
     {
-        $readModel = new UserReadModel(new InMemoryUserReadModelRepository());
-        $userDTOCollection = $readModel->findByQuery(new UserQuery(true, false));
+        $userDTOCollection = $this->readModel->findByQuery(new UserQuery(true, false));
 
         self::assertEquals([], $userDTOCollection);
     }
@@ -78,8 +83,7 @@ class UserReadModelTest extends UserBaseTestCase
      */
     public function shouldReturnAllUsers(): void
     {
-        $readModel = new UserReadModel(new InMemoryUserReadModelRepository());
-        $userDTOCollection = $readModel->getAllUsers();
+        $userDTOCollection = $this->readModel->getAllUsers();
 
         self::assertCount(3, $userDTOCollection);
     }
@@ -89,10 +93,9 @@ class UserReadModelTest extends UserBaseTestCase
      */
     public function shouldReturnEmptyArrayWhenNoUsersDefined(): void
     {
-        InMemoryUserReadModelRepository::clear();
+        InMemoryStorage::clear();
 
-        $readModel = new UserReadModel(new InMemoryUserReadModelRepository());
-        $userDTOCollection = $readModel->getAllUsers();
+        $userDTOCollection = $this->readModel->getAllUsers();
 
         self::assertEquals([], $userDTOCollection);
     }
@@ -102,25 +105,38 @@ class UserReadModelTest extends UserBaseTestCase
      */
     protected function setUp(): void
     {
-        InMemoryUserReadModelRepository::clear();
+        InMemoryStorage::clear();
 
-        InMemoryUserReadModelRepository::addUser([
-            'login' => 'first.user@domain.com',
-            'password' => 'test.password#1',
-            'active' => true,
-            'enabled' => true
-        ]);
-        InMemoryUserReadModelRepository::addUser([
-            'login' => 'second.user@domain.com',
-            'password' => 'test.password#2',
-            'active' => false,
-            'enabled' => true
-        ]);
-        InMemoryUserReadModelRepository::addUser([
-            'login' => 'third.user@domain.com',
-            'password' => 'test.password#3',
-            'active' => false,
-            'enabled' => false
-        ]);
+        InMemoryStorage::save(
+            InMemoryStorage::TYPE_USER,
+            [
+                'login' => 'first.user@domain.com',
+                'password' => 'test.password#1',
+                'active' => true,
+                'enabled' => true
+            ]
+        );
+        InMemoryStorage::save(
+            InMemoryStorage::TYPE_USER,
+            [
+                'login' => 'second.user@domain.com',
+                'password' => 'test.password#2',
+                'active' => false,
+                'enabled' => true
+            ]
+        );
+        InMemoryStorage::save(
+            InMemoryStorage::TYPE_USER,
+            [
+                'login' => 'third.user@domain.com',
+                'password' => 'test.password#3',
+                'active' => false,
+                'enabled' => false
+            ]
+        );
+
+        $this->readModel = new UserReadModel(
+            new InMemoryUserReadModelRepository()
+        );
     }
 }

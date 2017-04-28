@@ -26,5 +26,5 @@ interface UserReadModelRepository
     /**
      * @return UserDTO[]
      */
-    public function getAllUsers(): array;
+    public function getUsers(): array;
 }
