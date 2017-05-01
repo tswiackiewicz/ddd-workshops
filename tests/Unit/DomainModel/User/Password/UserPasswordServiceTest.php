@@ -9,6 +9,8 @@ use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 /**
  * Class UserPasswordServiceTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User\Password
+ *
+ * @coversDefaultClass UserPasswordService
  */
 class UserPasswordServiceTest extends UserBaseTestCase
 {

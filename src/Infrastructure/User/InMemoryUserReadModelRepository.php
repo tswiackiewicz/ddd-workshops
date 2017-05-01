@@ -23,6 +23,8 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
     {
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
 
+        print_r($users);
+
         return isset($users[$id->getId()]) ? UserDTO::fromArray($users[$id->getId()]) : null;
     }
 

@@ -60,8 +60,8 @@ class UserDTO
             $user['id'],
             $user['login'],
             $user['password'],
-            $user['active'],
-            $user['enabled']
+            $user['active'] ?? false,
+            $user['enabled'] ?? false
         );
     }
 

@@ -12,6 +12,8 @@ use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 /**
  * Class ActiveUserTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User
+ *
+ * @coversDefaultClass ActiveUser
  */
 class ActiveUserTest extends UserBaseTestCase
 {

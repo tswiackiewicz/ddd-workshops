@@ -17,6 +17,8 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 /**
  * Class UserServiceTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User
+ *
+ * @coversDefaultClass UserService
  */
 class UserServiceTest extends UserServiceBaseTestCase
 {

@@ -13,6 +13,8 @@ use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 /**
  * Class UserReadModelTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\ReadModel\User
+ *
+ * @coversDefaultClass UserReadModel
  */
 class UserReadModelTest extends UserBaseTestCase
 {

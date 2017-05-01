@@ -10,6 +10,8 @@ use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 /**
  * Class UserIdTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\User
+ *
+ * @coversDefaultClass UserId
  */
 class UserIdTest extends UserBaseTestCase
 {

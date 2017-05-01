@@ -10,6 +10,8 @@ use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 /**
  * Class UserLoginTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User
+ *
+ * @coversDefaultClass UserLogin
  */
 class UserLoginTest extends UserBaseTestCase
 {

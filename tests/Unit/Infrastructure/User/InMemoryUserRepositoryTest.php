@@ -16,7 +16,7 @@ use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
  * Class InMemoryUserRepositoryTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Infrastructure\User
  *
- * @@coversDefaultClass InMemoryUserRepositoryTest
+ * @@coversDefaultClass InMemoryUserRepository
  */
 class InMemoryUserRepositoryTest extends UserBaseTestCase
 {
