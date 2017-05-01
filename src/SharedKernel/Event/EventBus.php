@@ -12,29 +12,27 @@ class EventBus
     /**
      * @var array
      */
-    private static $handlers = [];
+    protected static $handlers = [];
 
     /**
      * @param Event $event
      */
     public static function publish(Event $event): void
     {
-        print 'Handle event: ' . get_class($event) . PHP_EOL;
-
-        // TODO: apply event to event store
-
         $eventName = get_class($event);
-        if (isset(self::$handlers[$eventName]) && is_callable(self::$handlers[$eventName])) {
-            call_user_func(self::$handlers[$eventName], $event);
+        if (isset(self::$handlers[$eventName]) && self::$handlers[$eventName] instanceof EventHandler) {
+            /** @var EventHandler $handler */
+            $handler = self::$handlers[$eventName];
+            $handler->handle($event);
         }
     }
 
     /**
      * @param string $eventName
-     * @param callable $callback
+     * @param EventHandler $handler
      */
-    public static function subscribe(string $eventName, callable $callback): void
+    public static function subscribe(string $eventName, EventHandler $handler): void
     {
-        self::$handlers[$eventName] = $callback;
+        self::$handlers[$eventName] = $handler;
     }
 }

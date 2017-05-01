@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
+use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEventHandler;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     ActiveUser, RegisteredUser, UserLogin, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
+use TSwiackiewicz\AwesomeApp\SharedKernel\Event\EventHandler;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\Event\FakeEventBus;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
@@ -212,5 +215,33 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
             ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
+    }
+
+    /**
+     * @param string $eventName
+     * @return EventHandler
+     */
+    protected function getEventHandlerMock(string $eventName): EventHandler
+    {
+        /** @var UserNotifier|\PHPUnit_Framework_MockObject_MockObject $notifier */
+        $notifier = $this->getMockBuilder(UserNotifier::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'notifyUser'
+            ])
+            ->getMock();
+        $notifier->expects(self::once())
+            ->method('notifyUser')
+            ->with(self::isInstanceOf($eventName));
+
+        return new UserEventHandler($notifier);
+    }
+
+    /**
+     * Setup fixtures
+     */
+    protected function setUp(): void
+    {
+        FakeEventBus::clearRegisteredHandlers();
     }
 }

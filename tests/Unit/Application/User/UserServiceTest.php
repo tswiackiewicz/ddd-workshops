@@ -8,11 +8,16 @@ use TSwiackiewicz\AwesomeApp\Application\User\Command\EnableUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\RegisterUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\RemoveUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\UserService;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserActivatedEvent;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserRegisteredEvent;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserRemovedEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserAlreadyExistsException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\Event\FakeEventBus;
 
 /**
  * Class UserServiceTest
@@ -27,6 +32,11 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldRegisterUser(): void
     {
+        FakeEventBus::subscribe(
+            UserRegisteredEvent::class,
+            $this->getEventHandlerMock(UserRegisteredEvent::class)
+        );
+
         $service = new UserService(
             $this->getUserRepositoryMockForRegisterUser()
         );
@@ -63,6 +73,11 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldActivateUser(): void
     {
+        FakeEventBus::subscribe(
+            UserActivatedEvent::class,
+            $this->getEventHandlerMock(UserActivatedEvent::class)
+        );
+
         $service = new UserService(
             $this->getUserRepositoryMockForActivateUser()
         );
@@ -121,6 +136,11 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldEnableUser(): void
     {
+        FakeEventBus::subscribe(
+            UserEnabledEvent::class,
+            $this->getEventHandlerMock(UserEnabledEvent::class)
+        );
+
         $service = new UserService(
             $this->getUserRepositoryMockForEnableUser()
         );
@@ -165,6 +185,11 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldRemoveUser(): void
     {
+        FakeEventBus::subscribe(
+            UserRemovedEvent::class,
+            $this->getEventHandlerMock(UserRemovedEvent::class)
+        );
+
         $service = new UserService(
             $this->getUserRepositoryMockForRemoveUser()
         );

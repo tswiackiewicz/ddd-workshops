@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
@@ -54,19 +55,5 @@ class UserFactory
             new UserPassword($user['password']),
             isset($user['active']) && true === $user['active']
         );
-    }
-
-    public function createRegisteredUser(UserId $userId): RegisteredUser
-    {
-        // TODO: build object from event store
-
-        // use read model + added event -> return User
-    }
-
-    public function createActiveUser(UserId $userId): ActiveUser
-    {
-        // TODO: build object from event store
-
-        // use read model + added event -> return User
     }
 }

@@ -36,8 +36,9 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
 
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
-            if (isset($user['active']) && $query->isActive() === $user['active'] &&
-                isset($user['enabled']) && $query->isEnabled() === $user['enabled']
+            if (isset($user['active'], $user['enabled']) &&
+                $query->isActive() === $user['active'] &&
+                $query->isEnabled() === $user['enabled']
             ) {
                 $userDTOCollection[] = UserDTO::fromArray($user);
             }
