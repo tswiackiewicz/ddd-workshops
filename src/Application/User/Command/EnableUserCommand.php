@@ -17,7 +17,7 @@ class EnableUserCommand implements UserCommand
     private $userId;
 
     /**
-     * RemoveUserCommand constructor.
+     * EnableUserCommand constructor.
      * @param UserId $userId
      */
     public function __construct(UserId $userId)

@@ -94,7 +94,7 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
      */
     protected function getUserRepositoryMockForEnableUser(): UserRepository
     {
-        $user = $this->getLoggedInUser();
+        $user = $this->getActiveUser();
 
         /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder(UserRepository::class)
@@ -113,7 +113,7 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
     /**
      * @return ActiveUser
      */
-    protected function getLoggedInUser(): ActiveUser
+    protected function getActiveUser(): ActiveUser
     {
         return new ActiveUser(
             UserId::fromInt($this->userId),
@@ -185,7 +185,7 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
      */
     protected function getUserRepositoryMockForRemoveUser(): UserRepository
     {
-        $user = $this->getLoggedInUser();
+        $user = $this->getActiveUser();
 
         /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder(UserRepository::class)

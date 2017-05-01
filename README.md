@@ -6,9 +6,9 @@ Domain Driven Design
 
 ## TODO
 
-* Aggregate Root (example)
 * Domain Events
-* ES + projection
+* Event Sourcing
+* Aggregate Root (example)
 * Command Bus
 
  

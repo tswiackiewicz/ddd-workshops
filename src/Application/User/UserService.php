@@ -7,13 +7,11 @@ use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, GenerateResetPasswordTokenCommand, RegisterUserCommand, RemoveUserCommand, ResetPasswordCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    RegisteredUser, UserNotifier, UserRepository
+    Event\UserActivatedEvent, Event\UserEnabledEvent, Event\UserRegisteredEvent, Event\UserRemovedEvent, Exception\UserAlreadyExistsException, RegisteredUser, UserRepository
 };
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
-    UserActivatedEvent, UserEnabledEvent, UserRegisteredEvent, UserRemovedEvent
+use TSwiackiewicz\AwesomeApp\SharedKernel\{
+    Event\EventBus, User\Exception\UserDomainModelException, User\UserId
 };
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserAlreadyExistsException;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserDomainModelException;
 
 /**
  * Class UserService
@@ -27,28 +25,22 @@ class UserService
     private $repository;
 
     /**
-     * @var UserNotifier
-     */
-    private $notifier;
-
-    /**
      * UserService constructor.
      * @param UserRepository $repository
-     * @param UserNotifier $notifier
      */
-    public function __construct(UserRepository $repository, UserNotifier $notifier)
+    public function __construct(UserRepository $repository)
     {
         $this->repository = $repository;
-        $this->notifier = $notifier;
     }
 
     /**
      * Register new user
      *
      * @param RegisterUserCommand $command
+     * @return UserId
      * @throws UserDomainModelException
      */
-    public function register(RegisterUserCommand $command): void
+    public function register(RegisterUserCommand $command): UserId
     {
         if ($this->repository->exists((string)$command->getLogin())) {
             throw UserAlreadyExistsException::forUser((string)$command->getLogin());
@@ -60,13 +52,16 @@ class UserService
             $command->getPassword()
         );
 
-        $this->repository->save($registeredUser);
+        $userId = $this->repository->save($registeredUser);
 
-        $event = UserRegisteredEvent::fromUser($registeredUser);
+        EventBus::publish(
+            new UserRegisteredEvent(
+                $userId,
+                (string)$registeredUser->getLogin()
+            )
+        );
 
-        $this->notifier->notifyUser($event);
-
-        // publish UserRegisteredEvent
+        return $userId;
     }
 
     /**
@@ -82,11 +77,12 @@ class UserService
 
         $this->repository->save($user);
 
-        $event = UserActivatedEvent::fromUser($user, $command->getHash());
-
-        $this->notifier->notifyUser($event);
-
-        // publish UserActivatedEvent
+        EventBus::publish(
+            new UserActivatedEvent(
+                $user->getId(),
+                (string)$user->getLogin()
+            )
+        );
     }
 
     /**
@@ -135,11 +131,12 @@ class UserService
 
         $this->repository->save($user);
 
-        $event = UserEnabledEvent::fromUser($user);
-
-        $this->notifier->notifyUser($event);
-
-        // publish UserEnabledEvent
+        EventBus::publish(
+            new UserEnabledEvent(
+                $user->getId(),
+                (string)$user->getLogin()
+            )
+        );
     }
 
     /**
@@ -165,10 +162,11 @@ class UserService
 
         $this->repository->remove($user->getId());
 
-        $event = UserRemovedEvent::fromUser($user);
-
-        $this->notifier->notifyUser($event);
-
-        // publish UserRemovedEvent
+        EventBus::publish(
+            new UserRemovedEvent(
+                $user->getId(),
+                (string)$user->getLogin()
+            )
+        );
     }
 }

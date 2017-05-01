@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
+namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User\Password;
 
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
  * Class UserPasswordTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User
+ * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User\Password
  */
 class UserPasswordTest extends UserBaseTestCase
 {

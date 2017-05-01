@@ -1,9 +1,7 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Application\User\Command;
-
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 
 /**
  * Class ActivateUserCommand
@@ -12,32 +10,17 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 class ActivateUserCommand implements UserCommand
 {
     /**
-     * @var UserLogin
-     */
-    private $login;
-
-    /**
      * @var string
      */
     private $hash;
 
     /**
      * ActivateUserCommand constructor.
-     * @param UserLogin $login
      * @param string $hash
      */
-    public function __construct(UserLogin $login, string $hash)
+    public function __construct(string $hash)
     {
-        $this->login = $login;
         $this->hash = $hash;
-    }
-
-    /**
-     * @return UserLogin
-     */
-    public function getLogin(): UserLogin
-    {
-        return $this->login;
     }
 
     /**

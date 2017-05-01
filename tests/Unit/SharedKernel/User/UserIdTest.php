@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
+namespace TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\User;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
@@ -9,7 +9,7 @@ use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
  * Class UserIdTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User
+ * @package TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\User
  */
 class UserIdTest extends UserBaseTestCase
 {

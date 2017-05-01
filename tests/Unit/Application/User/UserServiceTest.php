@@ -26,8 +26,7 @@ class UserServiceTest extends UserServiceBaseTestCase
     public function shouldRegisterUser(): void
     {
         $service = new UserService(
-            $this->getUserRepositoryMockForRegisterUser(),
-            $this->getUserNotifierMock()
+            $this->getUserRepositoryMockForRegisterUser()
         );
 
         $service->register(
@@ -46,8 +45,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserAlreadyExistsException::class);
 
         $service = new UserService(
-            $this->getUserRepositoryMockWhenUserAlreadyExists(),
-            $this->getUserNotifierMock()
+            $this->getUserRepositoryMockWhenUserAlreadyExists()
         );
 
         $service->register(
@@ -64,14 +62,12 @@ class UserServiceTest extends UserServiceBaseTestCase
     public function shouldActivateUser(): void
     {
         $service = new UserService(
-            $this->getUserRepositoryMockForActivateUser(),
-            $this->getUserNotifierMock()
+            $this->getUserRepositoryMockForActivateUser()
         );
 
         $service->activate(
             new ActivateUserCommand(
-                new UserLogin($this->login),
-                'hash'
+                'existent_user_hash'
             )
         );
     }
@@ -84,14 +80,12 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new UserService(
-            $this->getUserRepositoryMockWhenRegisteredUserByHashNotFound(),
-            $this->getUserNotifierMock()
+            $this->getUserRepositoryMockWhenRegisteredUserByHashNotFound()
         );
 
         $service->activate(
             new ActivateUserCommand(
-                new UserLogin($this->login),
-                'hash'
+                'non_existent_user_hash'
             )
         );
     }
@@ -126,13 +120,13 @@ class UserServiceTest extends UserServiceBaseTestCase
     public function shouldEnableUser(): void
     {
         $service = new UserService(
-            $this->getUserRepositoryMockForEnableUser(),
-            $this->getUserNotifierMock()
+            $this->getUserRepositoryMockForEnableUser()
         );
 
         $service->enable(
             new EnableUserCommand(
-                UserId::fromInt($this->userId)
+                UserId::fromInt($this->userId),
+                new UserLogin($this->login)
             )
         );
     }
@@ -145,13 +139,13 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new UserService(
-            $this->getUserRepositoryMockWhenActiveUserByIdNotFound(),
-            $this->getUserNotifierMock()
+            $this->getUserRepositoryMockWhenActiveUserByIdNotFound()
         );
 
         $service->enable(
             new EnableUserCommand(
-                UserId::fromInt($this->userId)
+                UserId::fromInt($this->userId),
+                new UserLogin($this->login)
             )
         );
     }
@@ -170,8 +164,7 @@ class UserServiceTest extends UserServiceBaseTestCase
     public function shouldRemoveUser(): void
     {
         $service = new UserService(
-            $this->getUserRepositoryMockForRemoveUser(),
-            $this->getUserNotifierMock()
+            $this->getUserRepositoryMockForRemoveUser()
         );
 
         $service->remove(
@@ -189,8 +182,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new UserService(
-            $this->getUserRepositoryMockWhenUserByIdNotFound(),
-            $this->getUserNotifierMock()
+            $this->getUserRepositoryMockWhenUserByIdNotFound()
         );
 
         $service->remove(

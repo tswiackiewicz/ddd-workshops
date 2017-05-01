@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
+use TSwiackiewicz\AwesomeApp\SharedKernel\Event\Event;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class UserEvent
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User\Event
  */
-abstract class UserEvent
+abstract class UserEvent implements Event
 {
     /**
      * @var UserId
@@ -33,11 +34,11 @@ abstract class UserEvent
     }
 
     /**
-     * @return int
+     * @return UserId
      */
-    public function getId(): int
+    public function getId(): UserId
     {
-        return $this->id->getId();
+        return $this->id;
     }
 
     /**

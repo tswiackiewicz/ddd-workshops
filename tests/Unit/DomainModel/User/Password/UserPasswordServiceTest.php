@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
+namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User\Password;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPasswordService;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
  * Class UserPasswordServiceTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User
+ * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User\Password
  */
 class UserPasswordServiceTest extends UserBaseTestCase
 {

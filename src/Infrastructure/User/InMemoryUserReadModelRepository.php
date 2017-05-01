@@ -15,15 +15,13 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
  */
 class InMemoryUserReadModelRepository implements UserReadModelRepository
 {
-    private const USER_STORAGE_TYPE = 'user';
-
     /**
      * @param UserId $id
      * @return null|UserDTO
      */
     public function findById(UserId $id): ?UserDTO
     {
-        $users = InMemoryStorage::fetchAll(self::USER_STORAGE_TYPE);
+        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
 
         return isset($users[$id->getId()]) ? UserDTO::fromArray($users[$id->getId()]) : null;
     }
@@ -36,9 +34,11 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
     {
         $userDTOCollection = [];
 
-        $users = InMemoryStorage::fetchAll(self::USER_STORAGE_TYPE);
+        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
-            if ($query->isActive() === $user['active'] && $query->isEnabled() === $user['enabled']) {
+            if (isset($user['active']) && $query->isActive() === $user['active'] &&
+                isset($user['enabled']) && $query->isEnabled() === $user['enabled']
+            ) {
                 $userDTOCollection[] = UserDTO::fromArray($user);
             }
         }
@@ -53,7 +53,7 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
     {
         $userDTOCollection = [];
 
-        $users = InMemoryStorage::fetchAll(self::USER_STORAGE_TYPE);
+        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
             $userDTOCollection[] = UserDTO::fromArray($user);
         }

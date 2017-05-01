@@ -17,8 +17,6 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
  */
 class InMemoryUserRepository implements UserRepository
 {
-    private const USER_STORAGE_TYPE = 'user';
-
     /**
      * @var UserFactory
      */
@@ -47,9 +45,9 @@ class InMemoryUserRepository implements UserRepository
      */
     public function exists(string $login): bool
     {
-        $users = InMemoryStorage::fetchAll(self::USER_STORAGE_TYPE);
+        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
-            if ($login === $user['login']) {
+            if (isset($user['login']) && $login === $user['login']) {
                 return true;
             }
         }
@@ -65,7 +63,7 @@ class InMemoryUserRepository implements UserRepository
      */
     public function getById(UserId $id): User
     {
-        $user = InMemoryStorage::fetchById(self::USER_STORAGE_TYPE, $id->getId());
+        $user = InMemoryStorage::fetchById(InMemoryStorage::TYPE_USER, $id->getId());
         if ($user) {
             try {
                 return $this->userFactory->fromNative($user);
@@ -85,9 +83,11 @@ class InMemoryUserRepository implements UserRepository
      */
     public function getRegisteredUserByHash(string $hash): RegisteredUser
     {
-        $users = InMemoryStorage::fetchAll(self::USER_STORAGE_TYPE);
+        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
-            if ($hash === $user['hash'] && false === $user['active']) {
+            if (isset($user['hash']) && $hash === $user['hash'] &&
+                (!isset($user['active']) || false === $user['active'])
+            ) {
                 try {
                     return $this->userFactory->registeredUserFromNative($user);
                 } catch (InvalidArgumentException $exception) {
@@ -107,8 +107,8 @@ class InMemoryUserRepository implements UserRepository
      */
     public function getActiveUserById(UserId $id): ActiveUser
     {
-        $user = InMemoryStorage::fetchById(self::USER_STORAGE_TYPE, $id->getId());
-        if ($user && true === $user['active']) {
+        $user = InMemoryStorage::fetchById(InMemoryStorage::TYPE_USER, $id->getId());
+        if (isset($user['active']) && true === $user['active']) {
             try {
                 return $this->userFactory->activeUserFromNative($user);
             } catch (InvalidArgumentException $exception) {
@@ -127,7 +127,7 @@ class InMemoryUserRepository implements UserRepository
     public function save(User $user): UserId
     {
         if ($user->getId()->isNull()) {
-            $userId = InMemoryStorage::nextIdentity(self::USER_STORAGE_TYPE);
+            $userId = InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER);
         } else {
             $userId = $user->getId()->getId();
         }
@@ -147,7 +147,7 @@ class InMemoryUserRepository implements UserRepository
             $nativeUser['enabled'] = true;
         }
 
-        InMemoryStorage::save(self::USER_STORAGE_TYPE, $nativeUser);
+        InMemoryStorage::save(InMemoryStorage::TYPE_USER, $nativeUser);
 
         try {
             return UserId::fromInt($nativeUser['id']);
@@ -161,6 +161,6 @@ class InMemoryUserRepository implements UserRepository
      */
     public function remove(UserId $id): void
     {
-        InMemoryStorage::removeById(self::USER_STORAGE_TYPE, $id->getId());
+        InMemoryStorage::removeById(InMemoryStorage::TYPE_USER, $id->getId());
     }
 }

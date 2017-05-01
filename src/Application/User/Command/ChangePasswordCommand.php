@@ -1,11 +1,10 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Application\User\Command;
 
-
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class ChangePasswordCommand
@@ -14,9 +13,9 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 class ChangePasswordCommand implements UserCommand
 {
     /**
-     * @var UserLogin
+     * @var UserId
      */
-    private $login;
+    private $userId;
 
     /**
      * @var UserPassword
@@ -30,23 +29,27 @@ class ChangePasswordCommand implements UserCommand
 
     /**
      * ChangePasswordCommand constructor.
-     * @param UserLogin $login
+     * @param UserId $userId
      * @param UserPassword $currentPassword
      * @param UserPassword $newPassword
      */
-    public function __construct(UserLogin $login, UserPassword $currentPassword, UserPassword $newPassword)
+    public function __construct(
+        UserId $userId,
+        UserPassword $currentPassword,
+        UserPassword $newPassword
+    )
     {
-        $this->login = $login;
+        $this->userId = $userId;
         $this->currentPassword = $currentPassword;
         $this->newPassword = $newPassword;
     }
 
     /**
-     * @return UserLogin
+     * @return UserId
      */
-    public function getLogin(): UserLogin
+    public function getUserId(): UserId
     {
-        return $this->login;
+        return $this->userId;
     }
 
     /**

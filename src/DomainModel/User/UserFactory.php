@@ -19,7 +19,11 @@ class UserFactory
      */
     public function fromNative(array $user): User
     {
-        return true === $user['active'] ? $this->activeUserFromNative($user) : $this->registeredUserFromNative($user);
+        if (isset($user['active']) && true === $user['active']) {
+            return $this->activeUserFromNative($user);
+        }
+
+        return $this->registeredUserFromNative($user);
     }
 
     /**
@@ -33,7 +37,7 @@ class UserFactory
             UserId::fromInt($user['id']),
             new UserLogin($user['login']),
             new UserPassword($user['password']),
-            true === $user['enabled']
+            isset($user['enabled']) && true === $user['enabled']
         );
     }
 
@@ -48,7 +52,21 @@ class UserFactory
             UserId::fromInt($user['id']),
             new UserLogin($user['login']),
             new UserPassword($user['password']),
-            true === $user['active']
+            isset($user['active']) && true === $user['active']
         );
+    }
+
+    public function createRegisteredUser(UserId $userId): RegisteredUser
+    {
+        // TODO: build object from event store
+
+        // use read model + added event -> return User
+    }
+
+    public function createActiveUser(UserId $userId): ActiveUser
+    {
+        // TODO: build object from event store
+
+        // use read model + added event -> return User
     }
 }

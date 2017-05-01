@@ -10,10 +10,10 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
- * Class LoggedInUserTest
+ * Class ActiveUserTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User
  */
-class LoggedInUserTest extends UserBaseTestCase
+class ActiveUserTest extends UserBaseTestCase
 {
     /**
      * @test
