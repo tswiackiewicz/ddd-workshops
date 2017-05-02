@@ -6,7 +6,6 @@ Domain Driven Design
 
 ## TODO
 
-* Domain Events
 * Event Sourcing
 * Aggregate Root (example)
 * Command Bus

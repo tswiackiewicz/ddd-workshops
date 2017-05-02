@@ -17,7 +17,7 @@ class StdOutUserNotifier implements UserNotifier
      */
     public function notifyUser(UserEvent $event): void
     {
-        // TODO: Implement notifyUser() method.
+        print $event . PHP_EOL;
     }
 
 }

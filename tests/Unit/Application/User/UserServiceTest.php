@@ -52,7 +52,7 @@ class UserServiceTest extends UserServiceBaseTestCase
     /**
      * @test
      */
-    public function shouldFailWhenRegisterAlreadyExistsUser(): void
+    public function shouldFailWhenRegisteredUserAlreadyExists(): void
     {
         $this->expectException(UserAlreadyExistsException::class);
 
@@ -92,7 +92,7 @@ class UserServiceTest extends UserServiceBaseTestCase
     /**
      * @test
      */
-    public function shouldFailWhenActivateNonExistentUser(): void
+    public function shouldFailWhenActivatedUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
 
@@ -156,7 +156,7 @@ class UserServiceTest extends UserServiceBaseTestCase
     /**
      * @test
      */
-    public function shouldFailWhenEnableNonExistentUser(): void
+    public function shouldFailWhenEnabledUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
 
@@ -204,7 +204,7 @@ class UserServiceTest extends UserServiceBaseTestCase
     /**
      * @test
      */
-    public function shouldFailWhenRemoveNonExistentUser(): void
+    public function shouldFailWhenRemovedUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
 

@@ -69,6 +69,6 @@ abstract class User
      */
     public function hash(): string
     {
-        return md5($this->id->getId() . '::' . $this->login);
+        return md5($this->login . '::' . $this->password);
     }
 }
