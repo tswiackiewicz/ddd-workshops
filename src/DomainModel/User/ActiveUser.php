@@ -7,7 +7,9 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
- * Class ActiveUser
+ * Example of two different User's Bounded Contexts
+ * It can be organized within same or various (sub-)namespaces
+ *
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
 class ActiveUser extends User

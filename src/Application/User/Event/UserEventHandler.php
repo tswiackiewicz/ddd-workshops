@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Application\User\Event;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
-use TSwiackiewicz\AwesomeApp\SharedKernel\Event\Event;
-use TSwiackiewicz\AwesomeApp\SharedKernel\Event\EventHandler;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\{
+    Event\UserEvent, UserNotifier
+};
+use TSwiackiewicz\AwesomeApp\SharedKernel\Event\{
+    Event, EventHandler
+};
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 
 /**
- * Class UserEventHandler
+ * Sample generic event handler
+ *
  * @package TSwiackiewicz\AwesomeApp\Application\User\Event
  */
 class UserEventHandler implements EventHandler
@@ -33,6 +37,10 @@ class UserEventHandler implements EventHandler
      */
     public function handle(Event $event): void
     {
+        if (!$event instanceof UserEvent) {
+            throw new RuntimeException('UserEvent instance is expected, event class: ' . get_class($event));
+        }
+
         /** @var UserEvent $event */
         $this->notifier->notifyUser($event);
     }

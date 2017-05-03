@@ -41,7 +41,7 @@ class UserPassword
             throw new InvalidArgumentException('');
         }
 
-        // TODO: other password assert rules
+        // TODO: other password assertion rules
     }
 
     /**

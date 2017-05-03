@@ -9,7 +9,10 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
 };
 
 /**
- * Interface UserRepository
+ * When User (Application) Service is split by User's BC (registered vs active),
+ * we should divide UserRepository into RegisteredUserRepository and ActiveUserRepository,
+ * with common UserRepository if needed
+ *
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
 interface UserRepository

@@ -91,6 +91,8 @@ class UserPasswordService
      */
     public function generateStrongPassword(): string
     {
+        // this is only sample generated strong password,
+        // in real app it should vary between method calls
         return 'VEEERY_StR0Ng_P@sSw0rD1!#';
     }
 }

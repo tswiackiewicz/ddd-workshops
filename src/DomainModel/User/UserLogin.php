@@ -6,7 +6,10 @@ namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 
 /**
- * Class UserLogin
+ * Example of Value Object, very convenient way for data validation
+ * In this particular case, user login validation can be implemented
+ * with command validator
+ *
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
 class UserLogin

@@ -7,7 +7,8 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
- * Class User
+ * Abstract core for multiple User's BC
+ *
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
 abstract class User

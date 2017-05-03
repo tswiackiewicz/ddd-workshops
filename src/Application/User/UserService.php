@@ -108,7 +108,7 @@ class UserService
     }
 
     /**
-     * Change user's password
+     * Change active user's password
      *
      * @param ChangePasswordCommand $command
      * @throws UserDomainModelException
@@ -119,7 +119,7 @@ class UserService
     }
 
     /**
-     * Enable user
+     * Enable active user
      *
      * @param EnableUserCommand $command
      * @throws UserDomainModelException
@@ -140,7 +140,7 @@ class UserService
     }
 
     /**
-     * Disable user
+     * Disable active user
      *
      * @param DisableUserCommand $command
      * @throws UserDomainModelException

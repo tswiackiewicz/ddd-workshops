@@ -19,5 +19,4 @@ class StdOutUserNotifier implements UserNotifier
     {
         print $event . PHP_EOL;
     }
-
 }
