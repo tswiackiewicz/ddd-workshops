@@ -139,13 +139,8 @@ class InMemoryUserRepository implements UserRepository
             'hash' => $user->hash()
         ];
 
-        if ($user instanceof ActiveUser) {
-            $nativeUser['active'] = true;
-            $nativeUser['enabled'] = $user->isEnabled();
-        } else if ($user instanceof RegisteredUser) {
-            $nativeUser['active'] = $user->isActive();
-            $nativeUser['enabled'] = true;
-        }
+        $nativeUser['active'] = $user->isActive();
+        $nativeUser['enabled'] = $user->isEnabled();
 
         InMemoryStorage::save(InMemoryStorage::TYPE_USER, $nativeUser);
 

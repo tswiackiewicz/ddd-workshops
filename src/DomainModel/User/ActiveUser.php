@@ -63,4 +63,12 @@ class ActiveUser extends User
     {
         return $this->enabled;
     }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return true;
+    }
 }

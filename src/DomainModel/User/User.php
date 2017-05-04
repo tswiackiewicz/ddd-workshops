@@ -72,4 +72,14 @@ abstract class User
     {
         return md5($this->login . '::' . $this->password);
     }
+
+    /**
+     * @return bool
+     */
+    abstract public function isEnabled(): bool;
+
+    /**
+     * @return bool
+     */
+    abstract public function isActive(): bool;
 }
