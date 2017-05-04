@@ -19,8 +19,8 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
     InMemoryStorage, User\InMemoryUserReadModelRepository, User\InMemoryUserRepository, User\StdOutUserNotifier
 };
-use TSwiackiewicz\AwesomeApp\SharedKernel\Event\EventBus;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
  * Class UserServiceTest

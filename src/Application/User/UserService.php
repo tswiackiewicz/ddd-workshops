@@ -10,8 +10,9 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Event\UserActivatedEvent, Event\UserEnabledEvent, Event\UserRegisteredEvent, Event\UserRemovedEvent, Exception\UserAlreadyExistsException, RegisteredUser, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\{
-    Event\EventBus, User\Exception\UserDomainModelException, User\UserId
+    User\Exception\UserDomainModelException, User\UserId
 };
+use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
  * Class UserService

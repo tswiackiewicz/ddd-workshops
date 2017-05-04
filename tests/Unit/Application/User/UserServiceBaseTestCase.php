@@ -10,10 +10,9 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
-use TSwiackiewicz\AwesomeApp\SharedKernel\Event\EventHandler;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
-use TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\Event\FakeEventBus;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
+use TSwiackiewicz\DDD\Event\EventHandler;
 
 /**
  * Class UserServiceBaseTestCase

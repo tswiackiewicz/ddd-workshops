@@ -16,7 +16,8 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "TSwiackiewicz\\AwesomeApp\\": "src/"
+            "TSwiackiewicz\\AwesomeApp\\": "src/",
+            "TSwiackiewicz\\DDD\\": "src-ddd/"
         }
     },
     "autoload-dev": {

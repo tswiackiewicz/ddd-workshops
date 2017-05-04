@@ -1,11 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\SharedKernel\Event;
+namespace TSwiackiewicz\DDD\Event;
 
 /**
- * Class EventBus
- * @package TSwiackiewicz\AwesomeApp\SharedKernel\Event
+ * EventBus should be a part of "DDD framework" or external component
+ * To keep example simple, EB is delivered along with sample application (AwesomeApp)
+ *
+ * @package TSwiackiewicz\DDD\Event
  */
 class EventBus
 {

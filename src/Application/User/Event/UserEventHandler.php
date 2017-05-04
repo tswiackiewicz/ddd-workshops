@@ -6,10 +6,10 @@ namespace TSwiackiewicz\AwesomeApp\Application\User\Event;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Event\UserEvent, UserNotifier
 };
-use TSwiackiewicz\AwesomeApp\SharedKernel\Event\{
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
+use TSwiackiewicz\DDD\Event\{
     Event, EventHandler
 };
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 
 /**
  * Sample generic event handler

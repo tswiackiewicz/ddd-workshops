@@ -17,7 +17,6 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
-use TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\Event\FakeEventBus;
 
 /**
  * Class UserServiceTest

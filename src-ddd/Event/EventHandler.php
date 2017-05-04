@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\SharedKernel\Event;
+namespace TSwiackiewicz\DDD\Event;
 
 /**
  * Interface EventHandler
- * @package TSwiackiewicz\AwesomeApp\SharedKernel\Event
+ * @package TSwiackiewicz\DDD\Event
  */
 interface EventHandler
 {

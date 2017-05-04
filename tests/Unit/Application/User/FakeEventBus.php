@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\Event;
+namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
-use TSwiackiewicz\AwesomeApp\SharedKernel\Event\EventBus;
+use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
  * Class FakeEventBus
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\Event
+ * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User
  */
 class FakeEventBus extends EventBus
 {
