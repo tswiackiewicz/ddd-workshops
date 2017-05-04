@@ -82,14 +82,14 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
      */
     public function shouldReturnUserByHash(): void
     {
-        $registeredUser = RegisteredUser::register(
+        $registeredUser = RegisteredUser::createInactive(
             UserId::fromInt(123),
             new UserLogin('test_user@domain.com'),
             new UserPassword('test_password')
         );
         $this->repository->save($registeredUser);
 
-        $user = $this->repository->getRegisteredUserByHash($registeredUser->hash());
+        $user = $this->repository->getRegisteredUserByHash($registeredUser->getHash());
 
         self::assertInstanceOf(User::class, $user);
     }
@@ -182,7 +182,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         );
 
         $this->repository->save(
-            RegisteredUser::register(
+            RegisteredUser::createInactive(
                 UserId::fromInt(1),
                 new UserLogin('registered_user@domain.com'),
                 new UserPassword('test_password')

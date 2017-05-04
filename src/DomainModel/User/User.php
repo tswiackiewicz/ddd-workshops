@@ -29,6 +29,11 @@ abstract class User
     protected $password;
 
     /**
+     * @var string
+     */
+    private $hash;
+
+    /**
      * User constructor.
      * @param UserId $id
      * @param UserLogin $login
@@ -39,6 +44,7 @@ abstract class User
         $this->id = $id;
         $this->login = $login;
         $this->password = $password;
+        $this->hash = uniqid() . md5($this->login . '::' . $this->password);
     }
 
     /**
@@ -68,8 +74,18 @@ abstract class User
     /**
      * @return string
      */
-    public function hash(): string
+    public function getHash(): string
     {
-        return md5($this->login . '::' . $this->password);
+        return $this->hash;
     }
+
+    /**
+     * @return bool
+     */
+    abstract public function isEnabled(): bool;
+
+    /**
+     * @return bool
+     */
+    abstract public function isActive(): bool;
 }

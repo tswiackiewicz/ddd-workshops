@@ -23,15 +23,15 @@ class UserService
     /**
      * @var UserRepository
      */
-    private $repository;
+    private $userRepository;
 
     /**
      * UserService constructor.
-     * @param UserRepository $repository
+     * @param UserRepository $userRepository
      */
-    public function __construct(UserRepository $repository)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->repository = $repository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -43,17 +43,17 @@ class UserService
      */
     public function register(RegisterUserCommand $command): UserId
     {
-        if ($this->repository->exists((string)$command->getLogin())) {
+        if ($this->userRepository->exists((string)$command->getLogin())) {
             throw UserAlreadyExistsException::forUser((string)$command->getLogin());
         }
 
-        $registeredUser = RegisteredUser::register(
-            $this->repository->nextIdentity(),
+        $registeredUser = RegisteredUser::createInactive(
+            $this->userRepository->nextIdentity(),
             $command->getLogin(),
             $command->getPassword()
         );
 
-        $userId = $this->repository->save($registeredUser);
+        $userId = $this->userRepository->save($registeredUser);
 
         EventBus::publish(
             new UserRegisteredEvent(
@@ -73,10 +73,10 @@ class UserService
      */
     public function activate(ActivateUserCommand $command): void
     {
-        $user = $this->repository->getRegisteredUserByHash($command->getHash());
+        $user = $this->userRepository->getRegisteredUserByHash($command->getHash());
         $user->activate();
 
-        $this->repository->save($user);
+        $this->userRepository->save($user);
 
         EventBus::publish(
             new UserActivatedEvent(
@@ -127,10 +127,10 @@ class UserService
      */
     public function enable(EnableUserCommand $command): void
     {
-        $user = $this->repository->getActiveUserById($command->getUserId());
+        $user = $this->userRepository->getActiveUserById($command->getUserId());
         $user->enable();
 
-        $this->repository->save($user);
+        $this->userRepository->save($user);
 
         EventBus::publish(
             new UserEnabledEvent(
@@ -159,9 +159,9 @@ class UserService
      */
     public function remove(RemoveUserCommand $command): void
     {
-        $user = $this->repository->getById($command->getUserId());
+        $user = $this->userRepository->getById($command->getUserId());
 
-        $this->repository->remove($user->getId());
+        $this->userRepository->remove($user->getId());
 
         EventBus::publish(
             new UserRemovedEvent(
