@@ -22,7 +22,7 @@ class RegisteredUserTest extends UserBaseTestCase
      */
     public function shouldRegisterUser(): void
     {
-        $registeredUser = RegisteredUser::register(
+        $registeredUser = RegisteredUser::createInactive(
             UserId::fromInt($this->userId),
             new UserLogin($this->login),
             new UserPassword($this->password)
@@ -37,7 +37,7 @@ class RegisteredUserTest extends UserBaseTestCase
      */
     public function shouldActivateUser(): void
     {
-        $registeredUser = RegisteredUser::register(
+        $registeredUser = RegisteredUser::createInactive(
             UserId::fromInt($this->userId),
             new UserLogin($this->login),
             new UserPassword($this->password)

@@ -36,7 +36,7 @@ class RegisteredUser extends User
      * @param UserPassword $password
      * @return RegisteredUser
      */
-    public static function register(UserId $id, UserLogin $username, UserPassword $password): RegisteredUser
+    public static function createInactive(UserId $id, UserLogin $username, UserPassword $password): RegisteredUser
     {
         return new static($id, $username, $password, false);
     }

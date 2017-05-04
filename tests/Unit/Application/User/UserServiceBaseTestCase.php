@@ -85,7 +85,7 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
      */
     protected function getRegisteredUser(): RegisteredUser
     {
-        return RegisteredUser::register(
+        return RegisteredUser::createInactive(
             UserId::fromInt($this->userId),
             new UserLogin($this->login),
             new UserPassword($this->password)

@@ -136,7 +136,7 @@ class InMemoryUserRepository implements UserRepository
             'id' => $userId,
             'login' => (string)$user->getLogin(),
             'password' => (string)$user->getPassword(),
-            'hash' => $user->hash()
+            'hash' => $user->getHash()
         ];
 
         $nativeUser['active'] = $user->isActive();
