@@ -70,6 +70,10 @@ abstract class User
      */
     public function hash(): string
     {
-        return md5($this->login . '::' . $this->password);
+        $hash = md5($this->login . '::' . $this->password);
+
+        // salt added to User's hash
+        return substr($hash, 0, 8) . substr($hash, 24, 8) .
+            substr($hash, 16, 8) . substr($hash, 8, 8);
     }
 }

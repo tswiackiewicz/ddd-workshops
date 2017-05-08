@@ -48,7 +48,7 @@ class RegisteredUserServiceTest extends TestCase
     /**
      * @var string
      */
-    private $hash = '6b0696aae0d2fc7934795d81c54a198c';
+    private $hash = '6b0696aac54a198c34795d81e0d2fc79';
 
     /**
      * @test

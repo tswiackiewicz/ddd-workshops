@@ -12,7 +12,7 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
 };
 
 /**
- * Class InMemoryUserRepository
+ * Class InMemoryActiveUserRepository
  * @package TSwiackiewicz\AwesomeApp\Infrastructure\User
  */
 class InMemoryActiveUserRepository implements ActiveUserRepository

@@ -7,7 +7,7 @@ namespace TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception;
  * Class RuntimeException
  * @package TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception
  */
-class RuntimeException extends \RuntimeException implements UserDomainModelException
+class RuntimeException extends \RuntimeException
 {
 
 }
