@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Application\User;
 
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
-    ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, GenerateResetPasswordTokenCommand, RegisterUserCommand, RemoveUserCommand, ResetPasswordCommand
+    ActivateUserCommand, GenerateResetPasswordTokenCommand, RegisterUserCommand, ResetPasswordCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Event\UserActivatedEvent, Event\UserEnabledEvent, Event\UserRegisteredEvent, Event\UserRemovedEvent, Exception\UserAlreadyExistsException, RegisteredUser, UserRepository
+    Event\UserActivatedEvent, Event\UserRegisteredEvent, Exception\UserAlreadyExistsException, RegisteredUser, RegisteredUserRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\{
     User\Exception\UserDomainModelException, User\UserId
@@ -18,20 +18,20 @@ use TSwiackiewicz\DDD\Event\EventBus;
  * Class UserService
  * @package TSwiackiewicz\AwesomeApp\Application\User
  */
-class UserService
+class RegisteredUserService
 {
     /**
-     * @var UserRepository
+     * @var RegisteredUserRepository
      */
     private $repository;
 
     /**
-     * UserService constructor.
-     * @param UserRepository $repository
+     * RegisteredUserService constructor.
+     * @param RegisteredUserRepository $registeredUserRepository
      */
-    public function __construct(UserRepository $repository)
+    public function __construct(RegisteredUserRepository $registeredUserRepository)
     {
-        $this->repository = $repository;
+        $this->repository = $registeredUserRepository;
     }
 
     /**
@@ -73,7 +73,7 @@ class UserService
      */
     public function activate(ActivateUserCommand $command): void
     {
-        $user = $this->repository->getRegisteredUserByHash($command->getHash());
+        $user = $this->repository->getByHash($command->getHash());
         $user->activate();
 
         $this->repository->save($user);
@@ -106,68 +106,5 @@ class UserService
     public function resetPassword(ResetPasswordCommand $command): void
     {
 
-    }
-
-    /**
-     * Change active user's password
-     *
-     * @param ChangePasswordCommand $command
-     * @throws UserDomainModelException
-     */
-    public function changePassword(ChangePasswordCommand $command): void
-    {
-
-    }
-
-    /**
-     * Enable active user
-     *
-     * @param EnableUserCommand $command
-     * @throws UserDomainModelException
-     */
-    public function enable(EnableUserCommand $command): void
-    {
-        $user = $this->repository->getActiveUserById($command->getUserId());
-        $user->enable();
-
-        $this->repository->save($user);
-
-        EventBus::publish(
-            new UserEnabledEvent(
-                $user->getId(),
-                (string)$user->getLogin()
-            )
-        );
-    }
-
-    /**
-     * Disable active user
-     *
-     * @param DisableUserCommand $command
-     * @throws UserDomainModelException
-     */
-    public function disable(DisableUserCommand $command): void
-    {
-
-    }
-
-    /**
-     * Remove user
-     *
-     * @param RemoveUserCommand $command
-     * @throws UserDomainModelException
-     */
-    public function remove(RemoveUserCommand $command): void
-    {
-        $user = $this->repository->getById($command->getUserId());
-
-        $this->repository->remove($user->getId());
-
-        EventBus::publish(
-            new UserRemovedEvent(
-                $user->getId(),
-                (string)$user->getLogin()
-            )
-        );
     }
 }

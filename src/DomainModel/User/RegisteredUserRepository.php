@@ -9,13 +9,10 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
 };
 
 /**
- * When User (Application) Service is split by User's BC (registered vs active),
- * we should divide UserRepository into RegisteredUserRepository and ActiveUserRepository,
- * with common UserRepository if needed
- *
+ * Interface RegisteredUserRepository
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-interface UserRepository
+interface RegisteredUserRepository
 {
     /**
      * @return UserId
@@ -30,11 +27,11 @@ interface UserRepository
 
     /**
      * @param UserId $id
-     * @return User
+     * @return RegisteredUser
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getById(UserId $id): User;
+    public function getById(UserId $id): RegisteredUser;
 
     /**
      * @param string $hash
@@ -42,25 +39,12 @@ interface UserRepository
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getRegisteredUserByHash(string $hash): RegisteredUser;
+    public function getByHash(string $hash): RegisteredUser;
 
     /**
-     * @param UserId $id
-     * @return ActiveUser
-     * @throws UserRepositoryException
-     * @throws UserNotFoundException
-     */
-    public function getActiveUserById(UserId $id): ActiveUser;
-
-    /**
-     * @param User $user
+     * @param RegisteredUser $user
      * @return UserId
      * @throws UserRepositoryException
      */
-    public function save(User $user): UserId;
-
-    /**
-     * @param UserId $id
-     */
-    public function remove(UserId $id): void;
+    public function save(RegisteredUser $user): UserId;
 }

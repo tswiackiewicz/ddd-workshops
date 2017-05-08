@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
@@ -28,6 +29,21 @@ class RegisteredUser extends User
     {
         parent::__construct($id, $login, $password);
         $this->active = $active;
+    }
+
+    /**
+     * @param array $user
+     * @return RegisteredUser
+     * @throws InvalidArgumentException
+     */
+    public static function fromNative(array $user): RegisteredUser
+    {
+        return new static(
+            UserId::fromInt($user['id']),
+            new UserLogin($user['login']),
+            new UserPassword($user['password']),
+            isset($user['active']) && true === $user['active']
+        );
     }
 
     /**

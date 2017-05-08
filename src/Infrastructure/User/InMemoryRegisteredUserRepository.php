@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Infrastructure\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    ActiveUser, Exception\UserNotFoundException, RegisteredUser, User, UserFactory, UserRepository
+    Exception\UserNotFoundException, RegisteredUser, RegisteredUserRepository
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
@@ -12,24 +12,15 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
 };
 
 /**
- * Class InMemoryUserRepository
+ * Class InMemoryRegisteredUserRepository
  * @package TSwiackiewicz\AwesomeApp\Infrastructure\User
  */
-class InMemoryUserRepository implements UserRepository
+class InMemoryRegisteredUserRepository implements RegisteredUserRepository
 {
     /**
-     * @var UserFactory
+     * @var array
      */
-    private $userFactory;
-
-    /**
-     * InMemoryUserRepository constructor.
-     * @param UserFactory $userFactory
-     */
-    public function __construct(UserFactory $userFactory)
-    {
-        $this->userFactory = $userFactory;
-    }
+    private static $identityMap = [];
 
     /**
      * @return UserId
@@ -57,16 +48,22 @@ class InMemoryUserRepository implements UserRepository
 
     /**
      * @param UserId $id
-     * @return User
+     * @return RegisteredUser
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getById(UserId $id): User
+    public function getById(UserId $id): RegisteredUser
     {
+        if (isset(self::$identityMap[$id->getId()])) {
+            return self::$identityMap[$id->getId()];
+        }
+
         $user = InMemoryStorage::fetchById(InMemoryStorage::TYPE_USER, $id->getId());
         if ($user) {
             try {
-                return $this->userFactory->fromNative($user);
+                self::$identityMap[$id->getId()] = RegisteredUser::fromNative($user);
+
+                return self::$identityMap[$id->getId()];
             } catch (InvalidArgumentException $exception) {
                 throw UserRepositoryException::fromPrevious($exception);
             }
@@ -81,15 +78,18 @@ class InMemoryUserRepository implements UserRepository
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getRegisteredUserByHash(string $hash): RegisteredUser
+    public function getByHash(string $hash): RegisteredUser
     {
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
-            if (isset($user['hash']) && $hash === $user['hash'] &&
+            if (!empty($user['id']) &&
+                isset($user['hash']) && $hash === $user['hash'] &&
                 (!isset($user['active']) || false === $user['active'])
             ) {
                 try {
-                    return $this->userFactory->registeredUserFromNative($user);
+                    self::$identityMap[$user['id']] = RegisteredUser::fromNative($user);
+
+                    return self::$identityMap[$user['id']];
                 } catch (InvalidArgumentException $exception) {
                     throw UserRepositoryException::fromPrevious($exception);
                 }
@@ -100,31 +100,11 @@ class InMemoryUserRepository implements UserRepository
     }
 
     /**
-     * @param UserId $id
-     * @return ActiveUser
-     * @throws UserRepositoryException
-     * @throws UserNotFoundException
-     */
-    public function getActiveUserById(UserId $id): ActiveUser
-    {
-        $user = InMemoryStorage::fetchById(InMemoryStorage::TYPE_USER, $id->getId());
-        if (isset($user['active']) && true === $user['active']) {
-            try {
-                return $this->userFactory->activeUserFromNative($user);
-            } catch (InvalidArgumentException $exception) {
-                throw UserRepositoryException::fromPrevious($exception);
-            }
-        }
-
-        throw UserNotFoundException::forId($id);
-    }
-
-    /**
-     * @param User $user
+     * @param RegisteredUser $user
      * @return UserId
      * @throws UserRepositoryException
      */
-    public function save(User $user): UserId
+    public function save(RegisteredUser $user): UserId
     {
         if ($user->getId()->isNull()) {
             $userId = InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER);
@@ -136,31 +116,19 @@ class InMemoryUserRepository implements UserRepository
             'id' => $userId,
             'login' => (string)$user->getLogin(),
             'password' => (string)$user->getPassword(),
-            'hash' => $user->hash()
+            'hash' => $user->hash(),
+            'active' => $user->isActive(),
+            'enabled' => true
         ];
-
-        if ($user instanceof ActiveUser) {
-            $nativeUser['active'] = true;
-            $nativeUser['enabled'] = $user->isEnabled();
-        } else if ($user instanceof RegisteredUser) {
-            $nativeUser['active'] = $user->isActive();
-            $nativeUser['enabled'] = true;
-        }
 
         InMemoryStorage::save(InMemoryStorage::TYPE_USER, $nativeUser);
 
         try {
+            self::$identityMap[$userId] = RegisteredUser::fromNative($nativeUser);
+
             return UserId::fromInt($nativeUser['id']);
         } catch (InvalidArgumentException $exception) {
             throw UserRepositoryException::fromPrevious($exception);
         }
-    }
-
-    /**
-     * @param UserId $id
-     */
-    public function remove(UserId $id): void
-    {
-        InMemoryStorage::removeById(InMemoryStorage::TYPE_USER, $id->getId());
     }
 }
