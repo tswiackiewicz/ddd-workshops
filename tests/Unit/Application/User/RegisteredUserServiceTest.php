@@ -32,6 +32,7 @@ class RegisteredUserServiceTest extends UserServiceBaseTestCase
         );
 
         $service = new RegisteredUserService(
+            $this->getCommandValidatorMock(),
             $this->getRegisteredUserRepositoryMockForRegisterUser()
         );
 
@@ -51,6 +52,7 @@ class RegisteredUserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserAlreadyExistsException::class);
 
         $service = new RegisteredUserService(
+            $this->getCommandValidatorMock(),
             $this->getRegisteredUserRepositoryMockWhenUserAlreadyExists()
         );
 
@@ -73,6 +75,7 @@ class RegisteredUserServiceTest extends UserServiceBaseTestCase
         );
 
         $service = new RegisteredUserService(
+            $this->getCommandValidatorMock(),
             $this->getRegisteredUserRepositoryMockForActivateUser()
         );
 
@@ -91,6 +94,7 @@ class RegisteredUserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new RegisteredUserService(
+            $this->getCommandValidatorMock(),
             $this->getRegisteredUserRepositoryMockWhenUserByHashNotFound()
         );
 

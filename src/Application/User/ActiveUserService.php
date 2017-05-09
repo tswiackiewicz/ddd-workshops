@@ -16,17 +16,24 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserDomainModelExceptio
 class ActiveUserService
 {
     /**
+     * @var CommandValidator
+     */
+    private $validator;
+
+    /**
      * @var ActiveUserRepository
      */
     private $repository;
 
     /**
      * ActiveUserService constructor.
-     * @param ActiveUserRepository $activeUserRepository
+     * @param CommandValidator $validator
+     * @param ActiveUserRepository $repository
      */
-    public function __construct(ActiveUserRepository $activeUserRepository)
+    public function __construct(CommandValidator $validator, ActiveUserRepository $repository)
     {
-        $this->repository = $activeUserRepository;
+        $this->validator = $validator;
+        $this->repository = $repository;
     }
 
     /**
@@ -37,6 +44,8 @@ class ActiveUserService
      */
     public function enable(EnableUserCommand $command): void
     {
+        $this->validator->validate($command);
+
         $user = $this->repository->getById($command->getUserId());
         $user->enable();
     }
@@ -72,6 +81,8 @@ class ActiveUserService
      */
     public function unregister(UnregisterUserCommand $command): void
     {
+        $this->validator->validate($command);
+
         $user = $this->repository->getById($command->getUserId());
         $user->unregister();
     }

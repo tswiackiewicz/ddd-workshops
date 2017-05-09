@@ -21,17 +21,24 @@ use TSwiackiewicz\DDD\Event\EventBus;
 class RegisteredUserService
 {
     /**
+     * @var CommandValidator
+     */
+    private $validator;
+
+    /**
      * @var RegisteredUserRepository
      */
     private $repository;
 
     /**
      * RegisteredUserService constructor.
-     * @param RegisteredUserRepository $registeredUserRepository
+     * @param CommandValidator $validator
+     * @param RegisteredUserRepository $repository
      */
-    public function __construct(RegisteredUserRepository $registeredUserRepository)
+    public function __construct(CommandValidator $validator, RegisteredUserRepository $repository)
     {
-        $this->repository = $registeredUserRepository;
+        $this->validator = $validator;
+        $this->repository = $repository;
     }
 
     /**
@@ -43,6 +50,8 @@ class RegisteredUserService
      */
     public function register(RegisterUserCommand $command): UserId
     {
+        $this->validator->validate($command);
+
         if ($this->repository->exists((string)$command->getLogin())) {
             throw UserAlreadyExistsException::forUser((string)$command->getLogin());
         }
@@ -70,6 +79,8 @@ class RegisteredUserService
      */
     public function activate(ActivateUserCommand $command): void
     {
+        $this->validator->validate($command);
+
         $user = $this->repository->getByHash($command->getHash());
         $user->activate();
 

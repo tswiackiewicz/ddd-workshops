@@ -5,7 +5,7 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User;
 
 use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\Application\User\{
-    Event\UserEventHandler, RegisteredUserService
+    CommandValidator, Event\UserEventHandler, RegisteredUserService
 };
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     ActivateUserCommand, RegisterUserCommand
@@ -51,6 +51,11 @@ class RegisteredUserServiceTest extends TestCase
     private $hash = '6b0696aac54a198c34795d81e0d2fc79';
 
     /**
+     * @var RegisteredUserService
+     */
+    private $service;
+
+    /**
      * @test
      */
     public function shouldRegisterUser(): void
@@ -64,10 +69,7 @@ class RegisteredUserServiceTest extends TestCase
             )
         );
 
-        $service = new RegisteredUserService(
-            new InMemoryRegisteredUserRepository()
-        );
-        $registeredUserId = $service->register(
+        $registeredUserId = $this->service->register(
             new RegisterUserCommand(
                 new UserLogin($this->login),
                 new UserPassword($this->password)
@@ -85,10 +87,7 @@ class RegisteredUserServiceTest extends TestCase
     {
         $this->expectException(UserAlreadyExistsException::class);
 
-        $service = new RegisteredUserService(
-            new InMemoryRegisteredUserRepository()
-        );
-        $service->register(
+        $this->service->register(
             new RegisterUserCommand(
                 new UserLogin($this->login),
                 new UserPassword($this->password)
@@ -109,10 +108,7 @@ class RegisteredUserServiceTest extends TestCase
             )
         );
 
-        $service = new RegisteredUserService(
-            new InMemoryRegisteredUserRepository()
-        );
-        $service->activate(
+        $this->service->activate(
             new ActivateUserCommand($this->hash)
         );
 
@@ -128,10 +124,7 @@ class RegisteredUserServiceTest extends TestCase
     {
         $this->expectException(UserNotFoundException::class);
 
-        $service = new RegisteredUserService(
-            new InMemoryRegisteredUserRepository()
-        );
-        $service->activate(
+        $this->service->activate(
             new ActivateUserCommand('non_existent_user_hash')
         );
     }
@@ -150,5 +143,16 @@ class RegisteredUserServiceTest extends TestCase
     public function shouldResetPassword(): void
     {
         self::markTestSkipped('TODO: Implement shouldResetPassword() method test.');
+    }
+
+    /**
+     * Setup fixtures
+     */
+    protected function setUp(): void
+    {
+        $this->service = new RegisteredUserService(
+            new CommandValidator(),
+            new InMemoryRegisteredUserRepository()
+        );
     }
 }

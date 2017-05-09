@@ -5,7 +5,7 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User;
 
 use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\Application\User\{
-    ActiveUserService, Event\UserEnabledEventHandler, Event\UserUnregisteredEventHandler
+    ActiveUserService, CommandValidator, Event\UserEnabledEventHandler, Event\UserUnregisteredEventHandler
 };
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     EnableUserCommand, UnregisterUserCommand
@@ -142,7 +142,10 @@ class ActiveUserServiceTest extends TestCase
             )
         );
 
-        $this->service = new ActiveUserService($repository);
+        $this->service = new ActiveUserService(
+            new CommandValidator(),
+            $repository
+        );
     }
 
     private function registerEventHandlers(): void

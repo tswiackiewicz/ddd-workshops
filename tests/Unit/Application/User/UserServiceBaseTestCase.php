@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
+use TSwiackiewicz\AwesomeApp\Application\User\CommandValidator;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEventHandler;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     ActiveUser, ActiveUserRepository, RegisteredUser, RegisteredUserRepository, UserLogin
@@ -113,6 +114,19 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
     }
 
     /**
+     * @return ActiveUser
+     */
+    protected function getActiveUser(): ActiveUser
+    {
+        return new ActiveUser(
+            UserId::fromInt($this->userId),
+            new UserLogin($this->login),
+            new UserPassword($this->password),
+            false
+        );
+    }
+
+    /**
      * @return ActiveUserRepository
      */
     protected function getActiveUserRepositoryMockReturningActiveUser(): ActiveUserRepository
@@ -129,19 +143,6 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
         $repository->expects(self::once())->method('getById')->willReturn($user);
 
         return $repository;
-    }
-
-    /**
-     * @return ActiveUser
-     */
-    protected function getActiveUser(): ActiveUser
-    {
-        return new ActiveUser(
-            UserId::fromInt($this->userId),
-            new UserLogin($this->login),
-            new UserPassword($this->password),
-            false
-        );
     }
 
     /**
@@ -243,6 +244,16 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
             ->with(self::isInstanceOf($eventName));
 
         return new UserEventHandler($notifier);
+    }
+
+    /**
+     * @return CommandValidator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getCommandValidatorMock(): CommandValidator
+    {
+        return $this->getMockBuilder(CommandValidator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**

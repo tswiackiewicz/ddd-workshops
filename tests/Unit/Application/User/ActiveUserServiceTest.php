@@ -35,7 +35,10 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
             )
         );
 
-        $service = new ActiveUserService($this->getActiveUserRepositoryMockReturningActiveUser());
+        $service = new ActiveUserService(
+            $this->getCommandValidatorMock(),
+            $this->getActiveUserRepositoryMockReturningActiveUser()
+        );
         $service->enable(
             new EnableUserCommand(
                 UserId::fromInt($this->userId),
@@ -51,7 +54,10 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         $this->expectException(UserNotFoundException::class);
 
-        $service = new ActiveUserService($this->getActiveUserRepositoryMockWhenUserByIdNotFound());
+        $service = new ActiveUserService(
+            $this->getCommandValidatorMock(),
+            $this->getActiveUserRepositoryMockWhenUserByIdNotFound()
+        );
         $service->enable(
             new EnableUserCommand(
                 UserId::fromInt($this->userId),
@@ -89,7 +95,10 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
             )
         );
 
-        $service = new ActiveUserService($this->getActiveUserRepositoryMockReturningActiveUser());
+        $service = new ActiveUserService(
+            $this->getCommandValidatorMock(),
+            $this->getActiveUserRepositoryMockReturningActiveUser()
+        );
         $service->unregister(
             new UnregisterUserCommand(
                 UserId::fromInt($this->userId)
@@ -104,7 +113,10 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         $this->expectException(UserNotFoundException::class);
 
-        $service = new ActiveUserService($this->getActiveUserRepositoryMockWhenUserByIdNotFound());
+        $service = new ActiveUserService(
+            $this->getCommandValidatorMock(),
+            $this->getActiveUserRepositoryMockWhenUserByIdNotFound()
+        );
         $service->unregister(
             new UnregisterUserCommand(
                 UserId::fromInt($this->userId)
