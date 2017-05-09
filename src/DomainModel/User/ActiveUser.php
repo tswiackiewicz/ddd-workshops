@@ -58,9 +58,7 @@ class ActiveUser extends User
     {
         $this->enabled = true;
 
-        EventBus::publish(
-            new UserEnabledEvent($this->id, (string)$this->login)
-        );
+        EventBus::publish(new UserEnabledEvent($this->id));
     }
 
     /**
@@ -90,9 +88,7 @@ class ActiveUser extends User
     {
         $this->enabled = false;
 
-        EventBus::publish(
-            new UserUnregisteredEvent($this->id, (string)$this->login)
-        );
+        EventBus::publish(new UserUnregisteredEvent($this->id));
     }
 
     /**

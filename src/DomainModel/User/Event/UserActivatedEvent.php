@@ -14,6 +14,10 @@ class UserActivatedEvent extends UserEvent
      */
     public function __toString(): string
     {
-        return sprintf('User activated: id = %d, login = %s', $this->id->getId(), $this->login);
+        return sprintf(
+            '[%s] User activated: id = %d',
+            $this->occurredOn->format('Y-m-d H:i:s'),
+            $this->id->getId()
+        );
     }
 }

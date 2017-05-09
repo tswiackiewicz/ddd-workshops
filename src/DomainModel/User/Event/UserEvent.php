@@ -18,19 +18,19 @@ abstract class UserEvent implements Event
     protected $id;
 
     /**
-     * @var string
+     * @var \DateTimeImmutable
      */
-    protected $login;
+    protected $occurredOn;
 
     /**
-     * UserUnregisteredEvent constructor.
+     * UserEvent constructor.
      * @param UserId $id
-     * @param string $login
+     * @param null|\DateTimeImmutable $occurredOn
      */
-    public function __construct(UserId $id, string $login)
+    public function __construct(UserId $id, ?\DateTimeImmutable $occurredOn = null)
     {
         $this->id = $id;
-        $this->login = $login;
+        $this->occurredOn = $occurredOn ?: new \DateTimeImmutable();
     }
 
     /**
@@ -42,10 +42,10 @@ abstract class UserEvent implements Event
     }
 
     /**
-     * @return string
+     * @return \DateTimeImmutable
      */
-    public function getLogin(): string
+    public function getOccurredOn(): \DateTimeImmutable
     {
-        return $this->login;
+        return $this->occurredOn;
     }
 }

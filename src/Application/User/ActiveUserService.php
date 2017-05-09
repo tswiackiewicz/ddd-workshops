@@ -6,12 +6,8 @@ namespace TSwiackiewicz\AwesomeApp\Application\User;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     ChangePasswordCommand, DisableUserCommand, EnableUserCommand, UnregisterUserCommand
 };
-use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    ActiveUserRepository
-};
-use TSwiackiewicz\AwesomeApp\SharedKernel\{
-    User\Exception\UserDomainModelException
-};
+use TSwiackiewicz\AwesomeApp\DomainModel\User\ActiveUserRepository;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserDomainModelException;
 
 /**
  * Class ActiveUserService
