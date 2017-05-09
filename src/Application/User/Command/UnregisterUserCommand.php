@@ -6,10 +6,10 @@ namespace TSwiackiewicz\AwesomeApp\Application\User\Command;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
- * Class RemoveUserCommand
+ * Class UnregisterUserCommand
  * @package TSwiackiewicz\AwesomeApp\Application\User\Command
  */
-class RemoveUserCommand implements UserCommand
+class UnregisterUserCommand implements UserCommand
 {
     /**
      * @var UserId
@@ -17,7 +17,7 @@ class RemoveUserCommand implements UserCommand
     private $userId;
 
     /**
-     * RemoveUserCommand constructor.
+     * UnregisterUserCommand constructor.
      * @param UserId $userId
      */
     public function __construct(UserId $userId)

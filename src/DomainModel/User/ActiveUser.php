@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
  * Example of two different User's Bounded Contexts
@@ -54,6 +57,10 @@ class ActiveUser extends User
     public function enable(): void
     {
         $this->enabled = true;
+
+        EventBus::publish(
+            new UserEnabledEvent($this->id, (string)$this->login)
+        );
     }
 
     /**
@@ -62,6 +69,8 @@ class ActiveUser extends User
     public function disable(): void
     {
         $this->enabled = false;
+
+        // TODO: publish UserDisabledEvent
     }
 
     /**
@@ -70,6 +79,20 @@ class ActiveUser extends User
     public function changePassword(UserPassword $password): void
     {
         $this->password = $password;
+
+        // TODO: publish UserPasswordChangedEvent
+    }
+
+    /**
+     * Unregister user
+     */
+    public function unregister(): void
+    {
+        $this->enabled = false;
+
+        EventBus::publish(
+            new UserUnregisteredEvent($this->id, (string)$this->login)
+        );
     }
 
     /**

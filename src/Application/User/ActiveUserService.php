@@ -4,15 +4,14 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Application\User;
 
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
-    ChangePasswordCommand, DisableUserCommand, EnableUserCommand, RemoveUserCommand
+    ChangePasswordCommand, DisableUserCommand, EnableUserCommand, UnregisterUserCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    ActiveUserRepository, Event\UserEnabledEvent, Event\UserRemovedEvent
+    ActiveUserRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\{
     User\Exception\UserDomainModelException
 };
-use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
  * Class ActiveUserService
@@ -44,15 +43,6 @@ class ActiveUserService
     {
         $user = $this->repository->getById($command->getUserId());
         $user->enable();
-
-        $this->repository->save($user);
-
-        EventBus::publish(
-            new UserEnabledEvent(
-                $user->getId(),
-                (string)$user->getLogin()
-            )
-        );
     }
 
     /**
@@ -78,22 +68,15 @@ class ActiveUserService
     }
 
     /**
-     * Remove user
+     * Unregister user
      *
-     * @param RemoveUserCommand $command
+     * @see http://udidahan.com/2009/09/01/dont-delete-just-dont/
+     * @param UnregisterUserCommand $command
      * @throws UserDomainModelException
      */
-    public function remove(RemoveUserCommand $command): void
+    public function unregister(UnregisterUserCommand $command): void
     {
         $user = $this->repository->getById($command->getUserId());
-
-        $this->repository->remove($user->getId());
-
-        EventBus::publish(
-            new UserRemovedEvent(
-                $user->getId(),
-                (string)$user->getLogin()
-            )
-        );
+        $user->unregister();
     }
 }

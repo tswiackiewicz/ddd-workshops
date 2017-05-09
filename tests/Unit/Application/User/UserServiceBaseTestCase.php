@@ -113,6 +113,25 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
     }
 
     /**
+     * @return ActiveUserRepository
+     */
+    protected function getActiveUserRepositoryMockReturningActiveUser(): ActiveUserRepository
+    {
+        $user = $this->getActiveUser();
+
+        /** @var ActiveUserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $this->getMockBuilder(ActiveUserRepository::class)
+            ->setMethods([
+                'getById'
+            ])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $repository->expects(self::once())->method('getById')->willReturn($user);
+
+        return $repository;
+    }
+
+    /**
      * @return ActiveUser
      */
     protected function getActiveUser(): ActiveUser
@@ -173,28 +192,37 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
         /** @var ActiveUserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder(ActiveUserRepository::class)
             ->setMethods([
-                'getById',
                 'remove'
             ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $repository->expects(self::once())->method('getById')->willReturn($user);
-        $repository->expects(self::once())->method('remove');
+        $repository->expects(self::once())
+            ->method('remove')
+            ->with($user->getId());
 
         return $repository;
     }
 
     /**
+     * @param null|string $eventName
      * @return UserNotifier|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getUserNotifierMock(): UserNotifier
+    protected function getUserNotifierMock(?string $eventName = null): UserNotifier
     {
-        return $this->getMockBuilder(UserNotifier::class)
+        /** @var UserNotifier|\PHPUnit_Framework_MockObject_MockObject $notifier */
+        $notifier = $this->getMockBuilder(UserNotifier::class)
+            ->disableOriginalConstructor()
             ->setMethods([
                 'notifyUser'
             ])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
+        if ($eventName !== null) {
+            $notifier->expects(self::once())
+                ->method('notifyUser')
+                ->with(self::isInstanceOf($eventName));
+        }
+
+        return $notifier;
     }
 
     /**

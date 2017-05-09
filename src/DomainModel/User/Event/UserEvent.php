@@ -23,7 +23,7 @@ abstract class UserEvent implements Event
     protected $login;
 
     /**
-     * UserRemovedEvent constructor.
+     * UserUnregisteredEvent constructor.
      * @param UserId $id
      * @param string $login
      */

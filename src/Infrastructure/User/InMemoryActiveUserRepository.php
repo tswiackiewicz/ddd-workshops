@@ -78,5 +78,6 @@ class InMemoryActiveUserRepository implements ActiveUserRepository
     public function remove(UserId $id): void
     {
         InMemoryStorage::removeById(InMemoryStorage::TYPE_USER, $id->getId());
+        unset(self::$identityMap[$id->getId()]);
     }
 }

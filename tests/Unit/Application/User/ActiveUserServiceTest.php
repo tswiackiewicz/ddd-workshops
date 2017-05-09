@@ -5,9 +5,11 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
 use TSwiackiewicz\AwesomeApp\Application\User\ActiveUserService;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\EnableUserCommand;
-use TSwiackiewicz\AwesomeApp\Application\User\Command\RemoveUserCommand;
+use TSwiackiewicz\AwesomeApp\Application\User\Command\UnregisterUserCommand;
+use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEnabledEventHandler;
+use TSwiackiewicz\AwesomeApp\Application\User\Event\UserUnregisteredEventHandler;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserRemovedEvent;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
@@ -27,13 +29,13 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         FakeEventBus::subscribe(
             UserEnabledEvent::class,
-            $this->getEventHandlerMock(UserEnabledEvent::class)
+            new UserEnabledEventHandler(
+                $this->getActiveUserRepositoryMockForEnableUser(),
+                $this->getUserNotifierMock(UserEnabledEvent::class)
+            )
         );
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockForEnableUser()
-        );
-
+        $service = new ActiveUserService($this->getActiveUserRepositoryMockReturningActiveUser());
         $service->enable(
             new EnableUserCommand(
                 UserId::fromInt($this->userId),
@@ -49,10 +51,7 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         $this->expectException(UserNotFoundException::class);
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockWhenUserByIdNotFound()
-        );
-
+        $service = new ActiveUserService($this->getActiveUserRepositoryMockWhenUserByIdNotFound());
         $service->enable(
             new EnableUserCommand(
                 UserId::fromInt($this->userId),
@@ -83,16 +82,16 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     public function shouldRemoveUser(): void
     {
         FakeEventBus::subscribe(
-            UserRemovedEvent::class,
-            $this->getEventHandlerMock(UserRemovedEvent::class)
+            UserUnregisteredEvent::class,
+            new UserUnregisteredEventHandler(
+                $this->getActiveUserRepositoryMockForRemoveUser(),
+                $this->getUserNotifierMock(UserUnregisteredEvent::class)
+            )
         );
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockForRemoveUser()
-        );
-
-        $service->remove(
-            new RemoveUserCommand(
+        $service = new ActiveUserService($this->getActiveUserRepositoryMockReturningActiveUser());
+        $service->unregister(
+            new UnregisterUserCommand(
                 UserId::fromInt($this->userId)
             )
         );
@@ -105,12 +104,9 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         $this->expectException(UserNotFoundException::class);
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockWhenUserByIdNotFound()
-        );
-
-        $service->remove(
-            new RemoveUserCommand(
+        $service = new ActiveUserService($this->getActiveUserRepositoryMockWhenUserByIdNotFound());
+        $service->unregister(
+            new UnregisterUserCommand(
                 UserId::fromInt($this->userId)
             )
         );

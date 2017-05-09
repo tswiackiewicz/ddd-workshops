@@ -38,7 +38,7 @@ class UserEventHandler implements EventHandler
     public function handle(Event $event): void
     {
         if (!$event instanceof UserEvent) {
-            throw new RuntimeException('UserEvent instance is expected, event class: ' . get_class($event));
+            throw RuntimeException::invalidHandledEventType($event, UserEvent::class);
         }
 
         /** @var UserEvent $event */
