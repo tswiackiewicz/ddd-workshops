@@ -5,12 +5,12 @@ namespace TSwiackiewicz\AwesomeApp\Infrastructure\User;
 
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserDTO;
-use TSwiackiewicz\AwesomeApp\ReadModel\User\UserPaginatedResult;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserQuery;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserReadModelRepository;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Query\PaginatedResult;
 use TSwiackiewicz\DDD\Query\QueryContext;
+use TSwiackiewicz\DDD\Query\Sort;
 
 /**
  * Class InMemoryUserReadModelRepository
@@ -36,19 +36,71 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
      */
     public function findByQuery(UserQuery $query, ?QueryContext $context = null): PaginatedResult
     {
-        $userDTOCollection = [];
-
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
+
+        $filteredUsers = [];
         foreach ($users as $user) {
             if (isset($user['active'], $user['enabled']) &&
                 $query->isActive() === $user['active'] &&
                 $query->isEnabled() === $user['enabled']
             ) {
-                $userDTOCollection[] = UserDTO::fromArray($user);
+                $filteredUsers[] = $user;
             }
         }
 
-        return UserPaginatedResult::singlePage($userDTOCollection);
+        return $this->buildPaginatedResult($filteredUsers, $context ?: new QueryContext());
+    }
+
+    /**
+     * @param array $users
+     * @param QueryContext $context
+     * @return PaginatedResult
+     */
+    private function buildPaginatedResult(array $users, QueryContext $context): PaginatedResult
+    {
+        $sortedUsers = $this->sortUsers($users, $context->getSort());
+
+        if (null === $context->getPagination()->getPerPage()) {
+            return PaginatedResult::singlePage($sortedUsers);
+        }
+
+        $paginatedUsers = array_slice(
+            $sortedUsers,
+            $context->getPagination()->getOffset(),
+            $context->getPagination()->getPerPage()
+        );
+
+        return new PaginatedResult(
+            $paginatedUsers,
+            $context->getPagination()->getCurrentPage(),
+            $context->getPagination()->getPerPage(),
+            count($users)
+        );
+    }
+
+    /**
+     * @param array $users
+     * @param Sort $sort
+     * @return UserDTO[]
+     */
+    private function sortUsers(array $users, Sort $sort): array
+    {
+        $sortedUsers = $users;
+        if ($sort->getFieldName() !== '') {
+            usort($sortedUsers, function ($a, $b) use ($sort) {
+                if (is_numeric($a[$sort->getFieldName()])) {
+                    $diff = $a[$sort->getFieldName()] - $b[$sort->getFieldName()];
+                } else {
+                    $diff = strcmp($a[$sort->getFieldName()], $b[$sort->getFieldName()]);
+                }
+
+                return $diff * ($sort->isAscendingOrder() ? 1 : -1);
+            });
+        }
+
+        return array_map(function (array $user) {
+            return UserDTO::fromArray($user);
+        }, $sortedUsers);
     }
 
     /**
@@ -57,14 +109,8 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
      */
     public function getUsers(?QueryContext $context = null): PaginatedResult
     {
-        $userDTOCollection = [];
-
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
-        foreach ($users as $user) {
-            $userDTOCollection[] = UserDTO::fromArray($user);
-        }
 
-        return UserPaginatedResult::singlePage($userDTOCollection);
+        return $this->buildPaginatedResult($users, $context ?: new QueryContext());
     }
-
 }

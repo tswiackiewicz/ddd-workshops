@@ -11,6 +11,9 @@ use TSwiackiewicz\AwesomeApp\ReadModel\User\{
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
+use TSwiackiewicz\DDD\Query\Pagination;
+use TSwiackiewicz\DDD\Query\QueryContext;
+use TSwiackiewicz\DDD\Query\Sort;
 
 /**
  * Class InMemoryUserReadModelRepositoryTest
@@ -56,7 +59,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
             new UserQuery(true, true)
         );
 
-        self::assertEquals(1, $users->getTotalItemsCount());
+        self::assertEquals(2, $users->getTotalItemsCount());
         self::assertInstanceOf(UserDTO::class, $users->getItems()[0]);
     }
 
@@ -79,9 +82,35 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
     {
         $users = $this->repository->getUsers();
 
-        self::assertEquals(3, $users->getTotalItemsCount());
+        self::assertEquals(5, $users->getTotalItemsCount());
         foreach ($users->getItems() as $user) {
             self::assertInstanceOf(UserDTO::class, $user);
+        }
+    }
+
+    /**
+     * @test
+     * @dataProvider getQueryContextDataProvider
+     *
+     * @param QueryContext $context
+     * @param int $itemsCount
+     * @param int $totalItemsCount
+     */
+    public function shouldReturnUsersWithQueryContext(
+        QueryContext $context,
+        int $itemsCount,
+        int $totalItemsCount
+    ): void
+    {
+        $users = $this->repository->getUsers($context);
+
+        self::assertCount($itemsCount, $users->getItems());
+        self::assertEquals($totalItemsCount, $users->getTotalItemsCount());
+
+        if ($itemsCount > 0) {
+            foreach ($users->getItems() as $user) {
+                self::assertInstanceOf(UserDTO::class, $user);
+            }
         }
     }
 
@@ -95,6 +124,68 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
         $users = $this->repository->getUsers()->getItems();
 
         self::assertEquals([], $users);
+    }
+
+    /**
+     * @return array
+     */
+    public function getQueryContextDataProvider(): array
+    {
+        return [
+            [
+                new QueryContext(
+                    Sort::asc('login'),
+                    new Pagination(1, 2)
+                ),
+                2,
+                5
+            ],
+            [
+                new QueryContext(
+                    Sort::desc('login'),
+                    new Pagination(1, 2)
+                ),
+                2,
+                5
+            ],
+            [
+                new QueryContext(
+                    Sort::asc('login'),
+                    new Pagination(2, 10)
+                ),
+                0,
+                5
+            ],
+            [
+                new QueryContext(
+                    Sort::desc('login'),
+                    new Pagination(2, 10)
+                ),
+                0,
+                5
+            ],
+            [
+                new QueryContext(
+                    Sort::asc('id'),
+                    Pagination::singlePage()
+                ),
+                5,
+                5
+            ],
+            [
+                new QueryContext(
+                    Sort::desc('id'),
+                    Pagination::singlePage()
+                ),
+                5,
+                5
+            ],
+            [
+                new QueryContext(),
+                5,
+                5
+            ]
+        ];
     }
 
     /**
@@ -117,7 +208,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
             self::USER_STORAGE_TYPE,
             [
                 'id' => 2,
-                'login' => 'active_enabled_user@domain.com',
+                'login' => 'first_active_enabled_user@domain.com',
                 'password' => 'test_password',
                 'active' => true,
                 'enabled' => true
@@ -127,7 +218,27 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
             self::USER_STORAGE_TYPE,
             [
                 'id' => 3,
-                'login' => 'active_disabled_user@domain.com',
+                'login' => 'second_active_enabled_user@domain.com',
+                'password' => 'test_password',
+                'active' => true,
+                'enabled' => true
+            ]
+        );
+        InMemoryStorage::save(
+            self::USER_STORAGE_TYPE,
+            [
+                'id' => 4,
+                'login' => 'first_active_disabled_user@domain.com',
+                'password' => 'test_password',
+                'active' => true,
+                'enabled' => false
+            ]
+        );
+        InMemoryStorage::save(
+            self::USER_STORAGE_TYPE,
+            [
+                'id' => 5,
+                'login' => 'second_active_disabled_user@domain.com',
                 'password' => 'test_password',
                 'active' => true,
                 'enabled' => false

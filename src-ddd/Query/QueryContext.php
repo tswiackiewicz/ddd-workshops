@@ -10,39 +10,24 @@ namespace TSwiackiewicz\DDD\Query;
 class QueryContext
 {
     /**
-     * @var Pagination
-     */
-    private $pagination;
-
-    /**
      * @var Sort
      */
     private $sort;
 
     /**
-     * QueryContext constructor.
-     * @param Pagination $pagination
-     * @param Sort $sort
+     * @var Pagination
      */
-    public function __construct(Pagination $pagination, Sort $sort)
-    {
-        $this->pagination = $pagination;
-        $this->sort = $sort;
-    }
+    private $pagination;
 
     /**
-     * @param int $page
-     * @param int $perPage
-     * @param string $order
-     * @param string $fieldName
-     * @return QueryContext
+     * QueryContext constructor.
+     * @param null|Sort $sort
+     * @param null|Pagination $pagination
      */
-    public static function create(int $page, int $perPage, string $order, string $fieldName): QueryContext
+    public function __construct(?Sort $sort = null, ?Pagination $pagination = null)
     {
-        return new static(
-            new Pagination($page, $perPage),
-            new Sort($order, $fieldName)
-        );
+        $this->sort = $sort ?: Sort::nullInstance();
+        $this->pagination = $pagination ?: Pagination::singlePage();
     }
 
     /**

@@ -43,7 +43,7 @@ class UserReadModel
      */
     public function findByQuery(UserQuery $query, ?QueryContext $context = null): PaginatedResult
     {
-        return $this->repository->findByQuery($query, $context);
+        return $this->repository->findByQuery($query, $context ?: new QueryContext());
     }
 
     /**
@@ -52,6 +52,6 @@ class UserReadModel
      */
     public function getUsers(?QueryContext $context = null): PaginatedResult
     {
-        return $this->repository->getUsers($context);
+        return $this->repository->getUsers($context ?: new QueryContext());
     }
 }

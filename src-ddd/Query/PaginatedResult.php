@@ -7,7 +7,7 @@ namespace TSwiackiewicz\DDD\Query;
  * Class PaginatedResult
  * @package TSwiackiewicz\DDD\Query
  */
-abstract class PaginatedResult
+class PaginatedResult
 {
     private const DEFAULT_CURRENT_PAGE = 1;
 

@@ -9,6 +9,8 @@ namespace TSwiackiewicz\DDD\Query;
  */
 class Pagination
 {
+    private const DEFAULT_CURRENT_PAGE = 1;
+
     /**
      * @var int
      */
@@ -22,12 +24,20 @@ class Pagination
     /**
      * Pagination constructor.
      * @param int $currentPage
-     * @param int $perPage
+     * @param null|int $perPage
      */
-    public function __construct(int $currentPage, int $perPage)
+    public function __construct(int $currentPage, ?int $perPage)
     {
         $this->currentPage = $currentPage;
         $this->perPage = $perPage;
+    }
+
+    /**
+     * @return Pagination
+     */
+    public static function singlePage(): Pagination
+    {
+        return new static(static::DEFAULT_CURRENT_PAGE, null);
     }
 
     /**
@@ -39,9 +49,9 @@ class Pagination
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getPerPage(): int
+    public function getPerPage(): ?int
     {
         return $this->perPage;
     }
@@ -51,6 +61,6 @@ class Pagination
      */
     public function getOffset(): int
     {
-        return ($this->currentPage - 1) * $this->perPage;
+        return null === $this->perPage ? 0 : ($this->currentPage - 1) * $this->perPage;
     }
 }

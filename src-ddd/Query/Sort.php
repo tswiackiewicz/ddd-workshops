@@ -52,6 +52,14 @@ class Sort
     }
 
     /**
+     * @return Sort
+     */
+    public static function nullInstance(): Sort
+    {
+        return new static(static::ORDER_ASC, '');
+    }
+
+    /**
      * @return string
      */
     public function getOrder(): string
@@ -65,5 +73,21 @@ class Sort
     public function getFieldName(): string
     {
         return $this->fieldName;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAscendingOrder(): bool
+    {
+        return self::ORDER_ASC === $this->order;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDescendingOrder(): bool
+    {
+        return self::ORDER_DESC === $this->order;
     }
 }
