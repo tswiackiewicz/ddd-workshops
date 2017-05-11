@@ -5,9 +5,12 @@ namespace TSwiackiewicz\AwesomeApp\Infrastructure\User;
 
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserDTO;
+use TSwiackiewicz\AwesomeApp\ReadModel\User\UserPaginatedResult;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserQuery;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserReadModelRepository;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\Query\PaginatedResult;
+use TSwiackiewicz\DDD\Query\QueryContext;
 
 /**
  * Class InMemoryUserReadModelRepository
@@ -28,9 +31,10 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
 
     /**
      * @param UserQuery $query
-     * @return UserDTO[]
+     * @param null|QueryContext $context
+     * @return PaginatedResult
      */
-    public function findByQuery(UserQuery $query): array
+    public function findByQuery(UserQuery $query, ?QueryContext $context = null): PaginatedResult
     {
         $userDTOCollection = [];
 
@@ -44,13 +48,14 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
             }
         }
 
-        return $userDTOCollection;
+        return UserPaginatedResult::singlePage($userDTOCollection);
     }
 
     /**
-     * @return UserDTO[]
+     * @param null|QueryContext $context
+     * @return PaginatedResult
      */
-    public function getUsers(): array
+    public function getUsers(?QueryContext $context = null): PaginatedResult
     {
         $userDTOCollection = [];
 
@@ -59,7 +64,7 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
             $userDTOCollection[] = UserDTO::fromArray($user);
         }
 
-        return $userDTOCollection;
+        return UserPaginatedResult::singlePage($userDTOCollection);
     }
 
 }

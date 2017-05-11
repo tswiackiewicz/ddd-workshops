@@ -56,8 +56,8 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
             new UserQuery(true, true)
         );
 
-        self::assertCount(1, $users);
-        self::assertInstanceOf(UserDTO::class, $users[0]);
+        self::assertEquals(1, $users->getTotalItemsCount());
+        self::assertInstanceOf(UserDTO::class, $users->getItems()[0]);
     }
 
     /**
@@ -69,7 +69,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
             new UserQuery(false, false)
         );
 
-        self::assertEquals([], $users);
+        self::assertEquals([], $users->getItems());
     }
 
     /**
@@ -79,8 +79,8 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
     {
         $users = $this->repository->getUsers();
 
-        self::assertCount(3, $users);
-        foreach ($users as $user) {
+        self::assertEquals(3, $users->getTotalItemsCount());
+        foreach ($users->getItems() as $user) {
             self::assertInstanceOf(UserDTO::class, $user);
         }
     }
@@ -92,7 +92,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
     {
         InMemoryStorage::clear(self::USER_STORAGE_TYPE);
 
-        $users = $this->repository->getUsers();
+        $users = $this->repository->getUsers()->getItems();
 
         self::assertEquals([], $users);
     }

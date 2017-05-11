@@ -53,7 +53,7 @@ class UserReadModelTest extends UserBaseTestCase
     public function shouldFindUsersByQuery(): void
     {
         $userDTOCollection = $this->readModel->findByQuery(new UserQuery(true, true));
-        self::assertCount(1, $userDTOCollection);
+        self::assertCount(1, $userDTOCollection->getItems());
 
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
@@ -67,7 +67,7 @@ class UserReadModelTest extends UserBaseTestCase
         );
 
         $userDTOCollection = $this->readModel->findByQuery(new UserQuery(true, true));
-        self::assertCount(2, $userDTOCollection);
+        self::assertCount(2, $userDTOCollection->getItems());
     }
 
     /**
@@ -77,7 +77,7 @@ class UserReadModelTest extends UserBaseTestCase
     {
         $userDTOCollection = $this->readModel->findByQuery(new UserQuery(true, false));
 
-        self::assertEquals([], $userDTOCollection);
+        self::assertEquals([], $userDTOCollection->getItems());
     }
 
     /**
@@ -85,9 +85,9 @@ class UserReadModelTest extends UserBaseTestCase
      */
     public function shouldReturnAllUsers(): void
     {
-        $userDTOCollection = $this->readModel->getAllUsers();
+        $userDTOCollection = $this->readModel->getUsers();
 
-        self::assertCount(3, $userDTOCollection);
+        self::assertCount(3, $userDTOCollection->getItems());
     }
 
     /**
@@ -97,7 +97,7 @@ class UserReadModelTest extends UserBaseTestCase
     {
         InMemoryStorage::clear();
 
-        $userDTOCollection = $this->readModel->getAllUsers();
+        $userDTOCollection = $this->readModel->getUsers()->getItems();
 
         self::assertEquals([], $userDTOCollection);
     }

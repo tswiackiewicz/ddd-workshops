@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\ReadModel\User;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\Query\PaginatedResult;
+use TSwiackiewicz\DDD\Query\QueryContext;
 
 /**
  * Interface UserReadModelRepository
@@ -19,12 +21,14 @@ interface UserReadModelRepository
 
     /**
      * @param UserQuery $query
-     * @return UserDTO[]
+     * @param null|QueryContext $context
+     * @return PaginatedResult
      */
-    public function findByQuery(UserQuery $query): array;
+    public function findByQuery(UserQuery $query, ?QueryContext $context = null): PaginatedResult;
 
     /**
-     * @return UserDTO[]
+     * @param null|QueryContext $context
+     * @return PaginatedResult
      */
-    public function getUsers(): array;
+    public function getUsers(?QueryContext $context = null): PaginatedResult;
 }

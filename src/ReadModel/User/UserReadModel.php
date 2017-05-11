@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\ReadModel\User;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\Query\PaginatedResult;
+use TSwiackiewicz\DDD\Query\QueryContext;
 
 /**
  * Class UserReadModel
@@ -36,18 +38,20 @@ class UserReadModel
 
     /**
      * @param UserQuery $query
-     * @return UserDTO[]
+     * @param null|QueryContext $context
+     * @return PaginatedResult
      */
-    public function findByQuery(UserQuery $query): array
+    public function findByQuery(UserQuery $query, ?QueryContext $context = null): PaginatedResult
     {
-        return $this->repository->findByQuery($query);
+        return $this->repository->findByQuery($query, $context);
     }
 
     /**
-     * @return UserDTO[]
+     * @param null|QueryContext $context
+     * @return PaginatedResult
      */
-    public function getAllUsers(): array
+    public function getUsers(?QueryContext $context = null): PaginatedResult
     {
-        return $this->repository->getUsers();
+        return $this->repository->getUsers($context);
     }
 }
