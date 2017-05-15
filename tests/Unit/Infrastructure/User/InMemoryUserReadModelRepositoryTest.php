@@ -56,7 +56,8 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
     public function shouldFindUsersByQuery(): void
     {
         $users = $this->repository->findByQuery(
-            new UserQuery(true, true)
+            new UserQuery(true, true),
+            new QueryContext()
         );
 
         self::assertEquals(2, $users->getTotalItemsCount());
@@ -69,7 +70,8 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
     public function shouldReturnEmptyArrayWhenUsersNotFoundByQuery(): void
     {
         $users = $this->repository->findByQuery(
-            new UserQuery(false, false)
+            new UserQuery(false, true),
+            new QueryContext()
         );
 
         self::assertEquals([], $users->getItems());
@@ -80,7 +82,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
      */
     public function shouldReturnAllUsers(): void
     {
-        $users = $this->repository->getUsers();
+        $users = $this->repository->getUsers(new QueryContext());
 
         self::assertEquals(5, $users->getTotalItemsCount());
         foreach ($users->getItems() as $user) {
@@ -121,7 +123,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
     {
         InMemoryStorage::clear(self::USER_STORAGE_TYPE);
 
-        $users = $this->repository->getUsers()->getItems();
+        $users = $this->repository->getUsers(new QueryContext())->getItems();
 
         self::assertEquals([], $users);
     }

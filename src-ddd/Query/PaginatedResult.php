@@ -53,6 +53,29 @@ class PaginatedResult
 
     /**
      * @param array $items
+     * @param QueryContext $context
+     * @return PaginatedResult
+     */
+    public static function withContext(array $items, QueryContext $context): PaginatedResult
+    {
+        if ($context->isSinglePagePagination()) {
+            return static::singlePage($items);
+        }
+
+        return new static(
+            array_slice(
+                $items,
+                $context->getPaginationOffset(),
+                $context->getPaginationPerPage()
+            ),
+            $context->getPaginationCurrentPage(),
+            $context->getPaginationPerPage(),
+            count($items)
+        );
+    }
+
+    /**
+     * @param array $items
      * @return PaginatedResult
      */
     public static function singlePage(array $items): PaginatedResult

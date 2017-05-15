@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Infrastructure;
 
+use TSwiackiewicz\DDD\Query\Sort;
+
 /**
  * Class InMemoryStorage
  * @package TSwiackiewicz\AwesomeApp\Infrastructure
@@ -33,11 +35,40 @@ class InMemoryStorage
 
     /**
      * @param string $type
+     * @param null|Sort $sort
      * @return array
      */
-    public static function fetchAll(string $type): array
+    public static function fetchAll(string $type, ?Sort $sort = null): array
     {
-        return self::$storage[$type] ?? [];
+        return self::sort(
+            self::$storage[$type] ?? [],
+            $sort ?: Sort::withoutSort()
+        );
+    }
+
+    /**
+     * @param array $records
+     * @param Sort $sort
+     * @return array
+     */
+    private static function sort(array $records, Sort $sort): array
+    {
+        if ('' === $sort->getFieldName()) {
+            return $records;
+        }
+
+        $sortedRecords = $records;
+        usort($sortedRecords, function (array $a, array $b) use ($sort) {
+            if (is_numeric($a[$sort->getFieldName()])) {
+                $diff = $a[$sort->getFieldName()] - $b[$sort->getFieldName()];
+            } else {
+                $diff = strcmp($a[$sort->getFieldName()], $b[$sort->getFieldName()]);
+            }
+
+            return $diff * ($sort->isAscendingOrder() ? 1 : -1);
+        });
+
+        return $sortedRecords;
     }
 
     /**

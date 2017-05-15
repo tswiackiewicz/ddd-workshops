@@ -21,14 +21,14 @@ interface UserReadModelRepository
 
     /**
      * @param UserQuery $query
-     * @param null|QueryContext $context
+     * @param QueryContext $context
      * @return PaginatedResult
      */
-    public function findByQuery(UserQuery $query, ?QueryContext $context = null): PaginatedResult;
+    public function findByQuery(UserQuery $query, QueryContext $context): PaginatedResult;
 
     /**
-     * @param null|QueryContext $context
+     * @param QueryContext $context
      * @return PaginatedResult
      */
-    public function getUsers(?QueryContext $context = null): PaginatedResult;
+    public function getUsers(QueryContext $context): PaginatedResult;
 }

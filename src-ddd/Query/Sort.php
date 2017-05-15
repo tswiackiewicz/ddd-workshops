@@ -54,7 +54,7 @@ class Sort
     /**
      * @return Sort
      */
-    public static function nullInstance(): Sort
+    public static function withoutSort(): Sort
     {
         return new static(static::ORDER_ASC, '');
     }

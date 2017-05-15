@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Infrastructure\User;
 
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
-use TSwiackiewicz\AwesomeApp\ReadModel\User\UserDTO;
-use TSwiackiewicz\AwesomeApp\ReadModel\User\UserQuery;
-use TSwiackiewicz\AwesomeApp\ReadModel\User\UserReadModelRepository;
+use TSwiackiewicz\AwesomeApp\ReadModel\User\{
+    UserDTO, UserQuery, UserReadModelRepository
+};
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
-use TSwiackiewicz\DDD\Query\PaginatedResult;
-use TSwiackiewicz\DDD\Query\QueryContext;
-use TSwiackiewicz\DDD\Query\Sort;
+use TSwiackiewicz\DDD\Query\{
+    PaginatedResult, QueryContext, Sort
+};
 
 /**
  * Class InMemoryUserReadModelRepository
@@ -24,93 +24,52 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
      */
     public function findById(UserId $id): ?UserDTO
     {
-        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
+        $users = $this->fetchAllUsers();
 
-        return isset($users[$id->getId()]) ? UserDTO::fromArray($users[$id->getId()]) : null;
+        return $users[$id->getId()] ?? null;
+    }
+
+    /**
+     * @param null|Sort $sort
+     * @return array
+     */
+    private function fetchAllUsers(?Sort $sort = null): array
+    {
+        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER, $sort ?: Sort::withoutSort());
+
+        return array_map(function (array $user) {
+            return UserDTO::fromArray($user);
+        }, $users);
     }
 
     /**
      * @param UserQuery $query
-     * @param null|QueryContext $context
+     * @param QueryContext $context
      * @return PaginatedResult
      */
-    public function findByQuery(UserQuery $query, ?QueryContext $context = null): PaginatedResult
+    public function findByQuery(UserQuery $query, QueryContext $context): PaginatedResult
     {
-        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
+        $users = $this->fetchAllUsers($context->getSort());
 
         $filteredUsers = [];
-        foreach ($users as $user) {
-            if (isset($user['active'], $user['enabled']) &&
-                $query->isActive() === $user['active'] &&
-                $query->isEnabled() === $user['enabled']
-            ) {
+        foreach ($users as $userId => $user) {
+            /** @var UserDTO $user */
+            if ($query->isActive() === $user->isActive() && $query->isEnabled() === $user->isEnabled()) {
                 $filteredUsers[] = $user;
             }
         }
 
-        return $this->buildPaginatedResult($filteredUsers, $context ?: new QueryContext());
+        return PaginatedResult::withContext($filteredUsers, $context);
     }
 
     /**
-     * @param array $users
      * @param QueryContext $context
      * @return PaginatedResult
      */
-    private function buildPaginatedResult(array $users, QueryContext $context): PaginatedResult
+    public function getUsers(QueryContext $context): PaginatedResult
     {
-        $sortedUsers = $this->sortUsers($users, $context->getSort());
+        $users = $this->fetchAllUsers($context->getSort());
 
-        if (null === $context->getPagination()->getPerPage()) {
-            return PaginatedResult::singlePage($sortedUsers);
-        }
-
-        $paginatedUsers = array_slice(
-            $sortedUsers,
-            $context->getPagination()->getOffset(),
-            $context->getPagination()->getPerPage()
-        );
-
-        return new PaginatedResult(
-            $paginatedUsers,
-            $context->getPagination()->getCurrentPage(),
-            $context->getPagination()->getPerPage(),
-            count($users)
-        );
-    }
-
-    /**
-     * @param array $users
-     * @param Sort $sort
-     * @return UserDTO[]
-     */
-    private function sortUsers(array $users, Sort $sort): array
-    {
-        $sortedUsers = $users;
-        if ($sort->getFieldName() !== '') {
-            usort($sortedUsers, function ($a, $b) use ($sort) {
-                if (is_numeric($a[$sort->getFieldName()])) {
-                    $diff = $a[$sort->getFieldName()] - $b[$sort->getFieldName()];
-                } else {
-                    $diff = strcmp($a[$sort->getFieldName()], $b[$sort->getFieldName()]);
-                }
-
-                return $diff * ($sort->isAscendingOrder() ? 1 : -1);
-            });
-        }
-
-        return array_map(function (array $user) {
-            return UserDTO::fromArray($user);
-        }, $sortedUsers);
-    }
-
-    /**
-     * @param null|QueryContext $context
-     * @return PaginatedResult
-     */
-    public function getUsers(?QueryContext $context = null): PaginatedResult
-    {
-        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
-
-        return $this->buildPaginatedResult($users, $context ?: new QueryContext());
+        return PaginatedResult::withContext($users, $context);
     }
 }

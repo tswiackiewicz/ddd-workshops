@@ -26,16 +26,40 @@ class QueryContext
      */
     public function __construct(?Sort $sort = null, ?Pagination $pagination = null)
     {
-        $this->sort = $sort ?: Sort::nullInstance();
+        $this->sort = $sort ?: Sort::withoutSort();
         $this->pagination = $pagination ?: Pagination::singlePage();
     }
 
     /**
-     * @return Pagination
+     * @return int
      */
-    public function getPagination(): Pagination
+    public function getPaginationCurrentPage(): int
     {
-        return $this->pagination;
+        return $this->pagination->getCurrentPage();
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPaginationPerPage(): ?int
+    {
+        return $this->pagination->getPerPage();
+    }
+
+    /**
+     * @return int
+     */
+    public function getPaginationOffset(): int
+    {
+        return $this->pagination->getOffset();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSinglePagePagination(): bool
+    {
+        return $this->pagination->isSinglePage();
     }
 
     /**

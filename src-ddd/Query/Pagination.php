@@ -49,11 +49,19 @@ class Pagination
     }
 
     /**
-     * @return int|null
+     * @return null|int
      */
     public function getPerPage(): ?int
     {
         return $this->perPage;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSinglePage(): bool
+    {
+        return null === $this->perPage;
     }
 
     /**

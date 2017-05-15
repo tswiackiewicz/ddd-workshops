@@ -51,7 +51,7 @@ class UserId
         try {
             return new self(self::NULL_ID);
         } catch (InvalidArgumentException $exception) {
-            // we need nullInstance method interface to be clear (without thrown exceptions)
+            // we need withoutSort method interface to be clear (without thrown exceptions)
             // but object construction contract declares InvalidArgumentException to be thrown
             // on the other hand, it is impossible to throw InvalidArgument exception when
             // we construct object with self::NULL_ID identity,
