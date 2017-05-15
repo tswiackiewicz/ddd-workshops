@@ -58,7 +58,10 @@ class ActiveUserService
      */
     public function disable(DisableUserCommand $command): void
     {
+        $this->validator->validate($command);
 
+        $user = $this->repository->getById($command->getUserId());
+        $user->disable();
     }
 
     /**

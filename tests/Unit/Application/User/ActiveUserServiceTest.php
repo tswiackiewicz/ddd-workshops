@@ -4,14 +4,16 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
 use TSwiackiewicz\AwesomeApp\Application\User\ActiveUserService;
+use TSwiackiewicz\AwesomeApp\Application\User\Command\DisableUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\EnableUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\UnregisterUserCommand;
+use TSwiackiewicz\AwesomeApp\Application\User\Event\UserDisabledEventHandler;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEnabledEventHandler;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserUnregisteredEventHandler;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserDisabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
@@ -41,8 +43,7 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         );
         $service->enable(
             new EnableUserCommand(
-                UserId::fromInt($this->userId),
-                new UserLogin($this->login)
+                UserId::fromInt($this->userId)
             )
         );
     }
@@ -60,8 +61,7 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         );
         $service->enable(
             new EnableUserCommand(
-                UserId::fromInt($this->userId),
-                new UserLogin($this->login)
+                UserId::fromInt($this->userId)
             )
         );
     }
@@ -71,7 +71,41 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldDisableUser(): void
     {
-        self::markTestSkipped('TODO: Implement shouldDisableUser() method test.');
+        FakeEventBus::subscribe(
+            UserDisabledEvent::class,
+            new UserDisabledEventHandler(
+                $this->getActiveUserRepositoryMockForEnableUser(),
+                $this->getUserNotifierMock(UserDisabledEvent::class)
+            )
+        );
+
+        $service = new ActiveUserService(
+            $this->getCommandValidatorMock(),
+            $this->getActiveUserRepositoryMockReturningActiveUser()
+        );
+        $service->disable(
+            new DisableUserCommand(
+                UserId::fromInt($this->userId)
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenDisabledUserNotExists(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        $service = new ActiveUserService(
+            $this->getCommandValidatorMock(),
+            $this->getActiveUserRepositoryMockWhenUserByIdNotFound()
+        );
+        $service->disable(
+            new DisableUserCommand(
+                UserId::fromInt($this->userId)
+            )
+        );
     }
 
     /**

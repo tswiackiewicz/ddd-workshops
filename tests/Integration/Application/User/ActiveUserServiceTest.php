@@ -5,16 +5,16 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User;
 
 use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\Application\User\{
-    ActiveUserService, CommandValidator, Event\UserEnabledEventHandler, Event\UserUnregisteredEventHandler
+    ActiveUserService, CommandValidator, Event\UserDisabledEventHandler, Event\UserEnabledEventHandler, Event\UserUnregisteredEventHandler
 };
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
-    EnableUserCommand, UnregisterUserCommand
+    DisableUserCommand, EnableUserCommand, UnregisterUserCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     ActiveUser, Exception\UserNotFoundException, Password\UserPassword, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
-    UserEnabledEvent, UserUnregisteredEvent
+    UserDisabledEvent, UserEnabledEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
     InMemoryStorage, User\InMemoryActiveUserRepository, User\InMemoryUserReadModelRepository, User\StdOutUserNotifier
@@ -51,10 +51,7 @@ class ActiveUserServiceTest extends TestCase
     public function shouldEnableUser(): void
     {
         $this->service->enable(
-            new EnableUserCommand(
-                UserId::fromInt($this->userId),
-                new UserLogin($this->login)
-            )
+            new EnableUserCommand(UserId::fromInt($this->userId))
         );
 
         $repository = new InMemoryUserReadModelRepository();
@@ -70,10 +67,7 @@ class ActiveUserServiceTest extends TestCase
         $this->expectException(UserNotFoundException::class);
 
         $this->service->enable(
-            new EnableUserCommand(
-                UserId::fromInt(1234),
-                new UserLogin('non_existent_user_login@domain.com')
-            )
+            new EnableUserCommand(UserId::fromInt(1234))
         );
     }
 
@@ -82,7 +76,25 @@ class ActiveUserServiceTest extends TestCase
      */
     public function shouldDisableUser(): void
     {
-        self::markTestSkipped('TODO: Implement shouldDisableUser() method test.');
+        $this->service->disable(
+            new DisableUserCommand(UserId::fromInt($this->userId))
+        );
+
+        $repository = new InMemoryUserReadModelRepository();
+        $userDTO = $repository->findById(UserId::fromInt($this->userId));
+        self::assertFalse($userDTO->isEnabled());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenDisabledUserNotExists(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        $this->service->disable(
+            new DisableUserCommand(UserId::fromInt(1234))
+        );
     }
 
     /**
@@ -153,6 +165,14 @@ class ActiveUserServiceTest extends TestCase
         EventBus::subscribe(
             UserEnabledEvent::class,
             new UserEnabledEventHandler(
+                new InMemoryActiveUserRepository(),
+                new StdOutUserNotifier()
+            )
+        );
+
+        EventBus::subscribe(
+            UserDisabledEvent::class,
+            new UserDisabledEventHandler(
                 new InMemoryActiveUserRepository(),
                 new StdOutUserNotifier()
             )

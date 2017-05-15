@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
+    UserDisabledEvent, UserEnabledEvent, UserUnregisteredEvent
+};
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
@@ -68,7 +69,7 @@ class ActiveUser extends User
     {
         $this->enabled = false;
 
-        // TODO: publish UserDisabledEvent
+        EventBus::publish(new UserDisabledEvent($this->id));
     }
 
     /**

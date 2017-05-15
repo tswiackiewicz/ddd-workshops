@@ -80,11 +80,13 @@ class PaginatedResult
      */
     public static function singlePage(array $items): PaginatedResult
     {
+        $totalItemsCount = count($items);
+
         $result = new static(
             $items,
             self::DEFAULT_CURRENT_PAGE,
-            PHP_INT_MAX,
-            count($items)
+            $totalItemsCount,
+            $totalItemsCount
         );
         $result->singlePage = true;
 
