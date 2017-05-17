@@ -11,9 +11,10 @@ use TSwiackiewicz\AwesomeApp\ReadModel\User\{
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
-use TSwiackiewicz\DDD\Query\Pagination;
+use TSwiackiewicz\DDD\Query\Pagination\NullPagination;
+use TSwiackiewicz\DDD\Query\Pagination\Pagination;
 use TSwiackiewicz\DDD\Query\QueryContext;
-use TSwiackiewicz\DDD\Query\Sort;
+use TSwiackiewicz\DDD\Query\Sort\Sort;
 
 /**
  * Class InMemoryUserReadModelRepositoryTest
@@ -169,7 +170,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
             [
                 new QueryContext(
                     Sort::asc('id'),
-                    Pagination::singlePage()
+                    new NullPagination()
                 ),
                 5,
                 5
@@ -177,7 +178,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
             [
                 new QueryContext(
                     Sort::desc('id'),
-                    Pagination::singlePage()
+                    new NullPagination()
                 ),
                 5,
                 5

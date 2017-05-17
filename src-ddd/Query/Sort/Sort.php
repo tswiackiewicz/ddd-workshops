@@ -1,16 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\DDD\Query;
+namespace TSwiackiewicz\DDD\Query\Sort;
 
 /**
  * Class Sort
- * @package TSwiackiewicz\DDD\Query
+ * @package TSwiackiewicz\DDD\Query\Sort
  */
 class Sort
 {
     private const ORDER_ASC = 'ASC';
     private const ORDER_DESC = 'DESC';
+    protected const ORDER_NO_SORT = '';
 
     /**
      * @var string
@@ -52,27 +53,11 @@ class Sort
     }
 
     /**
-     * @return Sort
-     */
-    public static function withoutSort(): Sort
-    {
-        return new static(static::ORDER_ASC, '');
-    }
-
-    /**
      * @return string
      */
     public function getOrder(): string
     {
         return $this->order;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFieldName(): string
-    {
-        return $this->fieldName;
     }
 
     /**
@@ -89,5 +74,13 @@ class Sort
     public function isDescendingOrder(): bool
     {
         return self::ORDER_DESC === $this->order;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFieldName(): string
+    {
+        return $this->fieldName;
     }
 }

@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Infrastructure;
 
-use TSwiackiewicz\DDD\Query\Sort;
+use TSwiackiewicz\DDD\Query\Sort\NullSort;
+use TSwiackiewicz\DDD\Query\Sort\Sort;
 
 /**
  * Class InMemoryStorage
@@ -42,7 +43,7 @@ class InMemoryStorage
     {
         return self::sort(
             self::$storage[$type] ?? [],
-            $sort ?: Sort::withoutSort()
+            $sort ?: new NullSort()
         );
     }
 
@@ -53,7 +54,7 @@ class InMemoryStorage
      */
     private static function sort(array $records, Sort $sort): array
     {
-        if ('' === $sort->getFieldName()) {
+        if ($sort instanceof NullSort) {
             return $records;
         }
 

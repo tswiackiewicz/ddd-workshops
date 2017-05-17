@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\DDD\Query;
 
+use TSwiackiewicz\DDD\Query\Pagination\NullPagination;
+use TSwiackiewicz\DDD\Query\Pagination\Pagination;
+
 /**
  * Class PaginatedResult
  * @package TSwiackiewicz\DDD\Query
@@ -32,11 +35,6 @@ class PaginatedResult
     private $totalItemsCount;
 
     /**
-     * @var bool
-     */
-    private $singlePage = false;
-
-    /**
      * PaginatedResult constructor.
      * @param array $items
      * @param int $currentPage
@@ -53,23 +51,23 @@ class PaginatedResult
 
     /**
      * @param array $items
-     * @param QueryContext $context
+     * @param Pagination $pagination
      * @return PaginatedResult
      */
-    public static function withContext(array $items, QueryContext $context): PaginatedResult
+    public static function withPagination(array $items, Pagination $pagination): PaginatedResult
     {
-        if ($context->isSinglePagePagination()) {
+        if ($pagination instanceof NullPagination) {
             return static::singlePage($items);
         }
 
         return new static(
             array_slice(
                 $items,
-                $context->getPaginationOffset(),
-                $context->getPaginationPerPage()
+                $pagination->getOffset(),
+                $pagination->getPerPage()
             ),
-            $context->getPaginationCurrentPage(),
-            $context->getPaginationPerPage(),
+            $pagination->getCurrentPage(),
+            $pagination->getPerPage(),
             count($items)
         );
     }
@@ -78,19 +76,16 @@ class PaginatedResult
      * @param array $items
      * @return PaginatedResult
      */
-    public static function singlePage(array $items): PaginatedResult
+    private static function singlePage(array $items): PaginatedResult
     {
         $totalItemsCount = count($items);
 
-        $result = new static(
+        return new static(
             $items,
             self::DEFAULT_CURRENT_PAGE,
             $totalItemsCount,
             $totalItemsCount
         );
-        $result->singlePage = true;
-
-        return $result;
     }
 
     /**
@@ -122,7 +117,7 @@ class PaginatedResult
      */
     public function getPagesCount(): int
     {
-        return (int)ceil($this->getTotalItemsCount() / $this->getPageSize());
+        return (int)ceil($this->totalItemsCount / $this->pageSize);
     }
 
     /**
@@ -138,6 +133,6 @@ class PaginatedResult
      */
     public function getPageSize(): int
     {
-        return $this->singlePage ? $this->totalItemsCount : $this->pageSize;
+        return $this->pageSize;
     }
 }

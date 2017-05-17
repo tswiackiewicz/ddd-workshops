@@ -9,7 +9,7 @@ use TSwiackiewicz\AwesomeApp\ReadModel\User\{
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Query\{
-    PaginatedResult, QueryContext, Sort
+    PaginatedResult, QueryContext, Sort\Sort
 };
 
 /**
@@ -35,7 +35,7 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
      */
     private function fetchAllUsers(?Sort $sort = null): array
     {
-        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER, $sort ?: Sort::withoutSort());
+        $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER, $sort);
 
         return array_map(function (array $user) {
             return UserDTO::fromArray($user);
@@ -59,7 +59,7 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
             }
         }
 
-        return PaginatedResult::withContext($filteredUsers, $context);
+        return PaginatedResult::withPagination($filteredUsers, $context->getPagination());
     }
 
     /**
@@ -70,6 +70,6 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
     {
         $users = $this->fetchAllUsers($context->getSort());
 
-        return PaginatedResult::withContext($users, $context);
+        return PaginatedResult::withPagination($users, $context->getPagination());
     }
 }
