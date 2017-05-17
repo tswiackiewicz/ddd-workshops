@@ -47,7 +47,7 @@ class RegisteredUser extends User
     }
 
     /**
-     * @param UserId $id ,
+     * @param UserId $id
      * @param UserLogin $username
      * @param UserPassword $password
      * @return RegisteredUser

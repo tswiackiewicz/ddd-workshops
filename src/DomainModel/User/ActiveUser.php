@@ -7,12 +7,13 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
+    Exception\InvalidArgumentException, UserId
+};
 use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
- * Example of two different User's Bounded Contexts
+ * One of two different User's Bounded Contexts
  * It can be organized within same or various (sub-)namespaces
  *
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User

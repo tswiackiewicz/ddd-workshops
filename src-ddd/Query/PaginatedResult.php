@@ -56,34 +56,21 @@ class PaginatedResult
      */
     public static function withPagination(array $items, Pagination $pagination): PaginatedResult
     {
+        $perPage = $pagination->getPerPage();
+        $totalItemsCount = count($items);
+
         if ($pagination instanceof NullPagination) {
-            return static::singlePage($items);
+            $perPage = $totalItemsCount;
         }
 
         return new static(
             array_slice(
                 $items,
                 $pagination->getOffset(),
-                $pagination->getPerPage()
+                $perPage
             ),
             $pagination->getCurrentPage(),
-            $pagination->getPerPage(),
-            count($items)
-        );
-    }
-
-    /**
-     * @param array $items
-     * @return PaginatedResult
-     */
-    private static function singlePage(array $items): PaginatedResult
-    {
-        $totalItemsCount = count($items);
-
-        return new static(
-            $items,
-            self::DEFAULT_CURRENT_PAGE,
-            $totalItemsCount,
+            $perPage,
             $totalItemsCount
         );
     }
