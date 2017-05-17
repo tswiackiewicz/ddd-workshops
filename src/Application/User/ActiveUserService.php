@@ -7,6 +7,8 @@ use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     ChangePasswordCommand, DisableUserCommand, EnableUserCommand, UnregisterUserCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\ActiveUserRepository;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\WeakPasswordException;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPasswordService;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserDomainModelException;
 
 /**
@@ -26,14 +28,25 @@ class ActiveUserService
     private $repository;
 
     /**
+     * @var UserPasswordService
+     */
+    private $passwordService;
+
+    /**
      * ActiveUserService constructor.
      * @param CommandValidator $validator
      * @param ActiveUserRepository $repository
+     * @param UserPasswordService $passwordService
      */
-    public function __construct(CommandValidator $validator, ActiveUserRepository $repository)
+    public function __construct(
+        CommandValidator $validator,
+        ActiveUserRepository $repository,
+        UserPasswordService $passwordService
+    )
     {
         $this->validator = $validator;
         $this->repository = $repository;
+        $this->passwordService = $passwordService;
     }
 
     /**
@@ -66,13 +79,22 @@ class ActiveUserService
 
     /**
      * Change active user's password
+     * Example usage of domain service (UserPasswordService)
      *
      * @param ChangePasswordCommand $command
      * @throws UserDomainModelException
      */
     public function changePassword(ChangePasswordCommand $command): void
     {
+        // TODO: check whether new password and previous one are equals
+        $this->validator->validate($command);
 
+        if ($this->passwordService->isWeak((string)$command->getNewPassword())) {
+            throw WeakPasswordException::forId($command->getUserId());
+        }
+
+        $user = $this->repository->getById($command->getUserId());
+        $user->changePassword($command->getNewPassword());
     }
 
     /**

@@ -5,16 +5,16 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User;
 
 use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\Application\User\{
-    ActiveUserService, CommandValidator, Event\UserDisabledEventHandler, Event\UserEnabledEventHandler, Event\UserUnregisteredEventHandler
+    ActiveUserService, CommandValidator, Event\UserDisabledEventHandler, Event\UserEnabledEventHandler, Event\UserPasswordChangedEventHandler, Event\UserUnregisteredEventHandler
 };
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
-    DisableUserCommand, EnableUserCommand, UnregisterUserCommand
+    ChangePasswordCommand, DisableUserCommand, EnableUserCommand, UnregisterUserCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    ActiveUser, Exception\UserNotFoundException, Password\UserPassword, UserLogin
+    ActiveUser, Exception\UserNotFoundException, Exception\WeakPasswordException, Password\UserPassword, Password\UserPasswordService, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
-    UserDisabledEvent, UserEnabledEvent, UserUnregisteredEvent
+    UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
     InMemoryStorage, User\InMemoryActiveUserRepository, User\InMemoryUserReadModelRepository, User\StdOutUserNotifier
@@ -39,6 +39,11 @@ class ActiveUserServiceTest extends TestCase
      * @var string
      */
     private $login = 'test@domain.com';
+
+    /**
+     * @var string
+     */
+    private $password = 'password1234';
 
     /**
      * @var ActiveUserService
@@ -102,7 +107,36 @@ class ActiveUserServiceTest extends TestCase
      */
     public function shouldChangePassword(): void
     {
-        self::markTestSkipped('TODO: Implement shouldChangePassword() method test.');
+        $newPassword = 'new-VEEERY_StR0Ng_P@sSw0rD1!#';
+
+        $this->service->changePassword(
+            new ChangePasswordCommand(
+                UserId::fromInt($this->userId),
+                new UserPassword($this->password),
+                new UserPassword($newPassword)
+            )
+        );
+
+        $repository = new InMemoryUserReadModelRepository();
+        $userDTO = $repository->findById(UserId::fromInt($this->userId));
+
+        self::assertEquals($newPassword, $userDTO->getPassword());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenChangedPasswordIsTooWeak(): void
+    {
+        $this->expectException(WeakPasswordException::class);
+
+        $this->service->changePassword(
+            new ChangePasswordCommand(
+                UserId::fromInt($this->userId),
+                new UserPassword($this->password),
+                new UserPassword('weak_password')
+            )
+        );
     }
 
     /**
@@ -156,7 +190,8 @@ class ActiveUserServiceTest extends TestCase
 
         $this->service = new ActiveUserService(
             new CommandValidator(),
-            $repository
+            $repository,
+            new UserPasswordService()
         );
     }
 
@@ -181,6 +216,14 @@ class ActiveUserServiceTest extends TestCase
         EventBus::subscribe(
             UserUnregisteredEvent::class,
             new UserUnregisteredEventHandler(
+                new InMemoryActiveUserRepository(),
+                new StdOutUserNotifier()
+            )
+        );
+
+        EventBus::subscribe(
+            UserPasswordChangedEvent::class,
+            new UserPasswordChangedEventHandler(
                 new InMemoryActiveUserRepository(),
                 new StdOutUserNotifier()
             )

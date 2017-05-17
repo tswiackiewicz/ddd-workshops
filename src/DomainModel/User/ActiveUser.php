@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
-    UserDisabledEvent, UserEnabledEvent, UserUnregisteredEvent
+    UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
@@ -79,7 +79,7 @@ class ActiveUser extends User
     {
         $this->password = $password;
 
-        // TODO: publish UserPasswordChangedEvent
+        EventBus::publish(new UserPasswordChangedEvent($this->id, (string)$this->password));
     }
 
     /**

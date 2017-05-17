@@ -6,7 +6,7 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 use TSwiackiewicz\AwesomeApp\Application\User\CommandValidator;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEventHandler;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    ActiveUser, ActiveUserRepository, RegisteredUser, RegisteredUserRepository, UserLogin
+    ActiveUser, ActiveUserRepository, Password\UserPasswordService, RegisteredUser, RegisteredUserRepository, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
@@ -90,6 +90,16 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
             new UserLogin($this->login),
             new UserPassword($this->password)
         );
+    }
+
+    /**
+     * @return ActiveUserRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getActiveUserRepositoryMock(): ActiveUserRepository
+    {
+        return $this->getMockBuilder(ActiveUserRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
@@ -254,6 +264,32 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
         return $this->getMockBuilder(CommandValidator::class)
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    /**
+     * @return UserPasswordService|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserPasswordServiceMock(): UserPasswordService
+    {
+        return $this->getMockBuilder(UserPasswordService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * @return UserPasswordService|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserPasswordServiceMockForWeakPasswordVerification(): UserPasswordService
+    {
+        $service = $this->getMockBuilder(UserPasswordService::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'isWeak'
+            ])
+            ->getMock();
+        $service->expects(self::once())->method('isWeak')->willReturn(true);
+
+        return $service;
     }
 
     /**
