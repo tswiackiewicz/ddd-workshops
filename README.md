@@ -8,8 +8,6 @@ The point is to show the idea without frameworks - pure PHP code (POPO), just th
 
 ## TODO
 
-* UserPassword -> string migration
-* VO validation
 * commands validation e.g. change password
 * Event Sourcing, Event Store
 * Aggregate Root (example)

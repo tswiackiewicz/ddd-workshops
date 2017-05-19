@@ -16,8 +16,8 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserDisabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserPasswordChangedEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\WeakPasswordException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
@@ -43,7 +43,6 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         );
 
         $service = new ActiveUserService(
-            $this->getCommandValidatorMock(),
             $this->getActiveUserRepositoryMockReturningActiveUser(),
             $this->getUserPasswordServiceMock()
         );
@@ -62,7 +61,6 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new ActiveUserService(
-            $this->getCommandValidatorMock(),
             $this->getActiveUserRepositoryMockWhenUserByIdNotFound(),
             $this->getUserPasswordServiceMock()
         );
@@ -87,7 +85,6 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         );
 
         $service = new ActiveUserService(
-            $this->getCommandValidatorMock(),
             $this->getActiveUserRepositoryMockReturningActiveUser(),
             $this->getUserPasswordServiceMock()
         );
@@ -106,7 +103,6 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new ActiveUserService(
-            $this->getCommandValidatorMock(),
             $this->getActiveUserRepositoryMockWhenUserByIdNotFound(),
             $this->getUserPasswordServiceMock()
         );
@@ -133,14 +129,12 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         );
 
         $service = new ActiveUserService(
-            $this->getCommandValidatorMock(),
             $this->getActiveUserRepositoryMockReturningActiveUser(),
             $this->getUserPasswordServiceMock()
         );
         $service->changePassword(
             new ChangePasswordCommand(
                 UserId::fromInt($this->userId),
-                new UserPassword($this->password),
                 new UserPassword($newPassword)
             )
         );
@@ -151,18 +145,35 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldFailWhenChangedPasswordIsTooWeak(): void
     {
-        $this->expectException(WeakPasswordException::class);
+        $this->expectException(PasswordException::class);
 
         $service = new ActiveUserService(
-            $this->getCommandValidatorMock(),
             $this->getActiveUserRepositoryMock(),
             $this->getUserPasswordServiceMockForWeakPasswordVerification()
         );
         $service->changePassword(
             new ChangePasswordCommand(
                 UserId::fromInt($this->userId),
-                new UserPassword($this->password),
                 new UserPassword('weak_password')
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenChangedPasswordEqualsWithCurrentPassword(): void
+    {
+        $this->expectException(PasswordException::class);
+
+        $service = new ActiveUserService(
+            $this->getActiveUserRepositoryMockReturningActiveUser(),
+            $this->getUserPasswordServiceMock()
+        );
+        $service->changePassword(
+            new ChangePasswordCommand(
+                UserId::fromInt($this->userId),
+                new UserPassword($this->password)
             )
         );
     }
@@ -175,14 +186,12 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new ActiveUserService(
-            $this->getCommandValidatorMock(),
             $this->getActiveUserRepositoryMockWhenUserByIdNotFound(),
             $this->getUserPasswordServiceMock()
         );
         $service->changePassword(
             new ChangePasswordCommand(
                 UserId::fromInt($this->userId),
-                new UserPassword($this->password),
                 new UserPassword($this->password)
             )
         );
@@ -202,7 +211,6 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         );
 
         $service = new ActiveUserService(
-            $this->getCommandValidatorMock(),
             $this->getActiveUserRepositoryMockReturningActiveUser(),
             $this->getUserPasswordServiceMock()
         );
@@ -221,7 +229,6 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $service = new ActiveUserService(
-            $this->getCommandValidatorMock(),
             $this->getActiveUserRepositoryMockWhenUserByIdNotFound(),
             $this->getUserPasswordServiceMock()
         );

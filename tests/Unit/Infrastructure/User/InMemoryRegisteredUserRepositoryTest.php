@@ -9,6 +9,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
     InMemoryStorage, User\InMemoryRegisteredUserRepository
 };
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserRepositoryException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
@@ -79,6 +80,29 @@ class InMemoryRegisteredUserRepositoryTest extends UserBaseTestCase
         );
 
         self::assertSame($firstAttemptUser, $secondAttemptUser);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenDataInStorageIsInvalid(): void
+    {
+        InMemoryStorage::save(
+            InMemoryStorage::TYPE_USER,
+            [
+                'id' => 1234,
+                'login' => '',
+                'password' => '',
+                'hash' => '',
+                'active' => true,
+                'enabled' => true
+            ]
+        );
+        $this->expectException(UserRepositoryException::class);
+
+        $this->repository->getById(
+            UserId::fromInt(1234)
+        );
     }
 
     /**

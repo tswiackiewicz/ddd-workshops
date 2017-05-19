@@ -29,16 +29,6 @@ class UserPasswordTest extends UserBaseTestCase
 
     /**
      * @test
-     */
-    public function shouldGenerateUserPassword(): void
-    {
-        $generatedPassword = UserPassword::generate();
-
-        self::assertInstanceOf(UserPassword::class, $generatedPassword);
-    }
-
-    /**
-     * @test
      * @dataProvider getInvalidPasswordDataProvider
      *
      * @param string $invalidPassword

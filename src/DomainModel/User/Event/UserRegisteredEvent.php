@@ -17,15 +17,22 @@ class UserRegisteredEvent extends UserEvent
     private $login;
 
     /**
+     * @var string
+     */
+    private $password;
+
+    /**
      * UserRegisteredEvent constructor.
      * @param UserId $id
      * @param string $login
+     * @param string $password
      * @param \DateTimeImmutable|null $occurredOn
      */
-    public function __construct(UserId $id, string $login, ?\DateTimeImmutable $occurredOn = null)
+    public function __construct(UserId $id, string $login, string $password, ?\DateTimeImmutable $occurredOn = null)
     {
         parent::__construct($id, $occurredOn);
         $this->login = $login;
+        $this->password = $password;
     }
 
     /**
@@ -39,13 +46,22 @@ class UserRegisteredEvent extends UserEvent
     /**
      * @return string
      */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @return string
+     */
     public function __toString(): string
     {
         return sprintf(
-            '[%s] User registered: id = %d, login = %s',
+            '[%s] User registered: id = %d, login = %s, password = %s',
             $this->occurredOn->format('Y-m-d H:i:s'),
             $this->id->getId(),
-            $this->login
+            $this->login,
+            md5($this->password)
         );
     }
 }

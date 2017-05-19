@@ -20,28 +20,20 @@ class ChangePasswordCommand implements UserCommand
     /**
      * @var UserPassword
      */
-    private $currentPassword;
-
-    /**
-     * @var UserPassword
-     */
-    private $newPassword;
+    private $password;
 
     /**
      * ChangePasswordCommand constructor.
      * @param UserId $userId
-     * @param UserPassword $currentPassword
-     * @param UserPassword $newPassword
+     * @param UserPassword $password
      */
     public function __construct(
         UserId $userId,
-        UserPassword $currentPassword,
-        UserPassword $newPassword
+        UserPassword $password
     )
     {
         $this->userId = $userId;
-        $this->currentPassword = $currentPassword;
-        $this->newPassword = $newPassword;
+        $this->password = $password;
     }
 
     /**
@@ -55,16 +47,8 @@ class ChangePasswordCommand implements UserCommand
     /**
      * @return UserPassword
      */
-    public function getCurrentPassword(): UserPassword
+    public function getPassword(): UserPassword
     {
-        return $this->currentPassword;
-    }
-
-    /**
-     * @return UserPassword
-     */
-    public function getNewPassword(): UserPassword
-    {
-        return $this->newPassword;
+        return $this->password;
     }
 }

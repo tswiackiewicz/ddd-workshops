@@ -5,13 +5,13 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User;
 
 use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\Application\User\{
-    ActiveUserService, CommandValidator, Event\UserDisabledEventHandler, Event\UserEnabledEventHandler, Event\UserPasswordChangedEventHandler, Event\UserUnregisteredEventHandler
+    ActiveUserService, Event\UserDisabledEventHandler, Event\UserEnabledEventHandler, Event\UserPasswordChangedEventHandler, Event\UserUnregisteredEventHandler
 };
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     ChangePasswordCommand, DisableUserCommand, EnableUserCommand, UnregisterUserCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    ActiveUser, Exception\UserNotFoundException, Exception\WeakPasswordException, Password\UserPassword, Password\UserPasswordService, UserLogin
+    ActiveUser, Exception\PasswordException, Exception\UserNotFoundException, Password\UserPassword, Password\UserPasswordService, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserUnregisteredEvent
@@ -112,7 +112,6 @@ class ActiveUserServiceTest extends TestCase
         $this->service->changePassword(
             new ChangePasswordCommand(
                 UserId::fromInt($this->userId),
-                new UserPassword($this->password),
                 new UserPassword($newPassword)
             )
         );
@@ -128,13 +127,27 @@ class ActiveUserServiceTest extends TestCase
      */
     public function shouldFailWhenChangedPasswordIsTooWeak(): void
     {
-        $this->expectException(WeakPasswordException::class);
+        $this->expectException(PasswordException::class);
 
         $this->service->changePassword(
             new ChangePasswordCommand(
                 UserId::fromInt($this->userId),
-                new UserPassword($this->password),
                 new UserPassword('weak_password')
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenChangedPasswordEqualsWithCurrentPassword(): void
+    {
+        $this->expectException(PasswordException::class);
+
+        $this->service->changePassword(
+            new ChangePasswordCommand(
+                UserId::fromInt($this->userId),
+                new UserPassword($this->password)
             )
         );
     }
@@ -183,13 +196,12 @@ class ActiveUserServiceTest extends TestCase
             new ActiveUser(
                 UserId::fromInt($this->userId),
                 new UserLogin($this->login),
-                new UserPassword('test_password'),
+                new UserPassword($this->password),
                 false
             )
         );
 
         $this->service = new ActiveUserService(
-            new CommandValidator(),
             $repository,
             new UserPasswordService()
         );

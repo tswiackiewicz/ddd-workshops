@@ -6,6 +6,7 @@ namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserUnregisteredEvent
 };
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
     Exception\InvalidArgumentException, UserId
@@ -75,9 +76,14 @@ class ActiveUser extends User
 
     /**
      * @param UserPassword $password
+     * @throws PasswordException
      */
     public function changePassword(UserPassword $password): void
     {
+        if ($this->password->equals($password)) {
+            throw PasswordException::newPasswordEqualsWithCurrentPassword($this->id);
+        }
+
         $this->password = $password;
 
         EventBus::publish(new UserPasswordChangedEvent($this->id, (string)$this->password));

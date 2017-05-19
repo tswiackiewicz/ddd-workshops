@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Password;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 
 /**
  * Class UserPassword
@@ -45,27 +44,20 @@ class UserPassword
     }
 
     /**
-     * @return UserPassword
-     */
-    public static function generate(): UserPassword
-    {
-        try {
-            return new static(uniqid('', false));
-        } catch (InvalidArgumentException $exception) {
-            throw new RuntimeException(
-                $exception->getMessage(),
-                $exception->getCode(),
-                $exception
-            );
-        }
-    }
-
-    /**
      * @return string
      */
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    /**
+     * @param UserPassword $password
+     * @return bool
+     */
+    public function equals(UserPassword $password): bool
+    {
+        return $this->password === (string)$password;
     }
 
     /**

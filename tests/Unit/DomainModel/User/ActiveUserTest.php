@@ -62,6 +62,6 @@ class ActiveUserTest extends UserBaseTestCase
         );
         $user->changePassword(new UserPassword('newPassword1234'));
 
-        self::assertEquals('newPassword1234', $user->getPassword());
+        self::assertTrue($user->getPassword()->equals(new UserPassword('newPassword1234')));
     }
 }

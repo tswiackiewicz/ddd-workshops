@@ -65,7 +65,7 @@ class RegisteredUserService
         $userId = $this->repository->save($registeredUser);
 
         EventBus::publish(
-            new UserRegisteredEvent($userId, (string)$registeredUser->getLogin())
+            new UserRegisteredEvent($userId, (string)$registeredUser->getLogin(), (string)$registeredUser->getPassword())
         );
 
         return $userId;

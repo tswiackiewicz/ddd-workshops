@@ -19,6 +19,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
     InMemoryStorage, User\InMemoryRegisteredUserRepository, User\InMemoryUserReadModelRepository, User\StdOutUserNotifier
 };
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
 
@@ -90,6 +91,22 @@ class RegisteredUserServiceTest extends TestCase
         $this->service->register(
             new RegisterUserCommand(
                 new UserLogin($this->login),
+                new UserPassword($this->password)
+            )
+        );
+    }
+
+    /**
+     * @test
+     * @depends shouldRegisterUser
+     */
+    public function shouldFailWhenRegisteredUserLoginIsInvalid(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->service->register(
+            new RegisterUserCommand(
+                new UserLogin('invalid_login'),
                 new UserPassword($this->password)
             )
         );

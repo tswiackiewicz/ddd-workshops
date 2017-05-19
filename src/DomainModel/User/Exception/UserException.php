@@ -19,4 +19,5 @@ abstract class UserException extends \Exception implements UserDomainModelExcept
     protected const ALREADY_EXISTS_ERROR_CODE = 1001;
     protected const NOT_FOUND_ERROR_CODE = 1002;
     protected const WEAK_PASSWORD_ERROR_CODE = 1003;
+    protected const NEW_PASSWORD_EQUALS_WITH_CURRENT_PASSWORD_ERROR_CODE = 1004;
 }
