@@ -55,13 +55,41 @@ class ActiveUser extends User
     }
 
     /**
+     * @param AggregateHistory $aggregateHistory
+     * @return ActiveUser
+     */
+    public static function reconstituteFrom(AggregateHistory $aggregateHistory): ActiveUser
+    {
+        $user = new static(
+            UserId::fromInt($aggregateHistory->getAggregateId())
+        );
+
+        $events = $aggregateHistory->getDomainEvents();
+        foreach ($events as $event)
+        {
+            $user->apply($event);
+        }
+
+        return $user;
+    }
+
+    /**
      * Enable user
      */
     public function enable(): void
     {
-        $this->enabled = true;
+        $event = new UserEnabledEvent($this->id);
 
-        EventBus::publish(new UserEnabledEvent($this->id));
+        $this->applyUserEnabledEvent($event);
+        EventBus::publish($event);
+    }
+
+    /**
+     * @param UserEnabledEvent $event
+     */
+    private function applyUserEnabledEvent(UserEnabledEvent $event): void
+    {
+        $this->enabled = $event->isEnabled();
     }
 
     /**
@@ -69,9 +97,18 @@ class ActiveUser extends User
      */
     public function disable(): void
     {
-        $this->enabled = false;
+        $event = new UserDisabledEvent($this->id);
 
-        EventBus::publish(new UserDisabledEvent($this->id));
+        $this->applyUserDisabledEvent($event);
+        EventBus::publish($event);
+    }
+
+    /**
+     * @param UserDisabledEvent $event
+     */
+    private function applyUserDisabledEvent(UserDisabledEvent $event): void
+    {
+        $this->enabled = $event->isEnabled();
     }
 
     /**
@@ -84,9 +121,18 @@ class ActiveUser extends User
             throw PasswordException::newPasswordEqualsWithCurrentPassword($this->id);
         }
 
-        $this->password = $password;
+        $event = new UserPasswordChangedEvent($this->id, (string)$password);
 
-        EventBus::publish(new UserPasswordChangedEvent($this->id, (string)$this->password));
+        $this->applyUserPasswordChangedEvent($event);
+        EventBus::publish($event);
+    }
+
+    /**
+     * @param UserPasswordChangedEvent $event
+     */
+    private function applyUserPasswordChangedEvent(UserPasswordChangedEvent $event): void
+    {
+        $this->password = new UserPassword($event->getPassword());
     }
 
     /**
@@ -94,9 +140,18 @@ class ActiveUser extends User
      */
     public function unregister(): void
     {
-        $this->enabled = false;
+        $event = new UserUnregisteredEvent($this->id);
 
-        EventBus::publish(new UserUnregisteredEvent($this->id));
+        $this->applyUserUnregisteredEvent($event);
+        EventBus::publish($event);
+    }
+
+    /**
+     * @param UserUnregisteredEvent $event
+     */
+    public function applyUserUnregisteredEvent(UserUnregisteredEvent $event): void
+    {
+        $this->enabled = $event->isEnabled();
     }
 
     /**

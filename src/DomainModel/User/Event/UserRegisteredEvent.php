@@ -52,6 +52,22 @@ class UserRegisteredEvent extends UserEvent
     }
 
     /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return false;
+    }
+
+    /**
      * @return string
      */
     public function __toString(): string

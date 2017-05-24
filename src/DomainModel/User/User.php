@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
@@ -75,5 +77,18 @@ abstract class User
         // salt added to User's hash
         return substr($hash, 0, 8) . substr($hash, 24, 8) .
             substr($hash, 16, 8) . substr($hash, 8, 8);
+    }
+
+    /**
+     * @param UserEvent $event
+     */
+    protected function apply(UserEvent $event): void
+    {
+        $method = 'apply' . get_class($event);
+        if (!method_exists($this, $method)) {
+            throw new RuntimeException();
+        }
+
+        $this->$method($event);
     }
 }
