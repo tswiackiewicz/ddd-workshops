@@ -80,4 +80,24 @@ class UserRegisteredEvent extends UserEvent
             md5($this->password)
         );
     }
+
+    /**
+     * @return array
+     */
+    protected function doSerialize(): array
+    {
+        return [
+            'login' => $this->login,
+            'password' => $this->password
+        ];
+    }
+
+    /**
+     * @param array $unserializedObject
+     */
+    protected function doUnserialize(array $unserializedObject): void
+    {
+        $this->login = $unserializedObject['login'];
+        $this->password = $unserializedObject['password'];
+    }
 }

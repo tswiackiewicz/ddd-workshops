@@ -102,7 +102,6 @@ class EventSourcedUser
     public static function register(UserId $id, UserLogin $username, UserPassword $password): EventSourcedUser
     {
         $user = new static($id);
-
         $user->whenUserRegistered(
             new UserRegisteredEvent($id, (string)$username, (string)$password)
         );

@@ -7,7 +7,7 @@ namespace TSwiackiewicz\DDD\Event;
  * Interface Event
  * @package TSwiackiewicz\DDD\Event
  */
-interface Event
+interface Event extends \Serializable
 {
 
 }

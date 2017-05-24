@@ -48,4 +48,22 @@ class UserPasswordChangedEvent extends UserEvent
             md5($this->password)
         );
     }
+
+    /**
+     * @return array
+     */
+    protected function doSerialize(): array
+    {
+        return [
+            'password' => $this->password
+        ];
+    }
+
+    /**
+     * @param array $unserializedObject
+     */
+    protected function doUnserialize(array $unserializedObject): void
+    {
+        $this->password = $unserializedObject['password'];
+    }
 }
