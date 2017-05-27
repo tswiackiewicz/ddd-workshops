@@ -5,7 +5,7 @@ namespace TSwiackiewicz\DDD\Event;
 
 /**
  * EventBus should be a part of "DDD framework" or external component
- * To keep example simple, EB is delivered along with sample application (AwesomeApp)
+ * To keep example simple, Event Bus is delivered along with sample application (AwesomeApp)
  *
  * @package TSwiackiewicz\DDD\Event
  */

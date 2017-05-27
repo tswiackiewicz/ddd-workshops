@@ -3,29 +3,29 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\EventSourcedUser;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
-use TSwiackiewicz\DDD\Event\AggregateHistory;
+use TSwiackiewicz\DDD\EventSourcing\AggregateHistory;
 
 /**
- * Class EventSourcedUserTest
+ * Class UserTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User
  *
- * @coversDefaultClass EventSourcedUser
+ * @coversDefaultClass User
  */
-class EventSourcedUserTest extends UserBaseTestCase
+class UserTest extends UserBaseTestCase
 {
     /**
      * @test
      */
     public function shouldRegisterUser(): void
     {
-        $registeredUser = EventSourcedUser::register(
+        $registeredUser = User::register(
             UserId::fromInt($this->userId),
             new UserLogin($this->login),
             new UserPassword($this->password)
@@ -51,10 +51,10 @@ class EventSourcedUserTest extends UserBaseTestCase
         bool $enabled
     ): void
     {
-        $history = new AggregateHistory($this->userId, $events);
-        $user = EventSourcedUser::reconstituteFrom($history);
+        $history = new AggregateHistory(UserId::fromInt($this->userId), $events);
+        $user = User::reconstituteFrom($history);
 
-        self::assertEquals(UserId::fromInt($history->getAggregateId()), $user->getId());
+        self::assertEquals(UserId::fromInt($history->getAggregateId()->getId()), $user->getId());
         self::assertAttributeEquals(new UserLogin($this->login), 'login', $user);
         self::assertAttributeEquals(new UserPassword($password), 'password', $user);
         self::assertAttributeEquals($active, 'active', $user);

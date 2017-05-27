@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Application\User\Event;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    ActiveUserRepository, Event\UserPasswordChangedEvent, UserNotifier
+    Event\UserPasswordChangedEvent, UserNotifier
 };
+use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\{
     RuntimeException, UserDomainModelException
 };
@@ -20,23 +21,16 @@ use TSwiackiewicz\DDD\Event\{
 class UserPasswordChangedEventHandler implements EventHandler
 {
     /**
-     * @var ActiveUserRepository
-     */
-    private $repository;
-
-    /**
      * @var UserNotifier
      */
     private $notifier;
 
     /**
      * UserPasswordChangedEventHandler constructor.
-     * @param ActiveUserRepository $repository
      * @param UserNotifier $notifier
      */
-    public function __construct(ActiveUserRepository $repository, UserNotifier $notifier)
+    public function __construct(UserNotifier $notifier)
     {
-        $this->repository = $repository;
         $this->notifier = $notifier;
     }
 
@@ -50,8 +44,13 @@ class UserPasswordChangedEventHandler implements EventHandler
             throw RuntimeException::invalidHandledEventType($event, UserPasswordChangedEvent::class);
         }
 
-        $user = $this->repository->getById($event->getId());
-        $this->repository->save($user);
+        InMemoryStorage::save(
+            InMemoryStorage::TYPE_USER,
+            [
+                'id' => $event->getId()->getId(),
+                'password' => (string)$event->getPassword()
+            ]
+        );
 
         $this->notifier->notifyUser($event);
     }

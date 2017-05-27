@@ -10,7 +10,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserPasswordChangedEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserRegisteredEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\EventSourcedUser;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
@@ -191,9 +191,9 @@ abstract class UserBaseTestCase extends TestCase
     }
 
     /**
-     * @return EventSourcedUser
+     * @return User
      */
-    protected function createDisabledUser(): EventSourcedUser
+    protected function createDisabledUser(): User
     {
         $user = $this->createInactiveUser();
         $user->activate();
@@ -203,11 +203,11 @@ abstract class UserBaseTestCase extends TestCase
     }
 
     /**
-     * @return EventSourcedUser
+     * @return User
      */
-    protected function createInactiveUser(): EventSourcedUser
+    protected function createInactiveUser(): User
     {
-        return EventSourcedUser::register(
+        return User::register(
             UserId::fromInt($this->userId),
             new UserLogin($this->login),
             new UserPassword($this->password)
@@ -215,9 +215,9 @@ abstract class UserBaseTestCase extends TestCase
     }
 
     /**
-     * @return EventSourcedUser
+     * @return User
      */
-    protected function createActiveUser(): EventSourcedUser
+    protected function createActiveUser(): User
     {
         $user = $this->createInactiveUser();
         $user->activate();

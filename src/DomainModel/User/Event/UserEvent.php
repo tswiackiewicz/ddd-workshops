@@ -4,24 +4,15 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\AggregateId;
 use TSwiackiewicz\DDD\Event\Event;
 
 /**
  * Class UserEvent
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User\Event
  */
-abstract class UserEvent implements Event
+abstract class UserEvent extends Event
 {
-    /**
-     * @var UserId
-     */
-    protected $id;
-
-    /**
-     * @var \DateTimeImmutable
-     */
-    protected $occurredOn;
-
     /**
      * UserEvent constructor.
      * @param UserId $id
@@ -29,71 +20,15 @@ abstract class UserEvent implements Event
      */
     public function __construct(UserId $id, ?\DateTimeImmutable $occurredOn = null)
     {
-        $this->id = $id;
-        $this->occurredOn = $occurredOn ?: new \DateTimeImmutable();
+        parent::__construct($id, $occurredOn);
     }
 
     /**
-     * @return \DateTimeImmutable
+     * @param int $id
+     * @return AggregateId
      */
-    public function getOccurredOn(): \DateTimeImmutable
+    protected function doUnserializeId(int $id): AggregateId
     {
-        return $this->occurredOn;
-    }
-
-    /**
-     * @return string
-     */
-    public function serialize(): string
-    {
-        return json_encode(
-            array_merge(
-                [
-                    'id' => $this->id->getId(),
-                    'occurred_on' => $this->occurredOn
-                ],
-                $this->doSerialize()
-            )
-        );
-    }
-    
-    /**
-     * @return array
-     */
-    protected function doSerialize(): array
-    {
-        return [];
-    }
-
-    /**
-     * @param string $serialized
-     */
-    public function unserialize($serialized): void
-    {
-        $deserializedObject = json_decode($serialized, true);
-
-        $this->id = UserId::fromInt($deserializedObject['id']);
-        $this->occurredOn = new \DateTimeImmutable(
-            $deserializedObject['occurred_on']['date'],
-            new \DateTimeZone($deserializedObject['occurred_on']['timezone'])
-        );
-
-        $this->doUnserialize($deserializedObject);
-    }
-
-    /**
-     * @param array $unserializedObject
-     */
-    protected function doUnserialize(array $unserializedObject): void
-    {
-        // noop
-    }
-
-    /**
-     * @return UserId
-     */
-    public function getId(): UserId
-    {
-        return $this->id;
+        return UserId::fromInt($id);
     }
 }

@@ -33,7 +33,7 @@ class UserUnregisteredEvent extends UserEvent
         return sprintf(
             '[%s] User unregistered: id = %d',
             $this->occurredOn->format('Y-m-d H:i:s'),
-            $this->id->getId()
+            $this->id
         );
     }
 }

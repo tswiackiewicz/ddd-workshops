@@ -33,7 +33,7 @@ class UserActivatedEvent extends UserEvent
         return sprintf(
             '[%s] User activated: id = %d',
             $this->occurredOn->format('Y-m-d H:i:s'),
-            $this->id->getId()
+            $this->id
         );
     }
 }

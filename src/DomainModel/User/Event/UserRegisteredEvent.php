@@ -75,7 +75,7 @@ class UserRegisteredEvent extends UserEvent
         return sprintf(
             '[%s] User registered: id = %d, login = %s, password = %s',
             $this->occurredOn->format('Y-m-d H:i:s'),
-            $this->id->getId(),
+            $this->id,
             $this->login,
             md5($this->password)
         );
@@ -93,11 +93,11 @@ class UserRegisteredEvent extends UserEvent
     }
 
     /**
-     * @param array $unserializedObject
+     * @param array $unserialized
      */
-    protected function doUnserialize(array $unserializedObject): void
+    protected function doUnserialize(array $unserialized): void
     {
-        $this->login = $unserializedObject['login'];
-        $this->password = $unserializedObject['password'];
+        $this->login = $unserialized['login'];
+        $this->password = $unserialized['password'];
     }
 }

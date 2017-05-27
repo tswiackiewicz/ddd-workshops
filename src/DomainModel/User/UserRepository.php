@@ -9,10 +9,10 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
 };
 
 /**
- * Interface RegisteredUserRepository
+ * Interface ActiveUserRepository
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-interface RegisteredUserRepository
+interface UserRepository extends UserAggregateRepository
 {
     /**
      * @return UserId
@@ -26,25 +26,21 @@ interface RegisteredUserRepository
     public function exists(string $login): bool;
 
     /**
-     * @param UserId $id
-     * @return RegisteredUser
-     * @throws UserRepositoryException
-     * @throws UserNotFoundException
-     */
-    public function getById(UserId $id): RegisteredUser;
-
-    /**
      * @param string $hash
-     * @return RegisteredUser
+     * @return User
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getByHash(string $hash): RegisteredUser;
+    public function getByHash(string $hash): User;
 
     /**
-     * @param RegisteredUser $user
-     * @return UserId
+     * @param User $user
      * @throws UserRepositoryException
      */
-    public function save(RegisteredUser $user): UserId;
+    public function save(User $user): void;
+
+    /**
+     * @param UserId $id
+     */
+    public function remove(UserId $id): void;
 }

@@ -1,16 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\DDD\Event;
+namespace TSwiackiewicz\DDD\EventSourcing;
+
+use TSwiackiewicz\DDD\AggregateId;
+use TSwiackiewicz\DDD\Event\Event;
 
 /**
  * Class AggregateHistory
- * @package TSwiackiewicz\DDD\Event
+ * @package TSwiackiewicz\DDD\EventSourcing
  */
 class AggregateHistory
 {
     /**
-     * @var int
+     * @var AggregateId
      */
     private $aggregateId;
 
@@ -21,19 +24,19 @@ class AggregateHistory
 
     /**
      * AggregateHistory constructor.
-     * @param int $aggregateId
-     * @param Event[] $events
+     * @param AggregateId $aggregateId
+     * @param array $events
      */
-    public function __construct($aggregateId, array $events)
+    public function __construct(AggregateId $aggregateId, array $events)
     {
         $this->aggregateId = $aggregateId;
         $this->events = $events;
     }
 
     /**
-     * @return int
+     * @return AggregateId
      */
-    public function getAggregateId(): int
+    public function getAggregateId(): AggregateId
     {
         return $this->aggregateId;
     }

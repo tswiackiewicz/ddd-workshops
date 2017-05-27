@@ -44,7 +44,7 @@ class UserPasswordChangedEvent extends UserEvent
         return sprintf(
             '[%s] User password changed: id = %d, new password = %s',
             $this->occurredOn->format('Y-m-d H:i:s'),
-            $this->id->getId(),
+            $this->id,
             md5($this->password)
         );
     }
@@ -60,10 +60,10 @@ class UserPasswordChangedEvent extends UserEvent
     }
 
     /**
-     * @param array $unserializedObject
+     * @param array $unserialized
      */
-    protected function doUnserialize(array $unserializedObject): void
+    protected function doUnserialize(array $unserialized): void
     {
-        $this->password = $unserializedObject['password'];
+        $this->password = $unserialized['password'];
     }
 }

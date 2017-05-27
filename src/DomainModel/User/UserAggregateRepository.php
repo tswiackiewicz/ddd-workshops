@@ -9,27 +9,16 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
 };
 
 /**
- * Interface ActiveUserRepository
+ * Interface UserAggregateRepository
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-interface ActiveUserRepository
+interface UserAggregateRepository
 {
     /**
      * @param UserId $id
-     * @return ActiveUser
+     * @return User
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getById(UserId $id): ActiveUser;
-
-    /**
-     * @param ActiveUser $user
-     * @throws UserRepositoryException
-     */
-    public function save(ActiveUser $user): void;
-
-    /**
-     * @param UserId $id
-     */
-    public function remove(UserId $id): void;
+    public function getById(UserId $id): User;
 }
