@@ -138,7 +138,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $repository = new InMemoryUserReadModelRepository();
         $userDTO = $repository->findById($this->userId);
-
+        
         self::assertEquals($newPassword, $userDTO->getPassword());
     }
 

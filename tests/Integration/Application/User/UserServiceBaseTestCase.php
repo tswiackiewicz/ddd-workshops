@@ -15,7 +15,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryEventStore, User\InMemoryEventStoreUserRepository, User\StdOutUserNotifier
+    InMemoryEventStore, InMemoryStorage, User\InMemoryEventStoreUserRepository, User\StdOutUserNotifier
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
@@ -90,6 +90,17 @@ abstract class UserServiceBaseTestCase extends TestCase
         $this->eventStore = new InMemoryEventStore();
         $this->eventStore->append($this->userId, new UserRegisteredEvent($this->userId, $this->login, $this->password));
         $this->eventStore->append($this->userId, new UserActivatedEvent($this->userId));
+
+        InMemoryStorage::save(
+            InMemoryStorage::TYPE_USER,
+            [
+                'id' => $this->userId->getId(),
+                'login' => $this->login,
+                'password' => $this->password,
+                'active' => true,
+                'enabled' => true
+            ]
+        );
 
         $this->service = new UserService(
             new InMemoryEventStoreUserRepository($this->eventStore),

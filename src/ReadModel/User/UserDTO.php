@@ -59,8 +59,8 @@ class UserDTO
     {
         return new static(
             $user['id'],
-            $user['login'],
-            $user['password'],
+            $user['login'] ?? '',
+            $user['password'] ?? '',
             $user['active'] ?? false,
             $user['enabled'] ?? false
         );
