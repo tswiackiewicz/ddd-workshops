@@ -22,18 +22,11 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentExceptio
  */
 class UserServiceTest extends UserServiceBaseTestCase
 {
-    /**
-     * @test
-     */
     public function shouldRegisterUser(): void
     {
         self::markTestSkipped('TODO: Implement shouldRegisterUser() method test.');
     }
 
-    /**
-     * @test
-     * @depends shouldRegisterUser
-     */
     public function shouldFailWhenRegisteredUserAlreadyExists(): void
     {
         $this->expectException(UserAlreadyExistsException::class);
@@ -41,10 +34,6 @@ class UserServiceTest extends UserServiceBaseTestCase
         self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserAlreadyExists() method test.');
     }
 
-    /**
-     * @test
-     * @depends shouldRegisterUser
-     */
     public function shouldFailWhenRegisteredUserLoginIsInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -52,18 +41,11 @@ class UserServiceTest extends UserServiceBaseTestCase
         self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserLoginIsInvalid() method test.');
     }
 
-    /**
-     * @test
-     * @depends shouldRegisterUser
-     */
     public function shouldActivateUser(): void
     {
         self::markTestSkipped('TODO: Implement shouldActivateUser() method test.');
     }
 
-    /**
-     * @test
-     */
     public function shouldFailWhenActivatedUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -71,17 +53,11 @@ class UserServiceTest extends UserServiceBaseTestCase
         self::markTestSkipped('TODO: Implement shouldFailWhenActivatedUserNotExists() method test.');
     }
 
-    /**
-     * @test
-     */
     public function shouldGenerateResetPasswordToken(): void
     {
         self::markTestSkipped('TODO: Implement shouldGenerateResetPasswordToken() method test.');
     }
 
-    /**
-     * @test
-     */
     public function shouldResetPassword(): void
     {
         self::markTestSkipped('TODO: Implement shouldResetPassword() method test.');

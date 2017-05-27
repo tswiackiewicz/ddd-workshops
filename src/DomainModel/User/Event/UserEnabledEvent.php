@@ -25,7 +25,7 @@ class UserEnabledEvent extends UserEvent
         return sprintf(
             '[%s] User enabled: id = %d',
             $this->occurredOn->format('Y-m-d H:i:s'),
-            $this->id
+            $this->id->getId()
         );
     }
 }

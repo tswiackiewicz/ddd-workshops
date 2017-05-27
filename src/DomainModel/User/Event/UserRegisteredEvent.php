@@ -75,7 +75,7 @@ class UserRegisteredEvent extends UserEvent
         return sprintf(
             '[%s] User registered: id = %d, login = %s, password = %s',
             $this->occurredOn->format('Y-m-d H:i:s'),
-            $this->id,
+            $this->id->getId(),
             $this->login,
             md5($this->password)
         );

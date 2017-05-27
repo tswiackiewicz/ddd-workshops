@@ -71,9 +71,6 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
         $this->repository->getById($nonExistentUserId);
     }
 
-    /**
-     * @test
-     */
     public function shouldFailWhenDataInStorageIsInvalid(): void
     {
         $this->expectException(UserRepositoryException::class);
@@ -81,17 +78,11 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
         self::markTestSkipped('TODO: Implement shouldFailWhenDataInStorageIsInvalid() method test.');
     }
 
-    /**
-     * @test
-     */
     public function shouldSaveUser(): void
     {
         self::markTestSkipped('TODO: Implement shouldSaveUser() method test.');
     }
 
-    /**
-     * @test
-     */
     public function shouldRemoveUserById(): void
     {
         self::markTestSkipped('TODO: Implement shouldRemoveUserById() method test.');

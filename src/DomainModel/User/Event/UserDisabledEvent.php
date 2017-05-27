@@ -25,7 +25,7 @@ class UserDisabledEvent extends UserEvent
         return sprintf(
             '[%s] User disabled: id = %d',
             $this->occurredOn->format('Y-m-d H:i:s'),
-            $this->id
+            $this->id->getId()
         );
     }
 }
