@@ -15,7 +15,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryEventStore, InMemoryStorage, User\InMemoryEventStoreUserRepository, User\StdOutUserNotifier
+    InMemoryEventStore, InMemoryStorage, User\InMemoryEventStoreUserRepository, User\InMemoryUserProjector, User\StdOutUserNotifier
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
@@ -130,6 +130,8 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserEnabledEvent::class,
             new UserEnabledEventHandler(
+                new InMemoryUserProjector(),
+                new InMemoryEventStore(),
                 new StdOutUserNotifier()
             )
         );
@@ -137,6 +139,8 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserDisabledEvent::class,
             new UserDisabledEventHandler(
+                new InMemoryUserProjector(),
+                new InMemoryEventStore(),
                 new StdOutUserNotifier()
             )
         );
@@ -144,6 +148,8 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserPasswordChangedEvent::class,
             new UserPasswordChangedEventHandler(
+                new InMemoryUserProjector(),
+                new InMemoryEventStore(),
                 new StdOutUserNotifier()
             )
         );
@@ -151,6 +157,8 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserUnregisteredEvent::class,
             new UserUnregisteredEventHandler(
+                new InMemoryUserProjector(),
+                new InMemoryEventStore(),
                 new StdOutUserNotifier()
             )
         );

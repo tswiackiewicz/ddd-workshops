@@ -3,18 +3,16 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
-use TSwiackiewicz\AwesomeApp\Application\User\CommandValidator;
-use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEventHandler;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Password\UserPasswordService, User, UserLogin, UserRepository
+    Password\UserPasswordService, User, UserLogin, UserProjector, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
-use TSwiackiewicz\DDD\Event\EventHandler;
 use TSwiackiewicz\DDD\EventSourcing\AggregateHistory;
+use TSwiackiewicz\DDD\EventStore\EventStore;
 
 /**
  * Class UserServiceBaseTestCase
@@ -103,58 +101,6 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
     }
 
     /**
-     * @param null|string $eventName
-     * @return UserNotifier|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getUserNotifierMock(?string $eventName = null): UserNotifier
-    {
-        /** @var UserNotifier|\PHPUnit_Framework_MockObject_MockObject $notifier */
-        $notifier = $this->getMockBuilder(UserNotifier::class)
-            ->disableOriginalConstructor()
-            ->setMethods([
-                'notifyUser'
-            ])
-            ->getMock();
-        if ($eventName !== null) {
-            $notifier->expects(self::once())
-                ->method('notifyUser')
-                ->with(self::isInstanceOf($eventName));
-        }
-
-        return $notifier;
-    }
-
-    /**
-     * @param string $eventName
-     * @return EventHandler
-     */
-    protected function getEventHandlerMock(string $eventName): EventHandler
-    {
-        /** @var UserNotifier|\PHPUnit_Framework_MockObject_MockObject $notifier */
-        $notifier = $this->getMockBuilder(UserNotifier::class)
-            ->disableOriginalConstructor()
-            ->setMethods([
-                'notifyUser'
-            ])
-            ->getMock();
-        $notifier->expects(self::once())
-            ->method('notifyUser')
-            ->with(self::isInstanceOf($eventName));
-
-        return new UserEventHandler($notifier);
-    }
-
-    /**
-     * @return CommandValidator|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getCommandValidatorMock(): CommandValidator
-    {
-        return $this->getMockBuilder(CommandValidator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
      * @return UserPasswordService|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getUserPasswordServiceMock(): UserPasswordService
@@ -178,6 +124,48 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
         $service->expects(self::once())->method('isWeak')->willReturn(true);
 
         return $service;
+    }
+
+    /**
+     * @param null|string $eventName
+     * @return UserNotifier|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserNotifierMock(?string $eventName = null): UserNotifier
+    {
+        /** @var UserNotifier|\PHPUnit_Framework_MockObject_MockObject $notifier */
+        $notifier = $this->getMockBuilder(UserNotifier::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'notifyUser'
+            ])
+            ->getMock();
+        if ($eventName !== null) {
+            $notifier->expects(self::once())
+                ->method('notifyUser')
+                ->with(self::isInstanceOf($eventName));
+        }
+
+        return $notifier;
+    }
+
+    /**
+     * @return EventStore|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getEventStoreMock(): EventStore
+    {
+        return $this->getMockBuilder(EventStore::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * @return UserProjector|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserProjectorMock(): UserProjector
+    {
+        return $this->getMockBuilder(UserProjector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**

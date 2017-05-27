@@ -4,15 +4,15 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Application\User\Event;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Event\UserPasswordChangedEvent, UserNotifier
+    Event\UserPasswordChangedEvent, UserNotifier, UserProjector
 };
-use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\{
     RuntimeException, UserDomainModelException
 };
 use TSwiackiewicz\DDD\Event\{
     Event, EventHandler
 };
+use TSwiackiewicz\DDD\EventStore\EventStore;
 
 /**
  * Class UserPasswordChangedEventHandler
@@ -21,16 +21,30 @@ use TSwiackiewicz\DDD\Event\{
 class UserPasswordChangedEventHandler implements EventHandler
 {
     /**
+     * @var UserProjector
+     */
+    private $projector;
+
+    /**
+     * @var EventStore
+     */
+    private $eventStore;
+
+    /**
      * @var UserNotifier
      */
     private $notifier;
 
     /**
      * UserPasswordChangedEventHandler constructor.
+     * @param UserProjector $projector
+     * @param EventStore $eventStore
      * @param UserNotifier $notifier
      */
-    public function __construct(UserNotifier $notifier)
+    public function __construct(UserProjector $projector, EventStore $eventStore, UserNotifier $notifier)
     {
+        $this->projector = $projector;
+        $this->eventStore = $eventStore;
         $this->notifier = $notifier;
     }
 
@@ -44,14 +58,8 @@ class UserPasswordChangedEventHandler implements EventHandler
             throw RuntimeException::invalidHandledEventType($event, UserPasswordChangedEvent::class);
         }
 
-        InMemoryStorage::save(
-            InMemoryStorage::TYPE_USER,
-            [
-                'id' => $event->getId()->getId(),
-                'password' => (string)$event->getPassword()
-            ]
-        );
-
+        $this->projector->projectUserPasswordChanged($event);
+        $this->eventStore->append($event->getId(), $event);
         $this->notifier->notifyUser($event);
     }
 }
