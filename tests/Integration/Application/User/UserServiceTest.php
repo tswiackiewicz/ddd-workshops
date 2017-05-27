@@ -11,7 +11,7 @@ use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     ChangePasswordCommand, DisableUserCommand, EnableUserCommand, UnregisterUserCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Exception\PasswordException, Exception\UserNotFoundException, Password\UserPassword, Password\UserPasswordService, User, UserLogin
+    Exception\PasswordException, Exception\UserAlreadyExistsException, Exception\UserNotFoundException, Password\UserPassword, Password\UserPasswordService, User, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserUnregisteredEvent
@@ -19,6 +19,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
     InMemoryStorage, User\InMemoryUserReadModelRepository, User\InMemoryUserRepository, User\StdOutUserNotifier
 };
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
 
@@ -49,6 +50,47 @@ class UserServiceTest extends TestCase
      * @var UserService
      */
     private $service;
+
+    public function shouldRegisterUser(): void
+    {
+        self::markTestSkipped('TODO: Implement shouldRegisterUser() method test.');
+    }
+
+    public function shouldFailWhenRegisteredUserAlreadyExists(): void
+    {
+        $this->expectException(UserAlreadyExistsException::class);
+
+        self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserAlreadyExists() method test.');
+    }
+
+    public function shouldFailWhenRegisteredUserLoginIsInvalid(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserLoginIsInvalid() method test.');
+    }
+
+    public function shouldActivateUser(): void
+    {
+        self::markTestSkipped('TODO: Implement shouldActivateUser() method test.');
+    }
+
+    public function shouldFailWhenActivatedUserNotExists(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        self::markTestSkipped('TODO: Implement shouldFailWhenActivatedUserNotExists() method test.');
+    }
+
+    public function shouldGenerateResetPasswordToken(): void
+    {
+        self::markTestSkipped('TODO: Implement shouldGenerateResetPasswordToken() method test.');
+    }
+
+    public function shouldResetPassword(): void
+    {
+        self::markTestSkipped('TODO: Implement shouldResetPassword() method test.');
+    }
 
     /**
      * @test
