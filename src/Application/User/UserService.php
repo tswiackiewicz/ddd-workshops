@@ -4,22 +4,25 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Application\User;
 
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
-    ChangePasswordCommand, DisableUserCommand, EnableUserCommand, UnregisterUserCommand
+    ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, GenerateResetPasswordTokenCommand, RegisterUserCommand, ResetPasswordCommand, UnregisterUserCommand
 };
-use TSwiackiewicz\AwesomeApp\DomainModel\User\ActiveUserRepository;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserAlreadyExistsException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPasswordService;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRepository;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserDomainModelException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\ValidationException;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
- * Class ActiveUserService
+ * Class UserService
  * @package TSwiackiewicz\AwesomeApp\Application\User
  */
-class ActiveUserService
+class UserService
 {
     /**
-     * @var ActiveUserRepository
+     * @var UserRepository
      */
     private $repository;
 
@@ -29,17 +32,70 @@ class ActiveUserService
     private $passwordService;
 
     /**
-     * ActiveUserService constructor.
-     * @param ActiveUserRepository $repository
+     * UserService constructor.
+     * @param UserRepository $repository
      * @param UserPasswordService $passwordService
      */
-    public function __construct(
-        ActiveUserRepository $repository,
-        UserPasswordService $passwordService
-    )
+    public function __construct(UserRepository $repository, UserPasswordService $passwordService)
     {
         $this->repository = $repository;
         $this->passwordService = $passwordService;
+    }
+
+    /**
+     * Register new user
+     *
+     * @param RegisterUserCommand $command
+     * @return UserId
+     * @throws UserDomainModelException
+     */
+    public function register(RegisterUserCommand $command): UserId
+    {
+        if ($this->repository->exists((string)$command->getLogin())) {
+            throw UserAlreadyExistsException::forUser((string)$command->getLogin());
+        }
+
+        $registeredUser = User::register(
+            $this->repository->nextIdentity(),
+            $command->getLogin(),
+            $command->getPassword()
+        );
+
+        return $registeredUser->getId();
+    }
+
+    /**
+     * Activate user
+     *
+     * @param ActivateUserCommand $command
+     * @throws UserDomainModelException
+     */
+    public function activate(ActivateUserCommand $command): void
+    {
+        $user = $this->repository->getByHash($command->getHash());
+        $user->activate();
+    }
+
+    /**
+     * Generate reset password token for registered user
+     *
+     * @param GenerateResetPasswordTokenCommand $command
+     * @throws UserDomainModelException
+     */
+    public function generateResetPasswordToken(GenerateResetPasswordTokenCommand $command): void
+    {
+
+    }
+
+    /**
+     * Reset password for registered user
+     *
+     * @param ResetPasswordCommand $command
+     * @throws UserDomainModelException
+     */
+    public function resetPassword(ResetPasswordCommand $command): void
+    {
+
     }
 
     /**

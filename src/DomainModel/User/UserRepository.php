@@ -9,24 +9,43 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
 };
 
 /**
- * Interface ActiveUserRepository
+ * Interface UserRepository
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-interface ActiveUserRepository
+interface UserRepository
 {
     /**
+     * @return UserId
+     */
+    public function nextIdentity(): UserId;
+
+    /**
+     * @param string $login
+     * @return bool
+     */
+    public function exists(string $login): bool;
+
+    /**
      * @param UserId $id
-     * @return ActiveUser
+     * @return User
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getById(UserId $id): ActiveUser;
+    public function getById(UserId $id): User;
 
     /**
-     * @param ActiveUser $user
+     * @param string $hash
+     * @return User
+     * @throws UserRepositoryException
+     * @throws UserNotFoundException
+     */
+    public function getByHash(string $hash): User;
+    
+    /**
+     * @param User $user
      * @throws UserRepositoryException
      */
-    public function save(ActiveUser $user): void;
+    public function save(User $user): void;
 
     /**
      * @param UserId $id

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Application\User\Event;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    ActiveUserRepository, Event\UserDisabledEvent, UserNotifier
+    Event\UserDisabledEvent, UserNotifier, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\{
     RuntimeException, UserDomainModelException
@@ -20,7 +20,7 @@ use TSwiackiewicz\DDD\Event\{
 class UserDisabledEventHandler implements EventHandler
 {
     /**
-     * @var ActiveUserRepository
+     * @var UserRepository
      */
     private $repository;
 
@@ -31,10 +31,10 @@ class UserDisabledEventHandler implements EventHandler
 
     /**
      * UserDisabledEventHandler constructor.
-     * @param ActiveUserRepository $repository
+     * @param UserRepository $repository
      * @param UserNotifier $notifier
      */
-    public function __construct(ActiveUserRepository $repository, UserNotifier $notifier)
+    public function __construct(UserRepository $repository, UserNotifier $notifier)
     {
         $this->repository = $repository;
         $this->notifier = $notifier;
