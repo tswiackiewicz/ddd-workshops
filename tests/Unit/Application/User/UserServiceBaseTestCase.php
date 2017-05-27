@@ -43,7 +43,7 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
             ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $repository->expects(self::once())->method('getById')->willReturn($user ?: $this->getUserMock());
+        $repository->expects(self::once())->method('getById')->willReturn($user ?: $this->getUserMock(true, true));
 
         return $repository;
     }
@@ -53,7 +53,7 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
      * @param bool $enabled
      * @return User
      */
-    protected function getUserMock(bool $active = true, bool $enabled = false): User
+    protected function getUserMock(bool $active, bool $enabled): User
     {
         /** @var UserId $userId */
         $userId = UserId::fromInt($this->userId);

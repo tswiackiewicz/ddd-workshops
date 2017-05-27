@@ -54,9 +54,12 @@ class UserPasswordChangedEvent extends UserEvent
      */
     protected function doSerialize(): array
     {
-        return [
-            'password' => $this->password
-        ];
+        return array_merge(
+            parent::doSerialize(),
+            [
+                'password' => $this->password
+            ]
+        );
     }
 
     /**

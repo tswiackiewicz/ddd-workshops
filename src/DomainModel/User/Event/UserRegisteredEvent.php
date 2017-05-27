@@ -86,10 +86,13 @@ class UserRegisteredEvent extends UserEvent
      */
     protected function doSerialize(): array
     {
-        return [
-            'login' => $this->login,
-            'password' => $this->password
-        ];
+        return array_merge(
+            parent::doSerialize(),
+            [
+                'login' => $this->login,
+                'password' => $this->password
+            ]
+        );
     }
 
     /**

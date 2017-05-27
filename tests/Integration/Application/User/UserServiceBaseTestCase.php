@@ -130,8 +130,8 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserEnabledEvent::class,
             new UserEnabledEventHandler(
-                new InMemoryUserProjector(),
                 new InMemoryEventStore(),
+                new InMemoryUserProjector(),
                 new StdOutUserNotifier()
             )
         );
@@ -139,8 +139,8 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserDisabledEvent::class,
             new UserDisabledEventHandler(
-                new InMemoryUserProjector(),
                 new InMemoryEventStore(),
+                new InMemoryUserProjector(),
                 new StdOutUserNotifier()
             )
         );
@@ -148,8 +148,8 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserPasswordChangedEvent::class,
             new UserPasswordChangedEventHandler(
-                new InMemoryUserProjector(),
                 new InMemoryEventStore(),
+                new InMemoryUserProjector(),
                 new StdOutUserNotifier()
             )
         );
@@ -157,8 +157,8 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserUnregisteredEvent::class,
             new UserUnregisteredEventHandler(
-                new InMemoryUserProjector(),
                 new InMemoryEventStore(),
+                new InMemoryUserProjector(),
                 new StdOutUserNotifier()
             )
         );

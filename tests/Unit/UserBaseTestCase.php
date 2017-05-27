@@ -10,8 +10,9 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserPasswordChangedEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserRegisteredEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
@@ -83,11 +84,14 @@ abstract class UserBaseTestCase extends TestCase
      */
     public function getUserEventHistoryDataProvider(): array
     {
+        /** @var UserId $userId */
+        $userId = UserId::fromInt($this->userId);
+
         return [
             [
                 [
                     new UserRegisteredEvent(
-                        UserId::fromInt($this->userId),
+                        $userId,
                         $this->login,
                         $this->password
                     )
@@ -99,12 +103,12 @@ abstract class UserBaseTestCase extends TestCase
             [
                 [
                     new UserRegisteredEvent(
-                        UserId::fromInt($this->userId),
+                        $userId,
                         $this->login,
                         $this->password
                     ),
                     new UserActivatedEvent(
-                        UserId::fromInt($this->userId)
+                        $userId
                     )
                 ],
                 $this->password,
@@ -114,15 +118,15 @@ abstract class UserBaseTestCase extends TestCase
             [
                 [
                     new UserRegisteredEvent(
-                        UserId::fromInt($this->userId),
+                        $userId,
                         $this->login,
                         $this->password
                     ),
                     new UserActivatedEvent(
-                        UserId::fromInt($this->userId)
+                        $userId
                     ),
                     new UserDisabledEvent(
-                        UserId::fromInt($this->userId)
+                        $userId
                     )
                 ],
                 $this->password,
@@ -132,18 +136,18 @@ abstract class UserBaseTestCase extends TestCase
             [
                 [
                     new UserRegisteredEvent(
-                        UserId::fromInt($this->userId),
+                        $userId,
                         $this->login,
                         $this->password
                     ),
                     new UserActivatedEvent(
-                        UserId::fromInt($this->userId)
+                        $userId
                     ),
                     new UserDisabledEvent(
-                        UserId::fromInt($this->userId)
+                        $userId
                     ),
                     new UserEnabledEvent(
-                        UserId::fromInt($this->userId)
+                        $userId
                     )
                 ],
                 $this->password,
@@ -153,15 +157,15 @@ abstract class UserBaseTestCase extends TestCase
             [
                 [
                     new UserRegisteredEvent(
-                        UserId::fromInt($this->userId),
+                        $userId,
                         $this->login,
                         $this->password
                     ),
                     new UserActivatedEvent(
-                        UserId::fromInt($this->userId)
+                        $userId
                     ),
                     new UserPasswordChangedEvent(
-                        UserId::fromInt($this->userId),
+                        $userId,
                         'newPassword1234'
                     )
                 ],
@@ -172,15 +176,15 @@ abstract class UserBaseTestCase extends TestCase
             [
                 [
                     new UserRegisteredEvent(
-                        UserId::fromInt($this->userId),
+                        $userId,
                         $this->login,
                         $this->password
                     ),
                     new UserActivatedEvent(
-                        UserId::fromInt($this->userId)
+                        $userId
                     ),
                     new UserUnregisteredEvent(
-                        UserId::fromInt($this->userId)
+                        $userId
                     )
                 ],
                 $this->password,
@@ -192,6 +196,7 @@ abstract class UserBaseTestCase extends TestCase
 
     /**
      * @return User
+     * @throws UserException
      */
     protected function createDisabledUser(): User
     {
@@ -207,8 +212,11 @@ abstract class UserBaseTestCase extends TestCase
      */
     protected function createInactiveUser(): User
     {
+        /** @var UserId $userId */
+        $userId = UserId::fromInt($this->userId);
+
         return User::register(
-            UserId::fromInt($this->userId),
+            $userId,
             new UserLogin($this->login),
             new UserPassword($this->password)
         );
@@ -216,6 +224,7 @@ abstract class UserBaseTestCase extends TestCase
 
     /**
      * @return User
+     * @throws UserException
      */
     protected function createActiveUser(): User
     {

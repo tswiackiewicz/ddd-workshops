@@ -86,8 +86,8 @@ class UserServiceTest extends UserServiceBaseTestCase
         FakeEventBus::subscribe(
             UserEnabledEvent::class,
             new UserEnabledEventHandler(
-                $this->getUserProjectorMock(),
                 $this->getEventStoreMock(),
+                $this->getUserProjectorMock(),
                 $this->getUserNotifierMock(UserEnabledEvent::class)
             )
         );
@@ -134,8 +134,8 @@ class UserServiceTest extends UserServiceBaseTestCase
         FakeEventBus::subscribe(
             UserDisabledEvent::class,
             new UserDisabledEventHandler(
-                $this->getUserProjectorMock(),
                 $this->getEventStoreMock(),
+                $this->getUserProjectorMock(),
                 $this->getUserNotifierMock(UserDisabledEvent::class)
             )
         );
@@ -184,8 +184,8 @@ class UserServiceTest extends UserServiceBaseTestCase
         FakeEventBus::subscribe(
             UserPasswordChangedEvent::class,
             new UserPasswordChangedEventHandler(
-                $this->getUserProjectorMock(),
                 $this->getEventStoreMock(),
+                $this->getUserProjectorMock(),
                 $this->getUserNotifierMock(UserPasswordChangedEvent::class)
             )
         );
@@ -285,8 +285,8 @@ class UserServiceTest extends UserServiceBaseTestCase
         FakeEventBus::subscribe(
             UserUnregisteredEvent::class,
             new UserUnregisteredEventHandler(
-                $this->getUserProjectorMock(),
                 $this->getEventStoreMock(),
+                $this->getUserProjectorMock(),
                 $this->getUserNotifierMock(UserUnregisteredEvent::class)
             )
         );

@@ -68,7 +68,6 @@ class InMemoryEventStoreUserRepository implements UserRepository
         }
 
         $events = $this->store->load($id);
-
         if (empty($events)) {
             throw UserNotFoundException::forId($id);
         }

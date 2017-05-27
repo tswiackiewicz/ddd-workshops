@@ -3,17 +3,15 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserActivatedEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserDisabledEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserPasswordChangedEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserRegisteredEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
+    UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
+};
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
+    UserId
+};
 use TSwiackiewicz\DDD\Event\EventBus;
 use TSwiackiewicz\DDD\EventSourcing\AggregateHistory;
 
@@ -78,6 +76,8 @@ class User
     }
 
     /**
+     * TODO: move to "DDD Framework"
+     *
      * @param UserEvent $event
      */
     private function apply(UserEvent $event): void
@@ -106,7 +106,7 @@ class User
     {
         $user = new static($id);
 
-        $user->publishEvent(
+        $user->recordThat(
             new UserRegisteredEvent($id, (string)$username, (string)$password)
         );
 
@@ -116,7 +116,7 @@ class User
     /**
      * @param UserEvent $event
      */
-    private function publishEvent(UserEvent $event): void
+    private function recordThat(UserEvent $event): void
     {
         $this->apply($event);
         EventBus::publish($event);
@@ -124,61 +124,68 @@ class User
 
     /**
      * Activate user
+     *
+     * @throws UserException
      */
     public function activate(): void
     {
         if ($this->active) {
-            throw new RuntimeException('User already activated');
+            throw UserException::alreadyActivated($this->id);
         }
 
-        $this->publishEvent(
+        $this->recordThat(
             new UserActivatedEvent($this->id)
         );
     }
 
     /**
      * Enable user
+     *
+     * @throws UserException
      */
     public function enable(): void
     {
         if (!$this->active || $this->enabled) {
-            throw new RuntimeException('Only active disabled user can be enabled');
+            throw UserException::enableNotAllowed($this->id);
         }
 
-        $this->publishEvent(
+        $this->recordThat(
             new UserEnabledEvent($this->id)
         );
     }
 
     /**
      * Disable user
+     *
+     * @throws UserException
      */
     public function disable(): void
     {
         if (!$this->active || !$this->enabled) {
-            throw new RuntimeException('Only active enabled user can be disabled');
+            throw UserException::disableNotAllowed($this->id);
         }
 
-        $this->publishEvent(
+        $this->recordThat(
             new UserDisabledEvent($this->id)
         );
     }
 
     /**
      * @param UserPassword $password
+     * @throws UserException
      * @throws PasswordException
      */
     public function changePassword(UserPassword $password): void
     {
         if (!$this->active || !$this->enabled) {
-            throw new RuntimeException('Only active enabled user can change password');
+            throw UserException::passwordChangeNotAllowed($this->id);
         }
 
         if ($this->password->equals($password)) {
             throw PasswordException::newPasswordEqualsWithCurrentPassword($this->id);
         }
 
-        $this->publishEvent(
+        $this->recordThat(
             new UserPasswordChangedEvent($this->id, (string)$password)
         );
     }
@@ -188,7 +195,7 @@ class User
      */
     public function unregister(): void
     {
-        $this->publishEvent(
+        $this->recordThat(
             new UserUnregisteredEvent($this->id)
         );
     }
@@ -217,6 +224,7 @@ class User
             substr($hash, 8, 8);
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @param UserRegisteredEvent $event
      */
@@ -228,6 +236,7 @@ class User
         $this->enabled = $event->isEnabled();
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @param UserActivatedEvent $event
      */
@@ -237,6 +246,7 @@ class User
         $this->enabled = $event->isEnabled();
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @param UserEnabledEvent $event
      */
@@ -245,6 +255,7 @@ class User
         $this->enabled = $event->isEnabled();
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @param UserDisabledEvent $event
      */
@@ -253,6 +264,7 @@ class User
         $this->enabled = $event->isEnabled();
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @param UserPasswordChangedEvent $event
      */
@@ -261,6 +273,7 @@ class User
         $this->password = new UserPassword($event->getPassword());
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * @param UserUnregisteredEvent $event
      */
@@ -270,4 +283,3 @@ class User
         $this->enabled = $event->isEnabled();
     }
 }
-

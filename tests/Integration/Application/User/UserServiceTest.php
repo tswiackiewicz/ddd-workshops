@@ -10,7 +10,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Exception\PasswordException, Exception\UserAlreadyExistsException, Exception\UserNotFoundException, Password\UserPassword
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    User\InMemoryUserReadModelRepository
+    InMemoryEventStore, User\InMemoryUserReadModelRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 

@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 use TSwiackiewicz\DDD\EventSourcing\AggregateHistory;
@@ -25,8 +25,11 @@ class UserTest extends UserBaseTestCase
      */
     public function shouldRegisterUser(): void
     {
+        /** @var UserId $userId */
+        $userId = UserId::fromInt($this->userId);
+
         $registeredUser = User::register(
-            UserId::fromInt($this->userId),
+            $userId,
             new UserLogin($this->login),
             new UserPassword($this->password)
         );
@@ -78,7 +81,7 @@ class UserTest extends UserBaseTestCase
      */
     public function shouldFailWhenActivateAlreadyActivatedUser(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(UserException::class);
 
         $user = $this->createActiveUser();
         $user->activate();
@@ -100,7 +103,7 @@ class UserTest extends UserBaseTestCase
      */
     public function shouldFailWhenEnableInactiveUser(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(UserException::class);
 
         $user = $this->createInactiveUser();
         $user->enable();
@@ -111,7 +114,7 @@ class UserTest extends UserBaseTestCase
      */
     public function shouldFailWhenEnableAlreadyEnabledUser(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(UserException::class);
 
         $user = $this->createActiveUser();
         $user->enable();
@@ -133,7 +136,7 @@ class UserTest extends UserBaseTestCase
      */
     public function shouldFailWhenDisableInactiveUser(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(UserException::class);
 
         $user = $this->createInactiveUser();
         $user->disable();
@@ -144,7 +147,7 @@ class UserTest extends UserBaseTestCase
      */
     public function shouldFailWhenDisableAlreadyDisabledUser(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(UserException::class);
 
         $user = $this->createDisabledUser();
         $user->disable();
@@ -166,7 +169,7 @@ class UserTest extends UserBaseTestCase
      */
     public function shouldFailWhenPasswordChangedByInactiveUser(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(UserException::class);
 
         $user = $this->createInactiveUser();
         $user->changePassword(new UserPassword('newPassword1234'));
@@ -177,7 +180,7 @@ class UserTest extends UserBaseTestCase
      */
     public function shouldFailWhenPasswordChangedByDisabledUser(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(UserException::class);
 
         $user = $this->createDisabledUser();
         $user->changePassword(new UserPassword('newPassword1234'));

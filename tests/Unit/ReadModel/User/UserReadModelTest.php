@@ -28,7 +28,9 @@ class UserReadModelTest extends UserBaseTestCase
      */
     public function shouldFindUserById(): void
     {
-        $userDTO = $this->readModel->findById(UserId::fromInt(1));
+        /** @var UserId $userId */
+        $userId = UserId::fromInt(1);
+        $userDTO = $this->readModel->findById($userId);
 
         self::assertEquals(1, $userDTO->getId());
         self::assertEquals('first.user@domain.com', $userDTO->getLogin());
@@ -42,7 +44,9 @@ class UserReadModelTest extends UserBaseTestCase
      */
     public function shouldReturnNullWhenUnableToFindUserById(): void
     {
-        $userDTO = $this->readModel->findById(UserId::fromInt(123));
+        /** @var UserId $userId */
+        $userId = UserId::fromInt(123);
+        $userDTO = $this->readModel->findById($userId);
 
         self::assertNull($userDTO);
     }

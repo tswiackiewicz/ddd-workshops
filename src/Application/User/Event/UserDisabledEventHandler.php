@@ -21,14 +21,14 @@ use TSwiackiewicz\DDD\EventStore\EventStore;
 class UserDisabledEventHandler implements EventHandler
 {
     /**
-     * @var UserProjector
-     */
-    private $projector;
-
-    /**
      * @var EventStore
      */
     private $eventStore;
+
+    /**
+     * @var UserProjector
+     */
+    private $projector;
 
     /**
      * @var UserNotifier
@@ -37,14 +37,14 @@ class UserDisabledEventHandler implements EventHandler
 
     /**
      * UserDisabledEventHandler constructor.
-     * @param UserProjector $projector
      * @param EventStore $eventStore
+     * @param UserProjector $projector
      * @param UserNotifier $notifier
      */
-    public function __construct(UserProjector $projector, EventStore $eventStore, UserNotifier $notifier)
+    public function __construct(EventStore $eventStore, UserProjector $projector, UserNotifier $notifier)
     {
-        $this->projector = $projector;
         $this->eventStore = $eventStore;
+        $this->projector = $projector;
         $this->notifier = $notifier;
     }
 
@@ -58,8 +58,9 @@ class UserDisabledEventHandler implements EventHandler
             throw RuntimeException::invalidHandledEventType($event, UserDisabledEvent::class);
         }
 
-        $this->projector->projectUserDisabled($event);
         $this->eventStore->append($event->getId(), $event);
+        $this->projector->projectUserDisabled($event);
+
         $this->notifier->notifyUser($event);
     }
 }
