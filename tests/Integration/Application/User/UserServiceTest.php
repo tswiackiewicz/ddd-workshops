@@ -97,6 +97,8 @@ class UserServiceTest extends TestCase
      */
     public function shouldEnableUser(): void
     {
+        $this->disableUser();
+
         $this->service->enable(
             new EnableUserCommand(UserId::fromInt($this->userId))
         );
@@ -124,6 +126,8 @@ class UserServiceTest extends TestCase
      */
     public function shouldDisableUser(): void
     {
+        $this->enableUser();
+
         $this->service->disable(
             new DisableUserCommand(UserId::fromInt($this->userId))
         );
@@ -151,6 +155,7 @@ class UserServiceTest extends TestCase
      */
     public function shouldChangePassword(): void
     {
+        $this->enableUser();
         $newPassword = 'new-VEEERY_StR0Ng_P@sSw0rD1!#';
 
         $this->service->changePassword(
@@ -173,6 +178,8 @@ class UserServiceTest extends TestCase
     {
         $this->expectException(PasswordException::class);
 
+        $this->enableUser();
+
         $this->service->changePassword(
             new ChangePasswordCommand(
                 UserId::fromInt($this->userId),
@@ -188,6 +195,8 @@ class UserServiceTest extends TestCase
     {
         $this->expectException(PasswordException::class);
 
+        $this->enableUser();
+
         $this->service->changePassword(
             new ChangePasswordCommand(
                 UserId::fromInt($this->userId),
@@ -199,8 +208,25 @@ class UserServiceTest extends TestCase
     /**
      * @test
      */
+    public function shouldFailWhenUserThatChangedPasswordNotExists(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        $this->service->changePassword(
+            new ChangePasswordCommand(
+                UserId::fromInt(1234),
+                new UserPassword($this->password)
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
     public function shouldRemoveUser(): void
     {
+        $this->enableUser();
+
         $this->service->unregister(
             new UnregisterUserCommand(
                 UserId::fromInt($this->userId)
@@ -236,6 +262,10 @@ class UserServiceTest extends TestCase
 
         InMemoryStorage::clear();
 
+        $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
+        $identityMap->setAccessible(true);
+        $identityMap->setValue(null, []);
+
         $repository = new InMemoryUserRepository();
         $repository->save(
             new User(
@@ -250,6 +280,34 @@ class UserServiceTest extends TestCase
         $this->service = new UserService(
             $repository,
             new UserPasswordService()
+        );
+    }
+
+    private function enableUser(): void
+    {
+        $repository = new InMemoryUserRepository();
+        $repository->save(
+            new User(
+                UserId::fromInt($this->userId),
+                new UserLogin($this->login),
+                new UserPassword($this->password),
+                true,
+                true
+            )
+        );
+    }
+
+    private function disableUser(): void
+    {
+        $repository = new InMemoryUserRepository();
+        $repository->save(
+            new User(
+                UserId::fromInt($this->userId),
+                new UserLogin($this->login),
+                new UserPassword($this->password),
+                true,
+                false
+            )
         );
     }
 
