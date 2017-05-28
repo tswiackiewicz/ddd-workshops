@@ -62,7 +62,7 @@ class InMemoryRegisteredUserRepositoryTest extends UserBaseTestCase
             UserId::fromInt(1)
         );
 
-        self::assertInstanceOf(User::class, $user);
+        self::assertInstanceOf(RegisteredUser::class, $user);
     }
 
     /**
@@ -131,7 +131,7 @@ class InMemoryRegisteredUserRepositoryTest extends UserBaseTestCase
 
         $user = $this->repository->getByHash($registeredUser->hash());
 
-        self::assertInstanceOf(User::class, $user);
+        self::assertInstanceOf(RegisteredUser::class, $user);
     }
 
     /**

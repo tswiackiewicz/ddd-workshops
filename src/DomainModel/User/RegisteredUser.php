@@ -11,8 +11,23 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
  * Class RegisteredUser
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-class RegisteredUser extends User
+class RegisteredUser
 {
+    /**
+     * @var UserId
+     */
+    private $id;
+
+    /**
+     * @var UserLogin
+     */
+    private $login;
+
+    /**
+     * @var UserPassword
+     */
+    private $password;
+
     /**
      * @var bool
      */
@@ -27,7 +42,9 @@ class RegisteredUser extends User
      */
     public function __construct(UserId $id, UserLogin $login, UserPassword $password, bool $active)
     {
-        parent::__construct($id, $login, $password);
+        $this->id = $id;
+        $this->login = $login;
+        $this->password = $password;
         $this->active = $active;
     }
 
@@ -66,10 +83,46 @@ class RegisteredUser extends User
     }
 
     /**
+     * @return UserId
+     */
+    public function getId(): UserId
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return UserLogin
+     */
+    public function getLogin(): UserLogin
+    {
+        return $this->login;
+    }
+
+    /**
+     * @return UserPassword
+     */
+    public function getPassword(): UserPassword
+    {
+        return $this->password;
+    }
+
+    /**
      * @return bool
      */
     public function isActive(): bool
     {
         return $this->active;
+    }
+
+    /**
+     * @return string
+     */
+    public function hash(): string
+    {
+        $hash = md5($this->login . '::' . $this->password);
+
+        // salt added to User's hash
+        return substr($hash, 0, 8) . substr($hash, 24, 8) .
+            substr($hash, 16, 8) . substr($hash, 8, 8);
     }
 }

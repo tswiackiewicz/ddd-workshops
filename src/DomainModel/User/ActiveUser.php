@@ -19,8 +19,23 @@ use TSwiackiewicz\DDD\Event\EventBus;
  *
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-class ActiveUser extends User
+class ActiveUser
 {
+    /**
+     * @var UserId
+     */
+    private $id;
+
+    /**
+     * @var UserLogin
+     */
+    private $login;
+
+    /**
+     * @var UserPassword
+     */
+    private $password;
+
     /**
      * @var bool
      */
@@ -35,7 +50,9 @@ class ActiveUser extends User
      */
     public function __construct(UserId $id, UserLogin $login, UserPassword $password, bool $enabled)
     {
-        parent::__construct($id, $login, $password);
+        $this->id = $id;
+        $this->login = $login;
+        $this->password = $password;
         $this->enabled = $enabled;
     }
 
@@ -100,10 +117,46 @@ class ActiveUser extends User
     }
 
     /**
+     * @return UserId
+     */
+    public function getId(): UserId
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return UserLogin
+     */
+    public function getLogin(): UserLogin
+    {
+        return $this->login;
+    }
+
+    /**
+     * @return UserPassword
+     */
+    public function getPassword(): UserPassword
+    {
+        return $this->password;
+    }
+
+    /**
      * @return bool
      */
     public function isEnabled(): bool
     {
         return $this->enabled;
+    }
+
+    /**
+     * @return string
+     */
+    public function hash(): string
+    {
+        $hash = md5($this->login . '::' . $this->password);
+
+        // salt added to User's hash
+        return substr($hash, 0, 8) . substr($hash, 24, 8) .
+            substr($hash, 16, 8) . substr($hash, 8, 8);
     }
 }

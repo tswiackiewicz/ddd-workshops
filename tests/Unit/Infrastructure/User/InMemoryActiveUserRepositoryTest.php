@@ -37,7 +37,7 @@ class InMemoryActiveUserRepositoryTest extends UserBaseTestCase
             UserId::fromInt(1)
         );
 
-        self::assertInstanceOf(User::class, $user);
+        self::assertInstanceOf(ActiveUser::class, $user);
     }
 
     /**
