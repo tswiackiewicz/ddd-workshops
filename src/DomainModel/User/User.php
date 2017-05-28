@@ -47,7 +47,7 @@ class User
     private $enabled;
 
     /**
-     * EventSourcedUser constructor.
+     * User constructor.
      * @param UserId $id
      */
     private function __construct(UserId $id)
@@ -171,6 +171,8 @@ class User
     }
 
     /**
+     * Change user's password
+     *
      * @param UserPassword $password
      * @throws UserException
      * @throws PasswordException
