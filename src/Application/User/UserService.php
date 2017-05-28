@@ -66,18 +66,6 @@ class UserService
     }
 
     /**
-     * Activate user
-     *
-     * @param ActivateUserCommand $command
-     * @throws UserDomainModelException
-     */
-    public function activate(ActivateUserCommand $command): void
-    {
-        $user = $this->repository->getByHash($command->getHash());
-        $user->activate();
-    }
-
-    /**
      * Generate reset password token for registered user
      *
      * @param GenerateResetPasswordTokenCommand $command
@@ -97,6 +85,18 @@ class UserService
     public function resetPassword(ResetPasswordCommand $command): void
     {
 
+    }
+
+    /**
+     * Activate user
+     *
+     * @param ActivateUserCommand $command
+     * @throws UserDomainModelException
+     */
+    public function activate(ActivateUserCommand $command): void
+    {
+        $user = $this->repository->getByHash($command->getHash());
+        $user->activate();
     }
 
     /**

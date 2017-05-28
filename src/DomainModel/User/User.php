@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
+use TSwiackiewicz\AwesomeApp\DomainModel\User\{
+    Exception\PasswordException, Exception\UserException, Password\UserPassword
+};
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
     Exception\InvalidArgumentException, UserId
 };
@@ -46,7 +46,7 @@ class User
     private $enabled;
 
     /**
-     * User2 constructor.
+     * User constructor.
      * @param UserId $id
      * @param UserLogin $login
      * @param UserPassword $password
@@ -153,6 +153,8 @@ class User
     }
 
     /**
+     * Change user's password
+     *
      * @param UserPassword $password
      * @throws UserException
      * @throws PasswordException
