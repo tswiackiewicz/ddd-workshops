@@ -5,30 +5,31 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User;
 
 use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\Application\User\{
-    ActiveUserService, Event\UserDisabledEventHandler, Event\UserEnabledEventHandler, Event\UserPasswordChangedEventHandler, Event\UserUnregisteredEventHandler
+    Event\UserDisabledEventHandler, Event\UserEnabledEventHandler, Event\UserPasswordChangedEventHandler, Event\UserRegisteredEventHandler, Event\UserUnregisteredEventHandler, UserService
 };
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
-    ChangePasswordCommand, DisableUserCommand, EnableUserCommand, UnregisterUserCommand
+    ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, RegisterUserCommand, UnregisterUserCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    ActiveUser, Exception\PasswordException, Exception\UserNotFoundException, Password\UserPassword, Password\UserPasswordService, UserLogin
+    Exception\PasswordException, Exception\UserAlreadyExistsException, Exception\UserNotFoundException, Password\UserPassword, Password\UserPasswordService, User, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
-    UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserUnregisteredEvent
+    UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryStorage, User\InMemoryActiveUserRepository, User\InMemoryUserReadModelRepository, User\StdOutUserNotifier
+    InMemoryStorage, User\InMemoryUserReadModelRepository, User\InMemoryUserRepository, User\StdOutUserNotifier
 };
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
- * Class ActiveUserServiceTest
+ * Class UserServiceTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User
  *
- * @coversDefaultClass ActiveUserService
+ * @coversDefaultClass UserService
  */
-class ActiveUserServiceTest extends TestCase
+class UserServiceTest extends TestCase
 {
     /**
      * @var int
@@ -46,22 +47,134 @@ class ActiveUserServiceTest extends TestCase
     private $password = 'password1234';
 
     /**
-     * @var ActiveUserService
+     * @var string
+     */
+    private $hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
+
+    /**
+     * @var UserService
      */
     private $service;
 
     /**
      * @test
      */
+    public function shouldRegisterUser(): void
+    {
+        InMemoryStorage::clear();
+        $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
+        $identityMap->setAccessible(true);
+        $identityMap->setValue(null, []);
+
+        $registeredUserId = $this->service->register(
+            new RegisterUserCommand(
+                new UserLogin($this->login),
+                new UserPassword($this->password)
+            )
+        );
+
+        self::assertEquals(UserId::fromInt($this->userId), $registeredUserId);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenRegisteredUserAlreadyExists(): void
+    {
+        $this->expectException(UserAlreadyExistsException::class);
+
+        $this->service->register(
+            new RegisterUserCommand(
+                new UserLogin($this->login),
+                new UserPassword($this->password)
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenRegisteredUserLoginIsInvalid(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->service->register(
+            new RegisterUserCommand(
+                new UserLogin('invalid_login'),
+                new UserPassword($this->password)
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldActivateUser(): void
+    {
+        $this->service->activate(
+            new ActivateUserCommand($this->hash)
+        );
+
+        $repository = new InMemoryUserReadModelRepository();
+        $userDTO = $repository->findById(UserId::fromInt($this->userId));
+
+        self::assertTrue($userDTO->isActive());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenActivatedUserNotExists(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        $this->service->activate(
+            new ActivateUserCommand('non_existent_user_hash')
+        );
+    }
+
+    public function shouldGenerateResetPasswordToken(): void
+    {
+        self::markTestSkipped('TODO: Implement shouldGenerateResetPasswordToken() method test.');
+    }
+
+    public function shouldResetPassword(): void
+    {
+        self::markTestSkipped('TODO: Implement shouldResetPassword() method test.');
+    }
+
+    /**
+     * @test
+     */
     public function shouldEnableUser(): void
     {
+        $this->disableUser();
+
         $this->service->enable(
             new EnableUserCommand(UserId::fromInt($this->userId))
         );
 
         $repository = new InMemoryUserReadModelRepository();
         $userDTO = $repository->findById(UserId::fromInt($this->userId));
+
         self::assertTrue($userDTO->isEnabled());
+    }
+
+    /**
+     * Disable user
+     */
+    private function disableUser(): void
+    {
+        $repository = new InMemoryUserRepository();
+        $repository->save(
+            new User(
+                UserId::fromInt($this->userId),
+                new UserLogin($this->login),
+                new UserPassword($this->password),
+                true,
+                false
+            )
+        );
     }
 
     /**
@@ -81,13 +194,33 @@ class ActiveUserServiceTest extends TestCase
      */
     public function shouldDisableUser(): void
     {
+        $this->enableUser();
+
         $this->service->disable(
             new DisableUserCommand(UserId::fromInt($this->userId))
         );
 
         $repository = new InMemoryUserReadModelRepository();
         $userDTO = $repository->findById(UserId::fromInt($this->userId));
+
         self::assertFalse($userDTO->isEnabled());
+    }
+
+    /**
+     * Enable user
+     */
+    private function enableUser(): void
+    {
+        $repository = new InMemoryUserRepository();
+        $repository->save(
+            new User(
+                UserId::fromInt($this->userId),
+                new UserLogin($this->login),
+                new UserPassword($this->password),
+                true,
+                true
+            )
+        );
     }
 
     /**
@@ -107,6 +240,7 @@ class ActiveUserServiceTest extends TestCase
      */
     public function shouldChangePassword(): void
     {
+        $this->enableUser();
         $newPassword = 'new-VEEERY_StR0Ng_P@sSw0rD1!#';
 
         $this->service->changePassword(
@@ -127,6 +261,8 @@ class ActiveUserServiceTest extends TestCase
      */
     public function shouldFailWhenChangedPasswordIsTooWeak(): void
     {
+        $this->enableUser();
+
         $this->expectException(PasswordException::class);
 
         $this->service->changePassword(
@@ -142,6 +278,8 @@ class ActiveUserServiceTest extends TestCase
      */
     public function shouldFailWhenChangedPasswordEqualsWithCurrentPassword(): void
     {
+        $this->enableUser();
+
         $this->expectException(PasswordException::class);
 
         $this->service->changePassword(
@@ -155,8 +293,25 @@ class ActiveUserServiceTest extends TestCase
     /**
      * @test
      */
+    public function shouldFailWhenUserThatChangedPasswordNotExists(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        $this->service->changePassword(
+            new ChangePasswordCommand(
+                UserId::fromInt(1234),
+                new UserPassword($this->password)
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
     public function shouldRemoveUser(): void
     {
+        $this->enableUser();
+
         $this->service->unregister(
             new UnregisterUserCommand(
                 UserId::fromInt($this->userId)
@@ -165,6 +320,7 @@ class ActiveUserServiceTest extends TestCase
 
         $repository = new InMemoryUserReadModelRepository();
         $userDTO = $repository->findById(UserId::fromInt(1));
+
         self::assertNull($userDTO);
     }
 
@@ -190,18 +346,22 @@ class ActiveUserServiceTest extends TestCase
         $this->registerEventHandlers();
 
         InMemoryStorage::clear();
+        $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
+        $identityMap->setAccessible(true);
+        $identityMap->setValue(null, []);
 
-        $repository = new InMemoryActiveUserRepository();
+        $repository = new InMemoryUserRepository();
         $repository->save(
-            new ActiveUser(
+            new User(
                 UserId::fromInt($this->userId),
                 new UserLogin($this->login),
                 new UserPassword($this->password),
+                false,
                 false
             )
         );
 
-        $this->service = new ActiveUserService(
+        $this->service = new UserService(
             $repository,
             new UserPasswordService()
         );
@@ -210,33 +370,32 @@ class ActiveUserServiceTest extends TestCase
     private function registerEventHandlers(): void
     {
         EventBus::subscribe(
-            UserEnabledEvent::class,
-            new UserEnabledEventHandler(
-                new InMemoryActiveUserRepository(),
+            UserRegisteredEvent::class,
+            new UserRegisteredEventHandler(
                 new StdOutUserNotifier()
             )
         );
-
+        EventBus::subscribe(
+            UserEnabledEvent::class,
+            new UserEnabledEventHandler(
+                new StdOutUserNotifier()
+            )
+        );
         EventBus::subscribe(
             UserDisabledEvent::class,
             new UserDisabledEventHandler(
-                new InMemoryActiveUserRepository(),
                 new StdOutUserNotifier()
             )
         );
-
         EventBus::subscribe(
             UserUnregisteredEvent::class,
             new UserUnregisteredEventHandler(
-                new InMemoryActiveUserRepository(),
                 new StdOutUserNotifier()
             )
         );
-
         EventBus::subscribe(
             UserPasswordChangedEvent::class,
             new UserPasswordChangedEventHandler(
-                new InMemoryActiveUserRepository(),
                 new StdOutUserNotifier()
             )
         );

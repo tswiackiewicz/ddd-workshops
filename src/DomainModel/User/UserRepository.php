@@ -9,10 +9,10 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
 };
 
 /**
- * Interface RegisteredUserRepository
+ * Interface UserRepository
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-interface RegisteredUserRepository
+interface UserRepository
 {
     /**
      * @return UserId
@@ -27,24 +27,29 @@ interface RegisteredUserRepository
 
     /**
      * @param UserId $id
-     * @return RegisteredUser
+     * @return User
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getById(UserId $id): RegisteredUser;
+    public function getById(UserId $id): User;
 
     /**
      * @param string $hash
-     * @return RegisteredUser
+     * @return User
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getByHash(string $hash): RegisteredUser;
+    public function getByHash(string $hash): User;
 
     /**
-     * @param RegisteredUser $user
+     * @param User $user
      * @return UserId
      * @throws UserRepositoryException
      */
-    public function save(RegisteredUser $user): UserId;
+    public function save(User $user): UserId;
+
+    /**
+     * @param UserId $id
+     */
+    public function remove(UserId $id): void;
 }

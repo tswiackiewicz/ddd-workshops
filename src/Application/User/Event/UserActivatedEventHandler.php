@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Application\User\Event;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Event\UserPasswordChangedEvent, UserNotifier
+    Event\UserActivatedEvent, UserNotifier
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\{
     RuntimeException, UserDomainModelException
@@ -14,10 +14,10 @@ use TSwiackiewicz\DDD\Event\{
 };
 
 /**
- * Class UserPasswordChangedEventHandler
+ * Class UserActivatedEventHandler
  * @package TSwiackiewicz\AwesomeApp\Application\User\Event
  */
-class UserPasswordChangedEventHandler implements EventHandler
+class UserActivatedEventHandler implements EventHandler
 {
     /**
      * @var UserNotifier
@@ -25,7 +25,7 @@ class UserPasswordChangedEventHandler implements EventHandler
     private $notifier;
 
     /**
-     * UserPasswordChangedEventHandler constructor.
+     * UserActivatedEventHandler constructor.
      * @param UserNotifier $notifier
      */
     public function __construct(UserNotifier $notifier)
@@ -39,8 +39,8 @@ class UserPasswordChangedEventHandler implements EventHandler
      */
     public function handle(Event $event): void
     {
-        if (!$event instanceof UserPasswordChangedEvent) {
-            throw RuntimeException::invalidHandledEventType($event, UserPasswordChangedEvent::class);
+        if (!$event instanceof UserActivatedEvent) {
+            throw RuntimeException::invalidHandledEventType($event, UserActivatedEvent::class);
         }
 
         $this->notifier->notifyUser($event);

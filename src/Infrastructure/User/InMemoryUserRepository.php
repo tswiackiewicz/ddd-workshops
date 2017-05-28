@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Infrastructure\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Exception\UserNotFoundException, RegisteredUser, RegisteredUserRepository
+    Exception\UserNotFoundException, User, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
@@ -12,10 +12,10 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
 };
 
 /**
- * Class InMemoryRegisteredUserRepository
+ * Class InMemoryUserRepository
  * @package TSwiackiewicz\AwesomeApp\Infrastructure\User
  */
-class InMemoryRegisteredUserRepository implements RegisteredUserRepository
+class InMemoryUserRepository implements UserRepository
 {
     /**
      * @var array
@@ -48,20 +48,20 @@ class InMemoryRegisteredUserRepository implements RegisteredUserRepository
 
     /**
      * @param UserId $id
-     * @return RegisteredUser
+     * @return User
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getById(UserId $id): RegisteredUser
+    public function getById(UserId $id): User
     {
         if (isset(self::$identityMap[$id->getId()])) {
             return self::$identityMap[$id->getId()];
         }
 
         $user = InMemoryStorage::fetchById(InMemoryStorage::TYPE_USER, $id->getId());
-        if ($user) {
+        if (isset($user['active']) && true === $user['active']) {
             try {
-                self::$identityMap[$id->getId()] = RegisteredUser::fromNative($user);
+                self::$identityMap[$id->getId()] = User::fromNative($user);
 
                 return self::$identityMap[$id->getId()];
             } catch (InvalidArgumentException $exception) {
@@ -74,11 +74,11 @@ class InMemoryRegisteredUserRepository implements RegisteredUserRepository
 
     /**
      * @param string $hash
-     * @return RegisteredUser
+     * @return User
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getByHash(string $hash): RegisteredUser
+    public function getByHash(string $hash): User
     {
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
@@ -87,7 +87,7 @@ class InMemoryRegisteredUserRepository implements RegisteredUserRepository
                 (!isset($user['active']) || false === $user['active'])
             ) {
                 try {
-                    self::$identityMap[$user['id']] = RegisteredUser::fromNative($user);
+                    self::$identityMap[$user['id']] = User::fromNative($user);
 
                     return self::$identityMap[$user['id']];
                 } catch (InvalidArgumentException $exception) {
@@ -100,11 +100,11 @@ class InMemoryRegisteredUserRepository implements RegisteredUserRepository
     }
 
     /**
-     * @param RegisteredUser $user
+     * @param User $user
      * @return UserId
      * @throws UserRepositoryException
      */
-    public function save(RegisteredUser $user): UserId
+    public function save(User $user): UserId
     {
         if ($user->getId()->isNull()) {
             $userId = InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER);
@@ -118,17 +118,26 @@ class InMemoryRegisteredUserRepository implements RegisteredUserRepository
             'password' => (string)$user->getPassword(),
             'hash' => $user->hash(),
             'active' => $user->isActive(),
-            'enabled' => true
+            'enabled' => $user->isEnabled()
         ];
 
         InMemoryStorage::save(InMemoryStorage::TYPE_USER, $nativeUser);
 
         try {
-            self::$identityMap[$userId] = RegisteredUser::fromNative($nativeUser);
+            self::$identityMap[$userId] = User::fromNative($nativeUser);
 
             return UserId::fromInt($nativeUser['id']);
         } catch (InvalidArgumentException $exception) {
             throw UserRepositoryException::fromPrevious($exception);
         }
+    }
+
+    /**
+     * @param UserId $id
+     */
+    public function remove(UserId $id): void
+    {
+        InMemoryStorage::removeById(InMemoryStorage::TYPE_USER, $id->getId());
+        unset(self::$identityMap[$id->getId()]);
     }
 }

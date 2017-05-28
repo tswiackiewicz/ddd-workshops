@@ -4,19 +4,20 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Application\User\Event;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Event\UserEvent, UserNotifier
+    Event\UserRegisteredEvent, UserNotifier
 };
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\{
+    RuntimeException, UserDomainModelException
+};
 use TSwiackiewicz\DDD\Event\{
     Event, EventHandler
 };
 
 /**
- * Sample generic event handler
- *
+ * Class UserRegisteredEventHandler
  * @package TSwiackiewicz\AwesomeApp\Application\User\Event
  */
-class UserEventHandler implements EventHandler
+class UserRegisteredEventHandler implements EventHandler
 {
     /**
      * @var UserNotifier
@@ -24,7 +25,7 @@ class UserEventHandler implements EventHandler
     private $notifier;
 
     /**
-     * UserEventHandler constructor.
+     * UserRegisteredEventHandler constructor.
      * @param UserNotifier $notifier
      */
     public function __construct(UserNotifier $notifier)
@@ -34,14 +35,14 @@ class UserEventHandler implements EventHandler
 
     /**
      * @param Event $event
+     * @throws UserDomainModelException
      */
     public function handle(Event $event): void
     {
-        if (!$event instanceof UserEvent) {
-            throw RuntimeException::invalidHandledEventType($event, UserEvent::class);
+        if (!$event instanceof UserRegisteredEvent) {
+            throw RuntimeException::invalidHandledEventType($event, UserRegisteredEvent::class);
         }
 
-        /** @var UserEvent $event */
         $this->notifier->notifyUser($event);
     }
 }

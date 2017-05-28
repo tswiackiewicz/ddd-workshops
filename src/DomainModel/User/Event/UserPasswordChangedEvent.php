@@ -31,6 +31,14 @@ class UserPasswordChangedEvent extends UserEvent
     /**
      * @return string
      */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @return string
+     */
     public function __toString(): string
     {
         return sprintf(

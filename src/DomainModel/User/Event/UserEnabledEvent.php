@@ -10,6 +10,14 @@ namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 class UserEnabledEvent extends UserEvent
 {
     /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return true;
+    }
+
+    /**
      * @return string
      */
     public function __toString(): string
