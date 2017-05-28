@@ -6,14 +6,15 @@ namespace TSwiackiewicz\AwesomeApp\Application\User;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, GenerateResetPasswordTokenCommand, RegisterUserCommand, ResetPasswordCommand, UnregisterUserCommand
 };
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserAlreadyExistsException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPasswordService;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRepository;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserDomainModelException;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\ValidationException;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\{
+    Password\UserPasswordService, User, UserRepository
+};
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\{
+    PasswordException, UserAlreadyExistsException
+};
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
+    Exception\UserDomainModelException, Exception\ValidationException, UserId
+};
 
 /**
  * Class UserService

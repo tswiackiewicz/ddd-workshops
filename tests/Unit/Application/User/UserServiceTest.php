@@ -12,23 +12,65 @@ use TSwiackiewicz\AwesomeApp\Application\User\Event\UserDisabledEventHandler;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEnabledEventHandler;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserPasswordChangedEventHandler;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserUnregisteredEventHandler;
+use TSwiackiewicz\AwesomeApp\Application\User\UserService;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserDisabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserPasswordChangedEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserAlreadyExistsException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
- * Class ActiveUserServiceTest
+ * Class UserServiceTest
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User
  *
- * @coversDefaultClass ActiveUserService
+ * @coversDefaultClass UserService
  */
-class ActiveUserServiceTest extends UserServiceBaseTestCase
+class UserServiceTest extends UserServiceBaseTestCase
 {
+    public function shouldRegisterUser(): void
+    {
+        self::markTestSkipped('TODO: Implement shouldRegisterUser() method test.');
+    }
+
+    public function shouldFailWhenRegisteredUserAlreadyExists(): void
+    {
+        $this->expectException(UserAlreadyExistsException::class);
+        self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserAlreadyExists() method test.');
+    }
+
+    public function shouldFailWhenRegisteredUserLoginIsInvalid(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserLoginIsInvalid() method test.');
+    }
+
+    public function shouldActivateUser(): void
+    {
+        self::markTestSkipped('TODO: Implement shouldActivateUser() method test.');
+    }
+
+    public function shouldFailWhenActivatedUserNotExists(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+        self::markTestSkipped('TODO: Implement shouldFailWhenActivatedUserNotExists() method test.');
+    }
+
+    public function shouldGenerateResetPasswordToken(): void
+    {
+        self::markTestSkipped('TODO: Implement shouldGenerateResetPasswordToken() method test.');
+    }
+
+    public function shouldResetPassword(): void
+    {
+        self::markTestSkipped('TODO: Implement shouldResetPassword() method test.');
+    }
+
+
     /**
      * @test
      */
@@ -37,13 +79,15 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         FakeEventBus::subscribe(
             UserEnabledEvent::class,
             new UserEnabledEventHandler(
-                $this->getActiveUserRepositoryMockForEnableUser(),
+                $this->getUserRepositoryMockForEnableUser(),
                 $this->getUserNotifierMock(UserEnabledEvent::class)
             )
         );
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockReturningActiveUser(),
+        $service = new UserService(
+            $this->getUserRepositoryMockReturningUser(
+                $this->getUser(true, false)
+            ),
             $this->getUserPasswordServiceMock()
         );
         $service->enable(
@@ -60,8 +104,8 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         $this->expectException(UserNotFoundException::class);
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockWhenUserByIdNotFound(),
+        $service = new UserService(
+            $this->getUserRepositoryMockWhenUserByIdNotFound(),
             $this->getUserPasswordServiceMock()
         );
         $service->enable(
@@ -79,13 +123,15 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         FakeEventBus::subscribe(
             UserDisabledEvent::class,
             new UserDisabledEventHandler(
-                $this->getActiveUserRepositoryMockForEnableUser(),
+                $this->getUserRepositoryMockForEnableUser(),
                 $this->getUserNotifierMock(UserDisabledEvent::class)
             )
         );
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockReturningActiveUser(),
+        $service = new UserService(
+            $this->getUserRepositoryMockReturningUser(
+                $this->getUser(true, true)
+            ),
             $this->getUserPasswordServiceMock()
         );
         $service->disable(
@@ -102,8 +148,8 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         $this->expectException(UserNotFoundException::class);
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockWhenUserByIdNotFound(),
+        $service = new UserService(
+            $this->getUserRepositoryMockWhenUserByIdNotFound(),
             $this->getUserPasswordServiceMock()
         );
         $service->disable(
@@ -123,13 +169,15 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         FakeEventBus::subscribe(
             UserPasswordChangedEvent::class,
             new UserPasswordChangedEventHandler(
-                $this->getActiveUserRepositoryMockForEnableUser(),
+                $this->getUserRepositoryMockForEnableUser(),
                 $this->getUserNotifierMock(UserPasswordChangedEvent::class)
             )
         );
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockReturningActiveUser(),
+        $service = new UserService(
+            $this->getUserRepositoryMockReturningUser(
+                $this->getUser(true, true)
+            ),
             $this->getUserPasswordServiceMock()
         );
         $service->changePassword(
@@ -147,8 +195,8 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         $this->expectException(PasswordException::class);
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMock(),
+        $service = new UserService(
+            $this->getUserRepositoryMock(),
             $this->getUserPasswordServiceMockForWeakPasswordVerification()
         );
         $service->changePassword(
@@ -166,8 +214,10 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         $this->expectException(PasswordException::class);
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockReturningActiveUser(),
+        $service = new UserService(
+            $this->getUserRepositoryMockReturningUser(
+                $this->getUser(true, true)
+            ),
             $this->getUserPasswordServiceMock()
         );
         $service->changePassword(
@@ -185,8 +235,8 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         $this->expectException(UserNotFoundException::class);
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockWhenUserByIdNotFound(),
+        $service = new UserService(
+            $this->getUserRepositoryMockWhenUserByIdNotFound(),
             $this->getUserPasswordServiceMock()
         );
         $service->changePassword(
@@ -205,13 +255,15 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
         FakeEventBus::subscribe(
             UserUnregisteredEvent::class,
             new UserUnregisteredEventHandler(
-                $this->getActiveUserRepositoryMockForRemoveUser(),
+                $this->getUserRepositoryMockForRemoveUser(),
                 $this->getUserNotifierMock(UserUnregisteredEvent::class)
             )
         );
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockReturningActiveUser(),
+        $service = new UserService(
+            $this->getUserRepositoryMockReturningUser(
+                $this->getUser(true, true)
+            ),
             $this->getUserPasswordServiceMock()
         );
         $service->unregister(
@@ -228,8 +280,8 @@ class ActiveUserServiceTest extends UserServiceBaseTestCase
     {
         $this->expectException(UserNotFoundException::class);
 
-        $service = new ActiveUserService(
-            $this->getActiveUserRepositoryMockWhenUserByIdNotFound(),
+        $service = new UserService(
+            $this->getUserRepositoryMockWhenUserByIdNotFound(),
             $this->getUserPasswordServiceMock()
         );
         $service->unregister(

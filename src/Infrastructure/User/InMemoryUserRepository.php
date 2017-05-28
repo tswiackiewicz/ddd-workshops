@@ -110,7 +110,7 @@ class InMemoryUserRepository implements UserRepository
             'login' => (string)$user->getLogin(),
             'password' => (string)$user->getPassword(),
             'hash' => $user->hash(),
-            'active' => true,
+            'active' => $user->isActive(),
             'enabled' => $user->isEnabled()
         ];
 
