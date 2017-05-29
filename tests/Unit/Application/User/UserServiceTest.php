@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
-use TSwiackiewicz\AwesomeApp\Application\User\ActiveUserService;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\ActivateUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\ChangePasswordCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\DisableUserCommand;
@@ -158,7 +157,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserPasswordServiceMock()
         );
         $service->enable(
-            new EnableUserCommand(UserId::fromInt(1234))
+            new EnableUserCommand(UserId::fromInt(12345))
         );
     }
 
@@ -197,7 +196,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserPasswordServiceMock()
         );
         $service->disable(
-            new DisableUserCommand(UserId::fromInt(1234))
+            new DisableUserCommand(UserId::fromInt(12345))
         );
     }
 

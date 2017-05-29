@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Infrastructure\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Exception\UserNotFoundException, Password\UserPassword, RegisteredUser, User, UserLogin
+    Exception\UserNotFoundException, Password\UserPassword, User, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryStorage, User\InMemoryRegisteredUserRepository, User\InMemoryUserRepository
+    InMemoryStorage, User\InMemoryUserRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserRepositoryException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
@@ -42,7 +42,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
      */
     public function shouldReturnTrueWhenUserExists(): void
     {
-        self::assertTrue($this->repository->exists('registered_user@domain.com'));
+        self::assertTrue($this->repository->exists($this->login));
     }
 
     /**
@@ -59,7 +59,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
     public function shouldReturnUserById(): void
     {
         $user = $this->repository->getById(
-            UserId::fromInt(1)
+            UserId::fromInt($this->userId)
         );
 
         self::assertInstanceOf(User::class, $user);
@@ -71,12 +71,12 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
     public function shouldFetchUserByIdFromStorageOnlyOnce(): void
     {
         $firstAttemptUser = $this->repository->getById(
-            UserId::fromInt(1)
+            UserId::fromInt($this->userId)
         );
 
         $repository = new InMemoryUserRepository();
         $secondAttemptUser = $repository->getById(
-            UserId::fromInt(1)
+            UserId::fromInt($this->userId)
         );
 
         self::assertSame($firstAttemptUser, $secondAttemptUser);
@@ -87,10 +87,14 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
      */
     public function shouldFailWhenDataInStorageIsInvalid(): void
     {
+        $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
+        $identityMap->setAccessible(true);
+        $identityMap->setValue(null, []);
+
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
             [
-                'id' => 1234,
+                'id' => $this->userId,
                 'login' => '',
                 'password' => '',
                 'hash' => '',
@@ -98,10 +102,11 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
                 'enabled' => true
             ]
         );
+
         $this->expectException(UserRepositoryException::class);
 
         $this->repository->getById(
-            UserId::fromInt(1234)
+            UserId::fromInt($this->userId)
         );
     }
 
@@ -113,7 +118,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $this->repository->getById(
-            UserId::fromInt(1234)
+            UserId::fromInt(12345)
         );
     }
 
@@ -122,7 +127,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
      */
     public function shouldReturnUserByHash(): void
     {
-        $user = $this->repository->getByHash('8c205829c92a2c7259667b863d81dbe8');
+        $user = $this->repository->getByHash($this->hash);
 
         self::assertInstanceOf(User::class, $user);
     }
@@ -159,24 +164,15 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
      */
     public function shouldRemoveUserById(): void
     {
-        $user = new User(
-            UserId::fromInt(123),
-            new UserLogin('test_user@domain.com'),
-            new UserPassword('test_password'),
-            true,
-            true
-        );
-        $this->repository->save($user);
-
         self::assertEquals(
-            'test_user@domain.com',
-            (string)$this->repository->getById(UserId::fromInt(123))->getLogin()
+            $this->login,
+            (string)$this->repository->getById(UserId::fromInt($this->userId))->getLogin()
         );
 
-        $this->repository->remove(UserId::fromInt(123));
+        $this->repository->remove(UserId::fromInt($this->userId));
 
         try {
-            $this->repository->getById(UserId::fromInt(123));
+            $this->repository->getById(UserId::fromInt($this->userId));
         } catch (UserNotFoundException $exception) {
             // user not found
         }
@@ -190,12 +186,11 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         InMemoryStorage::clear();
 
         $this->repository = new InMemoryUserRepository();
-
         $this->repository->save(
             User::register(
-                UserId::fromInt(1),
-                new UserLogin('registered_user@domain.com'),
-                new UserPassword('test_password')
+                UserId::fromInt($this->userId),
+                new UserLogin($this->login),
+                new UserPassword($this->password)
             )
         );
     }
