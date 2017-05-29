@@ -4,6 +4,10 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class UserBaseTestCase
@@ -25,6 +29,11 @@ abstract class UserBaseTestCase extends TestCase
      * @var string
      */
     protected $password = 'password1234';
+
+    /**
+     * @var string
+     */
+    protected $hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
 
     /**
      * @return array
@@ -66,5 +75,61 @@ abstract class UserBaseTestCase extends TestCase
                 'test123'
             ]
         ];
+    }
+
+    /**
+     * @return User
+     */
+    protected function createActiveUser(): User
+    {
+        return new User(
+            UserId::fromInt($this->userId),
+            new UserLogin($this->login),
+            new UserPassword($this->password),
+            true,
+            false
+        );
+    }
+
+    /**
+     * @return User
+     */
+    protected function createInactiveUser(): User
+    {
+        return new User(
+            UserId::fromInt($this->userId),
+            new UserLogin($this->login),
+            new UserPassword($this->password),
+            false,
+            false
+        );
+    }
+
+    /**
+     * @return User
+     */
+    protected function createEnabledUser(): User
+    {
+        return new User(
+            UserId::fromInt($this->userId),
+            new UserLogin($this->login),
+            new UserPassword($this->password),
+            true,
+            true
+        );
+    }
+
+    /**
+     * @return User
+     */
+    protected function createDisabledUser(): User
+    {
+        return new User(
+            UserId::fromInt($this->userId),
+            new UserLogin($this->login),
+            new UserPassword($this->password),
+            true,
+            false
+        );
     }
 }
