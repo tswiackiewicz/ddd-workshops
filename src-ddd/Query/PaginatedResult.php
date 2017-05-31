@@ -12,8 +12,6 @@ use TSwiackiewicz\DDD\Query\Pagination\Pagination;
  */
 class PaginatedResult
 {
-    private const DEFAULT_CURRENT_PAGE = 1;
-
     /**
      * @var array
      */
@@ -56,21 +54,20 @@ class PaginatedResult
      */
     public static function withPagination(array $items, Pagination $pagination): PaginatedResult
     {
-        $perPage = $pagination->getPerPage();
         $totalItemsCount = count($items);
 
         if ($pagination instanceof NullPagination) {
-            $perPage = $totalItemsCount;
+            $pagination->setPerPage($totalItemsCount);
         }
 
         return new static(
             array_slice(
                 $items,
                 $pagination->getOffset(),
-                $perPage
+                $pagination->getPerPage()
             ),
             $pagination->getCurrentPage(),
-            $perPage,
+            $pagination->getPerPage(),
             $totalItemsCount
         );
     }

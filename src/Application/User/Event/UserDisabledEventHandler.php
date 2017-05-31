@@ -6,9 +6,7 @@ namespace TSwiackiewicz\AwesomeApp\Application\User\Event;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Event\UserDisabledEvent, UserNotifier
 };
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\{
-    RuntimeException, UserDomainModelException
-};
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 use TSwiackiewicz\DDD\Event\{
     Event, EventHandler
 };
@@ -35,7 +33,6 @@ class UserDisabledEventHandler implements EventHandler
 
     /**
      * @param Event $event
-     * @throws UserDomainModelException
      */
     public function handle(Event $event): void
     {

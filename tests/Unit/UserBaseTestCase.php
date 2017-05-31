@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
@@ -131,5 +132,27 @@ abstract class UserBaseTestCase extends TestCase
             true,
             false
         );
+    }
+
+    /**
+     * @param null|string $eventName
+     * @return UserNotifier|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserNotifierMock(?string $eventName = null): UserNotifier
+    {
+        /** @var UserNotifier|\PHPUnit_Framework_MockObject_MockObject $notifier */
+        $notifier = $this->getMockBuilder(UserNotifier::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'notifyUser'
+            ])
+            ->getMock();
+        if ($eventName !== null) {
+            $notifier->expects(self::once())
+                ->method('notifyUser')
+                ->with(self::isInstanceOf($eventName));
+        }
+
+        return $notifier;
     }
 }

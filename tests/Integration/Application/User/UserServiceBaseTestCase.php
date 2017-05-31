@@ -5,21 +5,17 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User;
 
 use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\Application\User\{
-    Event\UserDisabledEventHandler, Event\UserEnabledEventHandler, Event\UserPasswordChangedEventHandler, Event\UserRegisteredEventHandler, Event\UserUnregisteredEventHandler, UserService
-};
-use TSwiackiewicz\AwesomeApp\Application\User\Command\{
-    ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, RegisterUserCommand, UnregisterUserCommand
+    Event\UserActivatedEventHandler, Event\UserDisabledEventHandler, Event\UserEnabledEventHandler, Event\UserPasswordChangedEventHandler, Event\UserRegisteredEventHandler, Event\UserUnregisteredEventHandler, UserService
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Exception\PasswordException, Exception\UserAlreadyExistsException, Exception\UserNotFoundException, Password\UserPassword, Password\UserPasswordService, User, UserLogin
+    Password\UserPassword, Password\UserPasswordService, User, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
-    UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
+    UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryStorage, User\InMemoryUserReadModelRepository, User\InMemoryUserRepository, User\StdOutUserNotifier
+    InMemoryStorage, User\InMemoryUserRepository, User\StdOutUserNotifier
 };
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
 
@@ -122,6 +118,12 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserRegisteredEvent::class,
             new UserRegisteredEventHandler(
+                new StdOutUserNotifier()
+            )
+        );
+        EventBus::subscribe(
+            UserActivatedEvent::class,
+            new UserActivatedEventHandler(
                 new StdOutUserNotifier()
             )
         );

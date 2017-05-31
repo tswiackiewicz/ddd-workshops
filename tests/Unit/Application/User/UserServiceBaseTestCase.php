@@ -3,13 +3,11 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
-use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEventHandler;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    ActiveUser, ActiveUserRepository, Password\UserPasswordService, RegisteredUser, RegisteredUserRepository, User, UserLogin, UserRepository
+    Password\UserPasswordService, User, UserLogin, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
@@ -158,28 +156,6 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
             ->willThrowException(UserNotFoundException::forUser($this->login));
 
         return $repository;
-    }
-
-    /**
-     * @param null|string $eventName
-     * @return UserNotifier|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getUserNotifierMock(?string $eventName = null): UserNotifier
-    {
-        /** @var UserNotifier|\PHPUnit_Framework_MockObject_MockObject $notifier */
-        $notifier = $this->getMockBuilder(UserNotifier::class)
-            ->disableOriginalConstructor()
-            ->setMethods([
-                'notifyUser'
-            ])
-            ->getMock();
-        if ($eventName !== null) {
-            $notifier->expects(self::once())
-                ->method('notifyUser')
-                ->with(self::isInstanceOf($eventName));
-        }
-
-        return $notifier;
     }
 
     /**

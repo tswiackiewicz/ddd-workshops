@@ -58,11 +58,23 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
      */
     public function shouldReturnUserById(): void
     {
+        $this->clearIdentityMap();
+
         $user = $this->repository->getById(
             UserId::fromInt($this->userId)
         );
 
         self::assertInstanceOf(User::class, $user);
+    }
+
+    /**
+     * Clear identity map
+     */
+    private function clearIdentityMap(): void
+    {
+        $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
+        $identityMap->setAccessible(true);
+        $identityMap->setValue(null, []);
     }
 
     /**
@@ -85,11 +97,9 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
     /**
      * @test
      */
-    public function shouldFailWhenDataInStorageIsInvalid(): void
+    public function shouldFailWhenInvalidStorageDataForUserById(): void
     {
-        $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
-        $identityMap->setAccessible(true);
-        $identityMap->setValue(null, []);
+        $this->clearIdentityMap();
 
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
@@ -135,6 +145,30 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
     /**
      * @test
      */
+    public function shouldFailWhenInvalidStorageDataForUserByHash(): void
+    {
+        $this->clearIdentityMap();
+
+        InMemoryStorage::save(
+            InMemoryStorage::TYPE_USER,
+            [
+                'id' => $this->userId,
+                'login' => '',
+                'password' => '',
+                'hash' => $this->hash,
+                'active' => true,
+                'enabled' => true
+            ]
+        );
+
+        $this->expectException(UserRepositoryException::class);
+
+        $this->repository->getByHash($this->hash);
+    }
+
+    /**
+     * @test
+     */
     public function shouldFailWhenUserByHashNotFound(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -157,6 +191,25 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         $this->repository->save($user);
 
         self::assertTrue($this->repository->getById(UserId::fromInt(1))->isActive());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSaveUserWithNullId(): void
+    {
+        InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER);
+
+        $user = new User(
+            UserId::nullInstance(),
+            new UserLogin('test_user@domain.com'),
+            new UserPassword('test_password'),
+            true,
+            false
+        );
+        $userId = $this->repository->save($user);
+
+        self::assertTrue($this->repository->getById($userId)->isActive());
     }
 
     /**

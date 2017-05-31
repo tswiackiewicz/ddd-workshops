@@ -17,7 +17,7 @@ class Pagination
     /**
      * @var int
      */
-    private $perPage;
+    protected $perPage;
 
     /**
      * Pagination constructor.

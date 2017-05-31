@@ -75,16 +75,6 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    public function shouldGenerateResetPasswordToken(): void
-    {
-        self::markTestSkipped('TODO: Implement shouldGenerateResetPasswordToken() method test.');
-    }
-
-    public function shouldResetPassword(): void
-    {
-        self::markTestSkipped('TODO: Implement shouldResetPassword() method test.');
-    }
-
     /**
      * @test
      */

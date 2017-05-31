@@ -9,6 +9,8 @@ namespace TSwiackiewicz\DDD\Query\Sort;
  */
 class NullSort extends Sort
 {
+    private const ORDER_NO_SORT = '';
+
     /**
      * NullSort constructor.
      */

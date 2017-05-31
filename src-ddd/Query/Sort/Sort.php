@@ -11,7 +11,6 @@ class Sort
 {
     private const ORDER_ASC = 'ASC';
     private const ORDER_DESC = 'DESC';
-    protected const ORDER_NO_SORT = '';
 
     /**
      * @var string
