@@ -27,6 +27,11 @@ abstract class UserBaseTestCase extends TestCase
     protected $password = 'password1234';
 
     /**
+     * @var string
+     */
+    protected $hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
+
+    /**
      * @return array
      */
     public function getInvalidLoginDataProvider(): array

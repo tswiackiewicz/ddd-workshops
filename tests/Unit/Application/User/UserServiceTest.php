@@ -4,25 +4,32 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
 use TSwiackiewicz\AwesomeApp\Application\User\ActiveUserService;
+use TSwiackiewicz\AwesomeApp\Application\User\Command\ActivateUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\ChangePasswordCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\DisableUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\EnableUserCommand;
+use TSwiackiewicz\AwesomeApp\Application\User\Command\RegisterUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\UnregisterUserCommand;
+use TSwiackiewicz\AwesomeApp\Application\User\Event\UserActivatedEventHandler;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserDisabledEventHandler;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEnabledEventHandler;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserPasswordChangedEventHandler;
+use TSwiackiewicz\AwesomeApp\Application\User\Event\UserRegisteredEventHandler;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserUnregisteredEventHandler;
 use TSwiackiewicz\AwesomeApp\Application\User\UserService;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserActivatedEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserDisabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserPasswordChangedEvent;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserRegisteredEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserAlreadyExistsException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
  * Class UserServiceTest
@@ -32,44 +39,93 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
  */
 class UserServiceTest extends UserServiceBaseTestCase
 {
+    /**
+     * @test
+     */
     public function shouldRegisterUser(): void
     {
-        self::markTestSkipped('TODO: Implement shouldRegisterUser() method test.');
+        EventBus::subscribe(
+            UserRegisteredEvent::class,
+            new UserRegisteredEventHandler(
+                $this->getUserRepositoryMockForRegisterUser(
+                    $this->getUser(false, false)
+                ),
+                $this->getUserNotifierMock(UserRegisteredEvent::class)
+            )
+        );
+
+        $service = new UserService(
+            $this->getUserRepositoryMockCheckingIfUserByLoginExists(false),
+            $this->getUserPasswordServiceMock()
+        );
+        $service->register(
+            new RegisterUserCommand(
+                new UserLogin($this->login),
+                new UserPassword($this->password)
+            )
+        );
     }
 
+    /**
+     * @test
+     */
     public function shouldFailWhenRegisteredUserAlreadyExists(): void
     {
         $this->expectException(UserAlreadyExistsException::class);
-        self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserAlreadyExists() method test.');
+
+        $service = new UserService(
+            $this->getUserRepositoryMockCheckingIfUserByLoginExists(true),
+            $this->getUserPasswordServiceMock()
+        );
+        $service->register(
+            new RegisterUserCommand(
+                new UserLogin($this->login),
+                new UserPassword($this->password)
+            )
+        );
     }
 
-    public function shouldFailWhenRegisteredUserLoginIsInvalid(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserLoginIsInvalid() method test.');
-    }
-
+    /**
+     * @test
+     */
     public function shouldActivateUser(): void
     {
-        self::markTestSkipped('TODO: Implement shouldActivateUser() method test.');
+        EventBus::subscribe(
+            UserActivatedEvent::class,
+            new UserActivatedEventHandler(
+                $this->getUserRepositoryMockForActivateUser(
+                    $this->getUser(true, true)
+                ),
+                $this->getUserNotifierMock(UserActivatedEvent::class)
+            )
+        );
+
+        $service = new UserService(
+            $this->getUserRepositoryMockReturningUserByHash(
+                $this->getUser(false, false)
+            ),
+            $this->getUserPasswordServiceMock()
+        );
+        $service->activate(
+            new ActivateUserCommand($this->hash)
+        );
     }
 
+    /**
+     * @test
+     */
     public function shouldFailWhenActivatedUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
-        self::markTestSkipped('TODO: Implement shouldFailWhenActivatedUserNotExists() method test.');
-    }
 
-    public function shouldGenerateResetPasswordToken(): void
-    {
-        self::markTestSkipped('TODO: Implement shouldGenerateResetPasswordToken() method test.');
+        $service = new UserService(
+            $this->getUserRepositoryMockWhenUserByHashNotFound(),
+            $this->getUserPasswordServiceMock()
+        );
+        $service->activate(
+            new ActivateUserCommand($this->hash)
+        );
     }
-
-    public function shouldResetPassword(): void
-    {
-        self::markTestSkipped('TODO: Implement shouldResetPassword() method test.');
-    }
-
 
     /**
      * @test

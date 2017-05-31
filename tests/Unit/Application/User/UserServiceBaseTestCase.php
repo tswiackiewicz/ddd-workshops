@@ -34,18 +34,18 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
      * @param null|User $user
      * @return UserRepository
      */
-    protected function getUserRepositoryMockForEnableUser(?User $user = null): UserRepository
+    protected function getUserRepositoryMockForRegisterUser(?User $user = null): UserRepository
     {
         /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder(UserRepository::class)
             ->setMethods([
-                'getById',
-                'save'
+                'save',
+                'getByLogin'
             ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $repository->expects(self::once())->method('getById')->willReturn($user ?: $this->getUser(true, false));
         $repository->expects(self::once())->method('save');
+        $repository->expects(self::once())->method('getByLogin')->willReturn($user ?: $this->getUser(true, false));
 
         return $repository;
     }
@@ -70,6 +70,46 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
      * @param null|User $user
      * @return UserRepository
      */
+    protected function getUserRepositoryMockForActivateUser(?User $user = null): UserRepository
+    {
+        /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $this->getMockBuilder(UserRepository::class)
+            ->setMethods([
+                'getById',
+                'save'
+            ])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $repository->expects(self::once())->method('getById')->willReturn($user ?: $this->getUser(true, false));
+        $repository->expects(self::once())->method('save');
+
+        return $repository;
+    }
+
+    /**
+     * @param null|User $user
+     * @return UserRepository
+     */
+    protected function getUserRepositoryMockForEnableUser(?User $user = null): UserRepository
+    {
+        /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $this->getMockBuilder(UserRepository::class)
+            ->setMethods([
+                'getById',
+                'save'
+            ])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $repository->expects(self::once())->method('getById')->willReturn($user ?: $this->getUser(true, false));
+        $repository->expects(self::once())->method('save');
+
+        return $repository;
+    }
+
+    /**
+     * @param null|User $user
+     * @return UserRepository
+     */
     protected function getUserRepositoryMockReturningUser(?User $user = null): UserRepository
     {
         /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
@@ -80,6 +120,61 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $repository->expects(self::once())->method('getById')->willReturn($user ?: $this->getUser(true, false));
+
+        return $repository;
+    }
+
+    /**
+     * @param null|User $user
+     * @return UserRepository
+     */
+    protected function getUserRepositoryMockReturningUserByHash(?User $user = null): UserRepository
+    {
+        /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $this->getMockBuilder(UserRepository::class)
+            ->setMethods([
+                'getByHash'
+            ])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $repository->expects(self::once())->method('getByHash')->willReturn($user ?: $this->getUser(true, false));
+
+        return $repository;
+    }
+
+    /**
+     * @param bool $exists
+     * @return UserRepository
+     */
+    protected function getUserRepositoryMockCheckingIfUserByLoginExists(bool $exists): UserRepository
+    {
+        /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $this->getMockBuilder(UserRepository::class)
+            ->setMethods([
+                'exists'
+            ])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $repository->expects(self::once())->method('exists')->willReturn($exists);
+
+        return $repository;
+    }
+
+    /**
+     * @return UserRepository
+     */
+    protected function getUserRepositoryMockWhenUserByHashNotFound(): UserRepository
+    {
+        /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $this->getMockBuilder(UserRepository::class)
+            ->setMethods([
+                'getByHash'
+            ])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $repository->expects(self::once())
+            ->method('getByHash')
+            ->willThrowException(UserNotFoundException::forHash($this->hash));
 
         return $repository;
     }
