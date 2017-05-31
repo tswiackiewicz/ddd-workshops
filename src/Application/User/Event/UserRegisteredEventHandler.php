@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Application\User\Event;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Event\UserRegisteredEvent, UserNotifier, UserRepository
+    Event\UserRegisteredEvent, Password\UserPassword, User, UserLogin, UserNotifier, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\{
     RuntimeException, UserDomainModelException
@@ -50,8 +50,18 @@ class UserRegisteredEventHandler implements EventHandler
             throw RuntimeException::invalidHandledEventType($event, UserRegisteredEvent::class);
         }
 
-        // TODO: implement
+        $this->repository->save(
+            new User(
+                $event->getId(),
+                new UserLogin($event->getLogin()),
+                new UserPassword($event->getPassword()),
+                false,
+                false
+            )
+        );
 
-        $this->notifier->notifyUser($event);
+        $registeredUser = $this->repository->getByLogin($event->getLogin());
+
+        $this->notifier->notifyUser($event->withUserId($registeredUser->getId()));
     }
 }

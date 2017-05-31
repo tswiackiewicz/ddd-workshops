@@ -19,4 +19,12 @@ class NullPagination extends Pagination
     {
         parent::__construct(self::DEFAULT_CURRENT_PAGE, self::DEFAULT_PER_PAGE);
     }
+
+    /**
+     * @param int $perPage
+     */
+    public function setPerPage(int $perPage): void
+    {
+        $this->perPage = $perPage;
+    }
 }

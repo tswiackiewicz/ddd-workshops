@@ -50,7 +50,8 @@ class UserActivatedEventHandler implements EventHandler
             throw RuntimeException::invalidHandledEventType($event, UserActivatedEvent::class);
         }
 
-        // TODO: implement
+        $user = $this->repository->getById($event->getId());
+        $this->repository->save($user);
 
         $this->notifier->notifyUser($event);
     }

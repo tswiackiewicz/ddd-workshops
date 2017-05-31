@@ -34,6 +34,14 @@ interface UserRepository
     public function getById(UserId $id): User;
 
     /**
+     * @param string $login
+     * @return User
+     * @throws UserRepositoryException
+     * @throws UserNotFoundException
+     */
+    public function getByLogin(string $login): User;
+
+    /**
      * @param string $hash
      * @return User
      * @throws UserRepositoryException

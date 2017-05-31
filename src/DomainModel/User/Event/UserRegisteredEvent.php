@@ -36,6 +36,18 @@ class UserRegisteredEvent extends UserEvent
     }
 
     /**
+     * @param UserId $userId
+     * @return UserRegisteredEvent
+     */
+    public function withUserId(UserId $userId): UserRegisteredEvent
+    {
+        $event = clone $this;
+        $event->id = $userId;
+
+        return $event;
+    }
+
+    /**
      * @return string
      */
     public function getLogin(): string
