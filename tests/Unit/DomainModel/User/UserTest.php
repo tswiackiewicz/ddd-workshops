@@ -35,7 +35,7 @@ class UserTest extends UserBaseTestCase
         );
 
         self::assertEquals($this->userId, $registeredUser->getId()->getId());
-        self::assertEquals('2202d99e9f9f050779631533d894ecb0', $registeredUser->hash());
+        self::assertEquals($this->hash, $registeredUser->hash());
     }
 
     /**
@@ -62,7 +62,7 @@ class UserTest extends UserBaseTestCase
         self::assertAttributeEquals(new UserPassword($password), 'password', $user);
         self::assertAttributeEquals($active, 'active', $user);
         self::assertAttributeEquals($enabled, 'enabled', $user);
-        self::assertEquals('2202d99e9f9f050779631533d894ecb0', $user->hash());
+        self::assertEquals($this->hash, $user->hash());
     }
 
     /**

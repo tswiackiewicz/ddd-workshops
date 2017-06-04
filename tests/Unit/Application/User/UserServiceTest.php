@@ -22,6 +22,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
  * Class UserServiceTest
@@ -83,7 +84,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserMock(true, false)
         );
 
-        FakeEventBus::subscribe(
+        EventBus::subscribe(
             UserEnabledEvent::class,
             new UserEnabledEventHandler(
                 $this->getEventStoreMock(),
@@ -131,7 +132,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserMock(true, true)
         );
 
-        FakeEventBus::subscribe(
+        EventBus::subscribe(
             UserDisabledEvent::class,
             new UserDisabledEventHandler(
                 $this->getEventStoreMock(),
@@ -181,7 +182,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserMock(true, true)
         );
 
-        FakeEventBus::subscribe(
+        EventBus::subscribe(
             UserPasswordChangedEvent::class,
             new UserPasswordChangedEventHandler(
                 $this->getEventStoreMock(),
@@ -282,7 +283,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserMock(true, true)
         );
 
-        FakeEventBus::subscribe(
+        EventBus::subscribe(
             UserUnregisteredEvent::class,
             new UserUnregisteredEventHandler(
                 $this->getEventStoreMock(),

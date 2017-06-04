@@ -14,7 +14,10 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserProjector;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\EventStore\EventStore;
 
 /**
  * Class UserBaseTestCase
@@ -25,7 +28,7 @@ abstract class UserBaseTestCase extends TestCase
     /**
      * @var int
      */
-    protected $userId = 1234;
+    protected $userId = 1;
 
     /**
      * @var string
@@ -36,6 +39,11 @@ abstract class UserBaseTestCase extends TestCase
      * @var string
      */
     protected $password = 'password1234';
+
+    /**
+     * @var string
+     */
+    protected $hash = '16cd9c90760b79e7948ec315ec29413c';
 
     /**
      * @return array
@@ -232,5 +240,47 @@ abstract class UserBaseTestCase extends TestCase
         $user->activate();
 
         return $user;
+    }
+
+    /**
+     * @param null|string $eventName
+     * @return UserNotifier|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserNotifierMock(?string $eventName = null): UserNotifier
+    {
+        /** @var UserNotifier|\PHPUnit_Framework_MockObject_MockObject $notifier */
+        $notifier = $this->getMockBuilder(UserNotifier::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'notifyUser'
+            ])
+            ->getMock();
+        if ($eventName !== null) {
+            $notifier->expects(self::once())
+                ->method('notifyUser')
+                ->with(self::isInstanceOf($eventName));
+        }
+
+        return $notifier;
+    }
+
+    /**
+     * @return EventStore|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getEventStoreMock(): EventStore
+    {
+        return $this->getMockBuilder(EventStore::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * @return UserProjector|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserProjectorMock(): UserProjector
+    {
+        return $this->getMockBuilder(UserProjector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }

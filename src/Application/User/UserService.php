@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Application\User;
 
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
-    ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, GenerateResetPasswordTokenCommand, RegisterUserCommand, ResetPasswordCommand, UnregisterUserCommand
+    ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, RegisterUserCommand, UnregisterUserCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Exception\PasswordException, Exception\UserAlreadyExistsException, Password\UserPasswordService, User, UserRepository
@@ -60,28 +60,6 @@ class UserService
         );
 
         return $registeredUser->getId();
-    }
-
-    /**
-     * Generate reset password token for registered user
-     *
-     * @param GenerateResetPasswordTokenCommand $command
-     * @throws UserDomainModelException
-     */
-    public function generateResetPasswordToken(GenerateResetPasswordTokenCommand $command): void
-    {
-
-    }
-
-    /**
-     * Reset password for registered user
-     *
-     * @param ResetPasswordCommand $command
-     * @throws UserDomainModelException
-     */
-    public function resetPassword(ResetPasswordCommand $command): void
-    {
-
     }
 
     /**

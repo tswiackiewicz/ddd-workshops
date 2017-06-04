@@ -34,13 +34,6 @@ class UserServiceTest extends UserServiceBaseTestCase
         self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserAlreadyExists() method test.');
     }
 
-    public function shouldFailWhenRegisteredUserLoginIsInvalid(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserLoginIsInvalid() method test.');
-    }
-
     public function shouldActivateUser(): void
     {
         self::markTestSkipped('TODO: Implement shouldActivateUser() method test.');
@@ -51,16 +44,6 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         self::markTestSkipped('TODO: Implement shouldFailWhenActivatedUserNotExists() method test.');
-    }
-
-    public function shouldGenerateResetPasswordToken(): void
-    {
-        self::markTestSkipped('TODO: Implement shouldGenerateResetPasswordToken() method test.');
-    }
-
-    public function shouldResetPassword(): void
-    {
-        self::markTestSkipped('TODO: Implement shouldResetPassword() method test.');
     }
 
     /**
@@ -147,31 +130,14 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldFailWhenChangedPasswordIsTooWeak(): void
     {
-        $this->expectException(PasswordException::class);
-
         $this->enableUser();
+
+        $this->expectException(PasswordException::class);
 
         $this->service->changePassword(
             new ChangePasswordCommand(
                 $this->userId,
                 new UserPassword('weak_password')
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function shouldFailWhenChangedPasswordEqualsWithCurrentPassword(): void
-    {
-        $this->expectException(PasswordException::class);
-
-        $this->enableUser();
-
-        $this->service->changePassword(
-            new ChangePasswordCommand(
-                $this->userId,
-                new UserPassword($this->password)
             )
         );
     }

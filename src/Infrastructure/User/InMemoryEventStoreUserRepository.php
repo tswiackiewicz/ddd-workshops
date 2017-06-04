@@ -91,7 +91,11 @@ class InMemoryEventStoreUserRepository implements UserRepository
      */
     public function getByHash(string $hash): User
     {
-
+        // https://stackoverflow.com/questions/31386244/cqrs-event-sourcing-check-username-is-unique-or-not-from-eventstore-while-sendin
+        // https://stackoverflow.com/questions/9455305/uniqueness-validation-when-using-cqrs-and-event-sourcing
+        // https://stackoverflow.com/questions/9495985/cqrs-event-sourcing-validate-username-uniqueness
+        // https://groups.google.com/forum/#!topic/dddcqrs/aUltOB2a-3Y
+        
     }
 
     /**
