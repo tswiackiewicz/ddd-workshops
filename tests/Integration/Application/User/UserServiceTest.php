@@ -37,6 +37,15 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
 
         self::assertEquals(UserId::fromInt($this->userId), $registeredUserId);
+
+        $nextRegisteredUserId = $this->service->register(
+            new RegisterUserCommand(
+                new UserLogin('next.' . $this->login),
+                new UserPassword($this->password)
+            )
+        );
+
+        self::assertEquals(UserId::fromInt($this->userId + 1), $nextRegisteredUserId);
     }
 
     /**

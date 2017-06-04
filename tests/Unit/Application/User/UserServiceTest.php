@@ -3,29 +3,19 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
-use TSwiackiewicz\AwesomeApp\Application\User\ActiveUserService;
-use TSwiackiewicz\AwesomeApp\Application\User\Command\ActivateUserCommand;
-use TSwiackiewicz\AwesomeApp\Application\User\Command\ChangePasswordCommand;
-use TSwiackiewicz\AwesomeApp\Application\User\Command\DisableUserCommand;
-use TSwiackiewicz\AwesomeApp\Application\User\Command\EnableUserCommand;
-use TSwiackiewicz\AwesomeApp\Application\User\Command\RegisterUserCommand;
-use TSwiackiewicz\AwesomeApp\Application\User\Command\UnregisterUserCommand;
-use TSwiackiewicz\AwesomeApp\Application\User\Event\UserActivatedEventHandler;
-use TSwiackiewicz\AwesomeApp\Application\User\Event\UserDisabledEventHandler;
-use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEnabledEventHandler;
-use TSwiackiewicz\AwesomeApp\Application\User\Event\UserPasswordChangedEventHandler;
-use TSwiackiewicz\AwesomeApp\Application\User\Event\UserRegisteredEventHandler;
-use TSwiackiewicz\AwesomeApp\Application\User\Event\UserUnregisteredEventHandler;
+use TSwiackiewicz\AwesomeApp\Application\User\Command\{
+    ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, RegisterUserCommand, UnregisterUserCommand
+};
+use TSwiackiewicz\AwesomeApp\Application\User\Event\{
+    UserActivatedEventHandler, UserDisabledEventHandler, UserEnabledEventHandler, UserPasswordChangedEventHandler, UserRegisteredEventHandler, UserUnregisteredEventHandler
+};
 use TSwiackiewicz\AwesomeApp\Application\User\UserService;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserActivatedEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserDisabledEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserPasswordChangedEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserRegisteredEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserAlreadyExistsException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
+    UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
+};
+use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\{
+    PasswordException, UserAlreadyExistsException, UserNotFoundException
+};
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
@@ -132,7 +122,7 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldEnableUser(): void
     {
-        FakeEventBus::subscribe(
+        EventBus::subscribe(
             UserEnabledEvent::class,
             new UserEnabledEventHandler(
                 $this->getUserRepositoryMockForEnableUser(),
@@ -176,7 +166,7 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldDisableUser(): void
     {
-        FakeEventBus::subscribe(
+        EventBus::subscribe(
             UserDisabledEvent::class,
             new UserDisabledEventHandler(
                 $this->getUserRepositoryMockForEnableUser(),
@@ -222,7 +212,7 @@ class UserServiceTest extends UserServiceBaseTestCase
     {
         $newPassword = 'new-VEEERY_StR0Ng_P@sSw0rD1!#';
 
-        FakeEventBus::subscribe(
+        EventBus::subscribe(
             UserPasswordChangedEvent::class,
             new UserPasswordChangedEventHandler(
                 $this->getUserRepositoryMockForEnableUser(),
@@ -266,27 +256,6 @@ class UserServiceTest extends UserServiceBaseTestCase
     /**
      * @test
      */
-    public function shouldFailWhenChangedPasswordEqualsWithCurrentPassword(): void
-    {
-        $this->expectException(PasswordException::class);
-
-        $service = new UserService(
-            $this->getUserRepositoryMockReturningUser(
-                $this->getUser(true, true)
-            ),
-            $this->getUserPasswordServiceMock()
-        );
-        $service->changePassword(
-            new ChangePasswordCommand(
-                UserId::fromInt($this->userId),
-                new UserPassword($this->password)
-            )
-        );
-    }
-
-    /**
-     * @test
-     */
     public function shouldFailWhenUserChangingPasswordNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -308,7 +277,7 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldRemoveUser(): void
     {
-        FakeEventBus::subscribe(
+        EventBus::subscribe(
             UserUnregisteredEvent::class,
             new UserUnregisteredEventHandler(
                 $this->getUserRepositoryMockForRemoveUser(),

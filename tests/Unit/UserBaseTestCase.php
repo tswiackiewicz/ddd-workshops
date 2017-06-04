@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRepository;
 
 /**
  * Class UserBaseTestCase
@@ -14,7 +16,7 @@ abstract class UserBaseTestCase extends TestCase
     /**
      * @var int
      */
-    protected $userId = 1234;
+    protected $userId = 1;
 
     /**
      * @var string
@@ -71,5 +73,36 @@ abstract class UserBaseTestCase extends TestCase
                 'test123'
             ]
         ];
+    }
+
+    /**
+     * @param null|string $eventName
+     * @return UserNotifier|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserNotifierMock(?string $eventName = null): UserNotifier
+    {
+        /** @var UserNotifier|\PHPUnit_Framework_MockObject_MockObject $notifier */
+        $notifier = $this->getMockBuilder(UserNotifier::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'notifyUser'
+            ])
+            ->getMock();
+        if ($eventName !== null) {
+            $notifier->expects(self::once())
+                ->method('notifyUser')
+                ->with(self::isInstanceOf($eventName));
+        }
+        return $notifier;
+    }
+
+    /**
+     * @return UserRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserRepositoryMock()
+    {
+        return $this->getMockBuilder(UserRepository::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
     }
 }

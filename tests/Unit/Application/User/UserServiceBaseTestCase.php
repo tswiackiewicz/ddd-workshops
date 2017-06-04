@@ -276,12 +276,4 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
 
         return $service;
     }
-
-    /**
-     * Setup fixtures
-     */
-    protected function setUp(): void
-    {
-        FakeEventBus::clearRegisteredHandlers();
-    }
 }

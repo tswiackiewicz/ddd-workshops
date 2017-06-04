@@ -90,8 +90,6 @@ abstract class UserServiceBaseTestCase extends TestCase
     protected function setUp(): void
     {
         $this->registerEventHandlers();
-
-        InMemoryStorage::clear();
         $this->clearCache();
 
         $repository = new InMemoryUserRepository();
