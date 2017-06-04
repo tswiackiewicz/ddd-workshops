@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\ActiveUser;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
