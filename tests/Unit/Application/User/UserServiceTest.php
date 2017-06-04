@@ -147,7 +147,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserPasswordServiceMock()
         );
         $service->enable(
-            new EnableUserCommand(UserId::fromInt(12345))
+            new EnableUserCommand(UserId::fromInt(1234))
         );
     }
 
@@ -186,7 +186,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserPasswordServiceMock()
         );
         $service->disable(
-            new DisableUserCommand(UserId::fromInt(12345))
+            new DisableUserCommand(UserId::fromInt(1234))
         );
     }
 

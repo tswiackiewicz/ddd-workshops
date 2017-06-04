@@ -19,7 +19,7 @@ abstract class UserBaseTestCase extends TestCase
     /**
      * @var int
      */
-    protected $userId = 1234;
+    protected $userId = 1;
 
     /**
      * @var string

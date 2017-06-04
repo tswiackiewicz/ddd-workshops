@@ -20,11 +20,11 @@ class UserIdTest extends UserBaseTestCase
      */
     public function shouldCreateFromInt(): void
     {
-        $userId = UserId::fromInt(1234);
+        $userId = UserId::fromInt($this->userId);
 
         self::assertInstanceOf(UserId::class, $userId);
         self::assertFalse($userId->isNull());
-        self::assertEquals(1234, $userId->getId());
+        self::assertEquals($this->userId, $userId->getId());
     }
 
     /**

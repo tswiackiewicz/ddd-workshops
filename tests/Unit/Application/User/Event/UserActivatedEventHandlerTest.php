@@ -1,19 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\Event;
+namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User\Event;
 
-use TSwiackiewicz\AwesomeApp\Application\User\Event\UserUnregisteredEventHandler;
+use TSwiackiewicz\AwesomeApp\Application\User\Event\UserActivatedEventHandler;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
- * Class UserUnregisteredEventHandlerTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\Event
+ * Class UserActivatedEventHandlerTest
+ * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User\Event
  *
- * @coversDefaultClass UserUnregisteredEventHandler
+ * @coversDefaultClass UserActivatedEventHandler
  */
-class UserUnregisteredEventHandlerTest extends UserBaseTestCase
+class UserActivatedEventHandlerTest extends UserBaseTestCase
 {
     /**
      * @test
@@ -22,7 +22,7 @@ class UserUnregisteredEventHandlerTest extends UserBaseTestCase
     {
         $this->expectException(RuntimeException::class);
 
-        $handler = new UserUnregisteredEventHandler(
+        $handler = new UserActivatedEventHandler(
             $this->getUserNotifierMock()
         );
         $handler->handle(FakeUserEvent::create());

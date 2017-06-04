@@ -10,7 +10,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Exception\PasswordException, Exception\UserAlreadyExistsException, Exception\UserNotFoundException, Password\UserPassword, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryStorage, User\InMemoryUserReadModelRepository, User\InMemoryUserRepository
+    User\InMemoryUserReadModelRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
@@ -28,10 +28,7 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldRegisterUser(): void
     {
-        InMemoryStorage::clear();
-        $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
-        $identityMap->setAccessible(true);
-        $identityMap->setValue(null, []);
+        $this->clearCache();
 
         $registeredUserId = $this->service->register(
             new RegisterUserCommand(
@@ -41,6 +38,15 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
 
         self::assertEquals(UserId::fromInt($this->userId), $registeredUserId);
+
+        $nextRegisteredUserId = $this->service->register(
+            new RegisterUserCommand(
+                new UserLogin('next.' . $this->login),
+                new UserPassword($this->password)
+            )
+        );
+
+        self::assertEquals(UserId::fromInt($this->userId + 1), $nextRegisteredUserId);
     }
 
     /**

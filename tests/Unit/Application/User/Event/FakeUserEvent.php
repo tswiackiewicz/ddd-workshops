@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\Event;
+namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User\Event;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEvent;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class FakeUserEvent
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\Event
+ * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User\Event
  */
 class FakeUserEvent extends UserEvent
 {

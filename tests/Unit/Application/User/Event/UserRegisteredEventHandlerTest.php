@@ -1,19 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\Event;
+namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User\Event;
 
-use TSwiackiewicz\AwesomeApp\Application\User\Event\UserPasswordChangedEventHandler;
+use TSwiackiewicz\AwesomeApp\Application\User\Event\UserRegisteredEventHandler;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
- * Class UserPasswordChangedEventHandlerTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\Event
+ * Class UserRegisteredEventHandlerTest
+ * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User\Event
  *
- * @coversDefaultClass UserPasswordChangedEventHandler
+ * @coversDefaultClass UserRegisteredEventHandler
  */
-class UserPasswordChangedEventHandlerTest extends UserBaseTestCase
+class UserRegisteredEventHandlerTest extends UserBaseTestCase
 {
     /**
      * @test
@@ -22,7 +22,7 @@ class UserPasswordChangedEventHandlerTest extends UserBaseTestCase
     {
         $this->expectException(RuntimeException::class);
 
-        $handler = new UserPasswordChangedEventHandler(
+        $handler = new UserRegisteredEventHandler(
             $this->getUserNotifierMock()
         );
         $handler->handle(FakeUserEvent::create());

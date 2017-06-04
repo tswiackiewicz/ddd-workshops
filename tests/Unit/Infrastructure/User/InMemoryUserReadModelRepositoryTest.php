@@ -36,7 +36,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
      */
     public function shouldFindUserById(): void
     {
-        $user = $this->repository->findById(UserId::fromInt(1));
+        $user = $this->repository->findById(UserId::fromInt($this->userId));
 
         self::assertInstanceOf(UserDTO::class, $user);
     }
@@ -46,7 +46,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
      */
     public function shouldReturnNullWhenUserNotFoundById(): void
     {
-        $user = $this->repository->findById(UserId::fromInt(123));
+        $user = $this->repository->findById(UserId::fromInt(1234));
 
         self::assertNull($user);
     }

@@ -90,11 +90,7 @@ abstract class UserServiceBaseTestCase extends TestCase
     protected function setUp(): void
     {
         $this->registerEventHandlers();
-
-        InMemoryStorage::clear();
-        $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
-        $identityMap->setAccessible(true);
-        $identityMap->setValue(null, []);
+        $this->clearCache();
 
         $repository = new InMemoryUserRepository();
         $repository->save(
@@ -113,6 +109,9 @@ abstract class UserServiceBaseTestCase extends TestCase
         );
     }
 
+    /**
+     * Register event handlers
+     */
     private function registerEventHandlers(): void
     {
         EventBus::subscribe(
@@ -151,5 +150,16 @@ abstract class UserServiceBaseTestCase extends TestCase
                 new StdOutUserNotifier()
             )
         );
+    }
+
+    /**
+     * Clear cache
+     */
+    protected function clearCache(): void
+    {
+        InMemoryStorage::clear();
+        $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
+        $identityMap->setAccessible(true);
+        $identityMap->setValue(null, []);
     }
 }
