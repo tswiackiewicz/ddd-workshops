@@ -5,7 +5,7 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User;
 
 use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\{
-    UserDisabledEventHandler, UserEnabledEventHandler, UserPasswordChangedEventHandler, UserUnregisteredEventHandler
+    UserActivatedEventHandler, UserDisabledEventHandler, UserEnabledEventHandler, UserPasswordChangedEventHandler, UserRegisteredEventHandler, UserUnregisteredEventHandler
 };
 use TSwiackiewicz\AwesomeApp\Application\User\UserService;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
@@ -15,7 +15,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryEventStore, InMemoryStorage, User\InMemoryEventStoreUserRepository, User\InMemoryUserProjector, User\StdOutUserNotifier
+    InMemoryEventStore, InMemoryStorage, User\InMemoryEventStoreUserRepository, User\InMemoryUserProjector, User\InMemoryUserRegistry, User\StdOutUserNotifier
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
@@ -47,6 +47,11 @@ abstract class UserServiceBaseTestCase extends TestCase
     protected $password;
 
     /**
+     * @var string
+     */
+    protected $hash;
+
+    /**
      * @var UserService
      */
     protected $service;
@@ -61,6 +66,7 @@ abstract class UserServiceBaseTestCase extends TestCase
      */
     protected function disableUser(): void
     {
+        $this->eventStore->append($this->userId, new UserActivatedEvent($this->userId));
         $this->eventStore->append($this->userId, new UserDisabledEvent($this->userId));
     }
 
@@ -70,6 +76,7 @@ abstract class UserServiceBaseTestCase extends TestCase
      */
     protected function enableUser(): void
     {
+        $this->eventStore->append($this->userId, new UserActivatedEvent($this->userId));
         $this->eventStore->append($this->userId, new UserEnabledEvent($this->userId));
     }
 
@@ -85,11 +92,14 @@ abstract class UserServiceBaseTestCase extends TestCase
         $this->nonExistentUserId = UserId::fromInt(1234);
         $this->login = 'test@domain.com';
         $this->password = 'password1234';
+        $this->hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
 
-        // init event stream
+        // init events stream
         $this->eventStore = new InMemoryEventStore();
-        $this->eventStore->append($this->userId, new UserRegisteredEvent($this->userId, $this->login, $this->password));
-        $this->eventStore->append($this->userId, new UserActivatedEvent($this->userId));
+        $this->eventStore->append(
+            $this->userId,
+            new UserRegisteredEvent($this->userId, $this->login, $this->password, $this->hash)
+        );
 
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
@@ -97,13 +107,15 @@ abstract class UserServiceBaseTestCase extends TestCase
                 'id' => $this->userId->getId(),
                 'login' => $this->login,
                 'password' => $this->password,
-                'active' => true,
-                'enabled' => true
+                'hash' => $this->hash,
+                'active' => false,
+                'enabled' => false
             ]
         );
 
         $this->service = new UserService(
             new InMemoryEventStoreUserRepository($this->eventStore),
+            new InMemoryUserRegistry(),
             new UserPasswordService()
         );
     }
@@ -111,7 +123,7 @@ abstract class UserServiceBaseTestCase extends TestCase
     /**
      * Clear event store entries and repository identity map
      */
-    private function clearEventStore(): void
+    protected function clearEventStore(): void
     {
         $events = new \ReflectionProperty(InMemoryEventStore::class, 'events');
         $events->setAccessible(true);
@@ -127,40 +139,39 @@ abstract class UserServiceBaseTestCase extends TestCase
      */
     private function registerEventHandlers(): void
     {
+        $eventStore = new InMemoryEventStore();
+        $registry = new InMemoryUserRegistry();
+        $projector = new InMemoryUserProjector($registry);
+        $notifier = new StdOutUserNotifier();
+
+        EventBus::subscribe(
+            UserRegisteredEvent::class,
+            new UserRegisteredEventHandler($eventStore, $projector, $registry, $notifier)
+        );
+
+        EventBus::subscribe(
+            UserActivatedEvent::class,
+            new UserActivatedEventHandler($eventStore, $projector, $notifier)
+        );
+
         EventBus::subscribe(
             UserEnabledEvent::class,
-            new UserEnabledEventHandler(
-                new InMemoryEventStore(),
-                new InMemoryUserProjector(),
-                new StdOutUserNotifier()
-            )
+            new UserEnabledEventHandler($eventStore, $projector, $notifier)
         );
 
         EventBus::subscribe(
             UserDisabledEvent::class,
-            new UserDisabledEventHandler(
-                new InMemoryEventStore(),
-                new InMemoryUserProjector(),
-                new StdOutUserNotifier()
-            )
+            new UserDisabledEventHandler($eventStore, $projector, $notifier)
         );
 
         EventBus::subscribe(
             UserPasswordChangedEvent::class,
-            new UserPasswordChangedEventHandler(
-                new InMemoryEventStore(),
-                new InMemoryUserProjector(),
-                new StdOutUserNotifier()
-            )
+            new UserPasswordChangedEventHandler($eventStore, $projector, $notifier)
         );
 
         EventBus::subscribe(
             UserUnregisteredEvent::class,
-            new UserUnregisteredEventHandler(
-                new InMemoryEventStore(),
-                new InMemoryUserProjector(),
-                new StdOutUserNotifier()
-            )
+            new UserUnregisteredEventHandler($eventStore, $projector, $notifier)
         );
     }
 }

@@ -5,6 +5,11 @@
 Sample application for Domain Driven Design workshops
 The point is to show the idea without frameworks - pure PHP code (POPO), just the concept 
 
+## TODO
+
+* Id: int -> uuid
+* add comments
+
 ## License
 
 MIT

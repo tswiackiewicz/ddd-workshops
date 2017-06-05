@@ -7,7 +7,10 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserProjector;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRegistry;
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\AggregateId;
 
 /**
  * Class InMemoryUserProjector
@@ -15,6 +18,20 @@ use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
  */
 class InMemoryUserProjector implements UserProjector
 {
+    /**
+     * @var UserRegistry
+     */
+    private $registry;
+
+    /**
+     * InMemoryUserProjector constructor.
+     * @param UserRegistry $registry
+     */
+    public function __construct(UserRegistry $registry)
+    {
+        $this->registry = $registry;
+    }
+
     /**
      * @param UserActivatedEvent $event
      */
@@ -77,16 +94,22 @@ class InMemoryUserProjector implements UserProjector
      */
     public function projectUserRegistered(UserRegisteredEvent $event): void
     {
+        /** @var UserId|AggregateId $id */
+        $id = UserId::fromInt(InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER));
+
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
             [
-                'id' => $event->getId()->getId(),
+                'id' => $id->getId(),
                 'login' => $event->getLogin(),
                 'password' => $event->getPassword(),
+                'hash' => $event->getHash(),
                 'active' => $event->isActive(),
                 'enabled' => $event->isEnabled()
             ]
         );
+
+        $this->registry->put($event->getLogin(), $id);
     }
 
     /**

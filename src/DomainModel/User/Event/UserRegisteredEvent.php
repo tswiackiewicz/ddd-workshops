@@ -22,17 +22,41 @@ class UserRegisteredEvent extends UserEvent
     private $password;
 
     /**
+     * @var string
+     */
+    private $hash;
+
+    /**
      * UserRegisteredEvent constructor.
      * @param UserId $id
      * @param string $login
      * @param string $password
+     * @param string $hash
      * @param \DateTimeImmutable|null $occurredOn
      */
-    public function __construct(UserId $id, string $login, string $password, ?\DateTimeImmutable $occurredOn = null)
+    public function __construct(
+        UserId $id,
+        string $login,
+        string $password,
+        string $hash,
+        ?\DateTimeImmutable $occurredOn = null
+    )
     {
         parent::__construct($id, $occurredOn);
         $this->login = $login;
         $this->password = $password;
+        $this->hash = $hash;
+    }
+
+    /**
+     * @param UserId $userId
+     * @return UserRegisteredEvent
+     */
+    public function withUserId(UserId $userId): UserRegisteredEvent
+    {
+        $event = clone $this;
+        $event->id = $userId;
+        return $event;
     }
 
     /**
@@ -49,6 +73,14 @@ class UserRegisteredEvent extends UserEvent
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash(): string
+    {
+        return $this->hash;
     }
 
     /**

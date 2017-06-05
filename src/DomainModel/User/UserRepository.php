@@ -12,7 +12,7 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
  * Interface ActiveUserRepository
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-interface UserRepository extends UserAggregateRepository
+interface UserRepository
 {
     /**
      * @return UserId
@@ -20,27 +20,10 @@ interface UserRepository extends UserAggregateRepository
     public function nextIdentity(): UserId;
 
     /**
-     * @param string $login
-     * @return bool
-     */
-    public function exists(string $login): bool;
-
-    /**
-     * @param string $hash
+     * @param UserId $id
      * @return User
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
-    public function getByHash(string $hash): User;
-
-    /**
-     * @param User $user
-     * @throws UserRepositoryException
-     */
-    public function save(User $user): void;
-
-    /**
-     * @param UserId $id
-     */
-    public function remove(UserId $id): void;
+    public function getById(UserId $id): User;
 }

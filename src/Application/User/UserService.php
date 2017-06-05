@@ -7,7 +7,7 @@ use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, RegisterUserCommand, UnregisterUserCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Exception\PasswordException, Exception\UserAlreadyExistsException, Password\UserPasswordService, User, UserRepository
+    Exception\PasswordException, Exception\UserAlreadyExistsException, Password\UserPasswordService, User, UserRegistry, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\{
     User\Exception\UserDomainModelException, User\Exception\ValidationException, User\UserId
@@ -25,6 +25,11 @@ class UserService
     private $repository;
 
     /**
+     * @var UserRegistry
+     */
+    private $registry;
+
+    /**
      * @var UserPasswordService
      */
     private $passwordService;
@@ -32,11 +37,17 @@ class UserService
     /**
      * UserService constructor.
      * @param UserRepository $repository
+     * @param UserRegistry $registry
      * @param UserPasswordService $passwordService
      */
-    public function __construct(UserRepository $repository, UserPasswordService $passwordService)
+    public function __construct(
+        UserRepository $repository,
+        UserRegistry $registry,
+        UserPasswordService $passwordService
+    )
     {
         $this->repository = $repository;
+        $this->registry = $registry;
         $this->passwordService = $passwordService;
     }
 
@@ -49,17 +60,17 @@ class UserService
      */
     public function register(RegisterUserCommand $command): UserId
     {
-        if ($this->repository->exists((string)$command->getLogin())) {
+        if ($this->registry->exists((string)$command->getLogin())) {
             throw UserAlreadyExistsException::forUser((string)$command->getLogin());
         }
 
-        $registeredUser = User::register(
+        User::register(
             $this->repository->nextIdentity(),
             $command->getLogin(),
             $command->getPassword()
         );
 
-        return $registeredUser->getId();
+        return $this->registry->getByLogin((string)$command->getLogin());
     }
 
     /**
@@ -70,7 +81,9 @@ class UserService
      */
     public function activate(ActivateUserCommand $command): void
     {
-        $user = $this->repository->getByHash($command->getHash());
+        $user = $this->repository->getById(
+            $this->registry->getByHash($command->getHash())
+        );
         $user->activate();
     }
 

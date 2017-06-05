@@ -4,15 +4,15 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User;
 
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
-    ChangePasswordCommand, DisableUserCommand, EnableUserCommand, UnregisterUserCommand
+    ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, RegisterUserCommand, UnregisterUserCommand
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Exception\PasswordException, Exception\UserAlreadyExistsException, Exception\UserNotFoundException, Password\UserPassword
+    Exception\PasswordException, Exception\UserAlreadyExistsException, Exception\UserNotFoundException, Password\UserPassword, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    User\InMemoryUserReadModelRepository
+    InMemoryStorage, User\InMemoryUserReadModelRepository
 };
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class UserServiceTest
@@ -22,28 +22,73 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentExceptio
  */
 class UserServiceTest extends UserServiceBaseTestCase
 {
+    /**
+     * @test
+     */
     public function shouldRegisterUser(): void
     {
-        self::markTestSkipped('TODO: Implement shouldRegisterUser() method test.');
+        InMemoryStorage::clear();
+        $this->clearEventStore();
+
+        $registeredUserId = $this->service->register(
+            new RegisterUserCommand(
+                new UserLogin($this->login),
+                new UserPassword($this->password)
+            )
+        );
+
+        self::assertEquals(UserId::fromInt(1), $registeredUserId);
+
+        $nextRegisteredUserId = $this->service->register(
+            new RegisterUserCommand(
+                new UserLogin('next.' . $this->login),
+                new UserPassword($this->password)
+            )
+        );
+
+        self::assertEquals(UserId::fromInt(2), $nextRegisteredUserId);
     }
 
+    /**
+     * @test
+     */
     public function shouldFailWhenRegisteredUserAlreadyExists(): void
     {
         $this->expectException(UserAlreadyExistsException::class);
 
-        self::markTestSkipped('TODO: Implement shouldFailWhenRegisteredUserAlreadyExists() method test.');
+        $this->service->register(
+            new RegisterUserCommand(
+                new UserLogin($this->login),
+                new UserPassword($this->password)
+            )
+        );
     }
 
+    /**
+     * @test
+     */
     public function shouldActivateUser(): void
     {
-        self::markTestSkipped('TODO: Implement shouldActivateUser() method test.');
+        $this->service->activate(
+            new ActivateUserCommand($this->hash)
+        );
+
+        $repository = new InMemoryUserReadModelRepository();
+        $userDTO = $repository->findById($this->userId);
+
+        self::assertTrue($userDTO->isActive());
     }
 
+    /**
+     * @test
+     */
     public function shouldFailWhenActivatedUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
 
-        self::markTestSkipped('TODO: Implement shouldFailWhenActivatedUserNotExists() method test.');
+        $this->service->activate(
+            new ActivateUserCommand('non_existent_user_hash')
+        );
     }
 
     /**

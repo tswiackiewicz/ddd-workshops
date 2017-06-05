@@ -107,7 +107,12 @@ class User
         $user = new static($id);
 
         $user->recordThat(
-            new UserRegisteredEvent($id, (string)$username, (string)$password)
+            new UserRegisteredEvent(
+                $id,
+                (string)$username,
+                (string)$password,
+                $user->doHash((string)$username)
+            )
         );
 
         return $user;
@@ -120,6 +125,21 @@ class User
     {
         $this->apply($event);
         EventBus::publish($event);
+    }
+
+    /**
+     * @param string $login
+     * @return string
+     */
+    private function doHash(string $login): string
+    {
+        $hash = md5('::' . $login . '::');
+
+        // salt added to User's hash
+        return substr($hash, 0, 8) .
+            substr($hash, 24, 8) .
+            substr($hash, 16, 8) .
+            substr($hash, 8, 8);
     }
 
     /**
@@ -217,13 +237,7 @@ class User
      */
     public function hash(): string
     {
-        $hash = md5((string)$this->id->getId() . '::' . $this->login);
-
-        // salt added to User's hash
-        return substr($hash, 0, 8) .
-            substr($hash, 24, 8) .
-            substr($hash, 16, 8) .
-            substr($hash, 8, 8);
+        return $this->doHash((string)$this->login);
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */

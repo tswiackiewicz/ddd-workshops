@@ -4,15 +4,13 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Password\UserPasswordService, User, UserLogin, UserProjector, UserRepository
+    Password\UserPasswordService, User, UserLogin, UserRegistry, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 use TSwiackiewicz\DDD\EventSourcing\AggregateHistory;
-use TSwiackiewicz\DDD\EventStore\EventStore;
 
 /**
  * Class UserServiceBaseTestCase
@@ -98,6 +96,16 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
             ->willThrowException(UserNotFoundException::forUser($this->login));
 
         return $repository;
+    }
+
+    /**
+     * @return UserRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserRegistryMock(): UserRegistry
+    {
+        return $this->getMockBuilder(UserRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**

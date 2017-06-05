@@ -95,6 +95,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service = new UserService(
             $repository,
+            $this->getUserRegistryMock(),
             $this->getUserPasswordServiceMock()
         );
         $service->enable(
@@ -114,6 +115,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service = new UserService(
             $this->getUserRepositoryMockWhenUserByIdNotFound(),
+            $this->getUserRegistryMock(),
             $this->getUserPasswordServiceMock()
         );
         $service->enable(
@@ -143,6 +145,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service = new UserService(
             $repository,
+            $this->getUserRegistryMock(),
             $this->getUserPasswordServiceMock()
         );
         $service->disable(
@@ -162,6 +165,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service = new UserService(
             $this->getUserRepositoryMockWhenUserByIdNotFound(),
+            $this->getUserRegistryMock(),
             $this->getUserPasswordServiceMock()
         );
         $service->disable(
@@ -193,6 +197,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service = new UserService(
             $repository,
+            $this->getUserRegistryMock(),
             $this->getUserPasswordServiceMock()
         );
         $service->changePassword(
@@ -215,6 +220,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service = new UserService(
             $this->getUserRepositoryMock(),
+            $this->getUserRegistryMock(),
             $this->getUserPasswordServiceMockForWeakPasswordVerification()
         );
         $service->changePassword(
@@ -240,6 +246,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service = new UserService(
             $repository,
+            $this->getUserRegistryMock(),
             $this->getUserPasswordServiceMock()
         );
         $service->changePassword(
@@ -262,6 +269,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service = new UserService(
             $this->getUserRepositoryMockWhenUserByIdNotFound(),
+            $this->getUserRegistryMock(),
             $this->getUserPasswordServiceMock()
         );
         $service->changePassword(
@@ -294,6 +302,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service = new UserService(
             $repository,
+            $this->getUserRegistryMock(),
             $this->getUserPasswordServiceMock()
         );
         $service->unregister(
@@ -313,6 +322,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $service = new UserService(
             $this->getUserRepositoryMockWhenUserByIdNotFound(),
+            $this->getUserRegistryMock(),
             $this->getUserPasswordServiceMock()
         );
         $service->unregister(

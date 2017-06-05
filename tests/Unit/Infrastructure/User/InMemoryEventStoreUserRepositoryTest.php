@@ -97,7 +97,7 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
         $userId = UserId::fromInt($this->userId);
 
         $store = new InMemoryEventStore();
-        $store->append($userId, new UserRegisteredEvent($userId, $this->login, $this->password));
+        $store->append($userId, new UserRegisteredEvent($userId, $this->login, $this->password, $this->hash));
 
         $this->repository = new InMemoryEventStoreUserRepository($store);
     }

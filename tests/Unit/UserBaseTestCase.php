@@ -16,6 +16,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserProjector;
+use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRegistry;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\EventStore\EventStore;
 
@@ -43,7 +44,7 @@ abstract class UserBaseTestCase extends TestCase
     /**
      * @var string
      */
-    protected $hash = '16cd9c90760b79e7948ec315ec29413c';
+    protected $hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
 
     /**
      * @return array
@@ -101,7 +102,8 @@ abstract class UserBaseTestCase extends TestCase
                     new UserRegisteredEvent(
                         $userId,
                         $this->login,
-                        $this->password
+                        $this->password,
+                        $this->hash
                     )
                 ],
                 $this->password,
@@ -113,7 +115,8 @@ abstract class UserBaseTestCase extends TestCase
                     new UserRegisteredEvent(
                         $userId,
                         $this->login,
-                        $this->password
+                        $this->password,
+                        $this->hash
                     ),
                     new UserActivatedEvent(
                         $userId
@@ -128,7 +131,8 @@ abstract class UserBaseTestCase extends TestCase
                     new UserRegisteredEvent(
                         $userId,
                         $this->login,
-                        $this->password
+                        $this->password,
+                        $this->hash
                     ),
                     new UserActivatedEvent(
                         $userId
@@ -146,7 +150,8 @@ abstract class UserBaseTestCase extends TestCase
                     new UserRegisteredEvent(
                         $userId,
                         $this->login,
-                        $this->password
+                        $this->password,
+                        $this->hash
                     ),
                     new UserActivatedEvent(
                         $userId
@@ -167,7 +172,8 @@ abstract class UserBaseTestCase extends TestCase
                     new UserRegisteredEvent(
                         $userId,
                         $this->login,
-                        $this->password
+                        $this->password,
+                        $this->hash
                     ),
                     new UserActivatedEvent(
                         $userId
@@ -186,7 +192,8 @@ abstract class UserBaseTestCase extends TestCase
                     new UserRegisteredEvent(
                         $userId,
                         $this->login,
-                        $this->password
+                        $this->password,
+                        $this->hash
                     ),
                     new UserActivatedEvent(
                         $userId
@@ -280,6 +287,16 @@ abstract class UserBaseTestCase extends TestCase
     protected function getUserProjectorMock(): UserProjector
     {
         return $this->getMockBuilder(UserProjector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * @return UserRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getUserRegistryMock(): UserRegistry
+    {
+        return $this->getMockBuilder(UserRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
