@@ -31,8 +31,9 @@ class UserUnregisteredEvent extends UserEvent
     public function __toString(): string
     {
         return sprintf(
-            '[%s] User unregistered: id = %d',
+            '[%s] User unregistered: uuid = %s, id = %d',
             $this->occurredOn->format('Y-m-d H:i:s'),
+            $this->id->getAggregateId(),
             $this->id->getId()
         );
     }

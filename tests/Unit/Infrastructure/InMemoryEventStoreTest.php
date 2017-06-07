@@ -74,7 +74,7 @@ class InMemoryEventStoreTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->id = FakeAggregateId::fromInt(1234);
+        $this->id = FakeAggregateId::fromString('1ec7223b-cb08-46d0-9410-03d0b2b81d06')->setId(1);
         $this->events = array_fill(0, 10, new FakeDomainEvent($this->id));
     }
 }

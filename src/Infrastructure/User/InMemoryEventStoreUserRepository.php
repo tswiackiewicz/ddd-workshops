@@ -43,7 +43,7 @@ class InMemoryEventStoreUserRepository implements UserRepository
      */
     public function nextIdentity(): UserId
     {
-        return UserId::nullInstance();
+        return UserId::generate();
     }
 
     /**
@@ -54,8 +54,8 @@ class InMemoryEventStoreUserRepository implements UserRepository
      */
     public function getById(UserId $id): User
     {
-        if (isset(self::$identityMap[$id->getId()])) {
-            return self::$identityMap[$id->getId()];
+        if (isset(self::$identityMap[$id->getAggregateId()])) {
+            return self::$identityMap[$id->getAggregateId()];
         }
 
         $events = $this->store->load($id);
@@ -64,11 +64,11 @@ class InMemoryEventStoreUserRepository implements UserRepository
         }
 
         try {
-            self::$identityMap[$id->getId()] = User::reconstituteFrom(
+            self::$identityMap[$id->getAggregateId()] = User::reconstituteFrom(
                 new AggregateHistory($id, $events)
             );
 
-            return self::$identityMap[$id->getId()];
+            return self::$identityMap[$id->getAggregateId()];
         } catch (InvalidArgumentException $exception) {
             throw UserRepositoryException::fromPrevious($exception);
         }

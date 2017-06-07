@@ -24,12 +24,12 @@ class InMemoryEventStore implements EventStore
      */
     public function load(AggregateId $id): array
     {
-        if (!isset(self::$events[$id->getId()])) {
+        if (!isset(self::$events[$id->getAggregateId()])) {
             return [];
         }
 
         /** @var string[] $serializedEvents */
-        $serializedEvents = self::$events[$id->getId()];
+        $serializedEvents = self::$events[$id->getAggregateId()];
 
         /** @var Event[] $events */
         $events = [];
@@ -46,7 +46,7 @@ class InMemoryEventStore implements EventStore
      */
     public function append(AggregateId $id, Event $event): void
     {
-        self::$events[$id->getId()][] = serialize($event);
+        self::$events[$id->getAggregateId()][] = serialize($event);
     }
 
     /**

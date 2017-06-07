@@ -17,10 +17,10 @@ class UserId extends AggregateId
      * @return AggregateId
      * @throws InvalidArgumentException
      */
-    public static function fromInt(int $id): AggregateId
+    public function setId(int $id): AggregateId
     {
         try {
-            return parent::fromInt($id);
+            return parent::setId($id);
         } catch (\InvalidArgumentException $exception) {
             throw new InvalidArgumentException(
                 $exception->getMessage(),

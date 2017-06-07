@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace TSwiackiewicz\DDD;
 
 use InvalidArgumentException;
-use RuntimeException;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * Class AggregateId
@@ -12,64 +13,48 @@ use RuntimeException;
  */
 abstract class AggregateId
 {
-    protected const NULL_ID = 0;
+    /**
+     * @var UuidInterface
+     */
+    protected $uuid;
 
     /**
      * @var int
      */
-    protected $id;
+    protected $id = 0;
 
     /**
      * AggregateId constructor.
-     * @param int $id
+     * @param UuidInterface $uuid
      */
-    protected function __construct(int $id)
+    protected function __construct(UuidInterface $uuid)
     {
-        if ($id < 0) {
-            throw new InvalidArgumentException('AggregateId is not allowed to be below zero');
-        }
-
-        $this->id = $id;
+        $this->uuid = $uuid;
     }
 
     /**
-     * @param int $id
+     * @param string $uuid
      * @return AggregateId
-     * @throws InvalidArgumentException
      */
-    public static function fromInt(int $id): AggregateId
+    public static function fromString(string $uuid): AggregateId
     {
-        return new static($id);
+        return new static(Uuid::fromString($uuid));
     }
 
     /**
      * @return AggregateId
      */
-    public static function nullInstance(): AggregateId
+    public static function generate(): AggregateId
     {
-        try {
-            return new static(static::NULL_ID);
-        } catch (InvalidArgumentException $exception) {
-            // we need nullInstance method interface to be clear (without thrown exceptions),
-            // object construction contract declares InvalidArgumentException to be thrown
-            // on the other hand, it is impossible to throw InvalidArgument exception when
-            // we construct object with self::NULL_ID identity,
-            // Runtime exceptions could be treated as Java language unchecked exceptions,
-            // so we do not need to declare them
-            throw new RuntimeException(
-                $exception->getMessage(),
-                $exception->getCode(),
-                $exception
-            );
-        }
+        return new static(Uuid::uuid4());
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function isNull(): bool
+    public function getAggregateId(): string
     {
-        return static::NULL_ID === $this->id;
+        return $this->uuid->toString();
     }
 
     /**
@@ -81,10 +66,23 @@ abstract class AggregateId
     }
 
     /**
-     * @return int
+     * @param int $id
+     * @return AggregateId
+     * @throws InvalidArgumentException
      */
-    public function __toString()
+    public function setId(int $id): AggregateId
     {
-        return (string)$this->id;
+        if ($this->id > 0) {
+            return $this;
+        }
+
+        if ($id <= 0) {
+            throw new InvalidArgumentException('AggregateId is not allowed to be below zero');
+        }
+
+        $aggregateId = clone $this;
+        $aggregateId->id = $id;
+
+        return $aggregateId;
     }
 }

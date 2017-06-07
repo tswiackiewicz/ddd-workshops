@@ -40,6 +40,7 @@ class InMemoryUserProjector implements UserProjector
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
             [
+                'uuid' => $event->getId()->getAggregateId(),
                 'id' => $event->getId()->getId(),
                 'active' => $event->isActive(),
                 'enabled' => $event->isEnabled()
@@ -55,6 +56,7 @@ class InMemoryUserProjector implements UserProjector
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
             [
+                'uuid' => $event->getId()->getAggregateId(),
                 'id' => $event->getId()->getId(),
                 'enabled' => $event->isEnabled()
             ]
@@ -69,6 +71,7 @@ class InMemoryUserProjector implements UserProjector
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
             [
+                'uuid' => $event->getId()->getAggregateId(),
                 'id' => $event->getId()->getId(),
                 'enabled' => $event->isEnabled()
             ]
@@ -83,6 +86,7 @@ class InMemoryUserProjector implements UserProjector
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
             [
+                'uuid' => $event->getId()->getAggregateId(),
                 'id' => $event->getId()->getId(),
                 'password' => $event->getPassword()
             ]
@@ -95,11 +99,12 @@ class InMemoryUserProjector implements UserProjector
     public function projectUserRegistered(UserRegisteredEvent $event): void
     {
         /** @var UserId|AggregateId $id */
-        $id = UserId::fromInt(InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER));
+        $id = $event->getId()->setId(InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER));
 
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
             [
+                'uuid' => $id->getAggregateId(),
                 'id' => $id->getId(),
                 'login' => $event->getLogin(),
                 'password' => $event->getPassword(),

@@ -18,24 +18,23 @@ class UserIdTest extends UserBaseTestCase
     /**
      * @test
      */
-    public function shouldCreateFromInt(): void
+    public function shouldGenerateWithoutId(): void
     {
-        $userId = UserId::fromInt(1234);
+        $userId = UserId::generate();
 
         self::assertInstanceOf(UserId::class, $userId);
-        self::assertFalse($userId->isNull());
-        self::assertEquals(1234, $userId->getId());
+        self::assertEquals(0, $userId->getId());
     }
 
     /**
      * @test
      */
-    public function shouldCreateNullInstance(): void
+    public function shouldCreateWithGivenId(): void
     {
-        $userId = UserId::nullInstance();
+        $userId = UserId::generate()->setId(1234);
 
         self::assertInstanceOf(UserId::class, $userId);
-        self::assertTrue($userId->isNull());
+        self::assertEquals(1234, $userId->getId());
     }
 
     /**
@@ -45,6 +44,6 @@ class UserIdTest extends UserBaseTestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        UserId::fromInt(-1234);
+        UserId::generate()->setId(-1234);
     }
 }

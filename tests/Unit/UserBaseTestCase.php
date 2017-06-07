@@ -18,6 +18,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserProjector;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRegistry;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\AggregateId;
 use TSwiackiewicz\DDD\EventStore\EventStore;
 
 /**
@@ -94,7 +95,7 @@ abstract class UserBaseTestCase extends TestCase
     public function getUserEventHistoryDataProvider(): array
     {
         /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
+        $userId = $this->getUserId();
 
         return [
             [
@@ -228,7 +229,7 @@ abstract class UserBaseTestCase extends TestCase
     protected function createInactiveUser(): User
     {
         /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
+        $userId = $this->getUserId();
 
         return User::register(
             $userId,
@@ -299,5 +300,13 @@ abstract class UserBaseTestCase extends TestCase
         return $this->getMockBuilder(UserRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    /**
+     * @return UserId|AggregateId
+     */
+    protected function getUserId(): UserId
+    {
+        return UserId::fromString('98a7debc-00c3-44cd-aaaf-cfe9e7ab31fc')->setId($this->userId);
     }
 }

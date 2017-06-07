@@ -42,8 +42,9 @@ class UserPasswordChangedEvent extends UserEvent
     public function __toString(): string
     {
         return sprintf(
-            '[%s] User password changed: id = %d, new password = %s',
+            '[%s] User password changed: uuid = %s, id = %d, new password = %s',
             $this->occurredOn->format('Y-m-d H:i:s'),
+            $this->id->getAggregateId(),
             $this->id->getId(),
             md5($this->password)
         );

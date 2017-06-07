@@ -32,9 +32,7 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
      */
     public function shouldReturnUserById(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
-
+        $userId = $this->getUserId();
         $user = $this->repository->getById($userId);
 
         self::assertEquals($userId, $user->getId());
@@ -45,8 +43,7 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
      */
     public function shouldFetchUserByIdFromStorageOnlyOnce(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
+        $userId = $this->getUserId();
 
         $firstAttemptUser = $this->repository->getById($userId);
 
@@ -66,7 +63,7 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         /** @var UserId $nonExistentUserId */
-        $nonExistentUserId = UserId::fromInt(12345);
+        $nonExistentUserId = UserId::generate()->setId(12345);
 
         $this->repository->getById($nonExistentUserId);
     }
@@ -93,8 +90,7 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
      */
     protected function setUp(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
+        $userId = $this->getUserId();
 
         $store = new InMemoryEventStore();
         $store->append($userId, new UserRegisteredEvent($userId, $this->login, $this->password, $this->hash));

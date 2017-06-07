@@ -88,11 +88,18 @@ abstract class UserServiceBaseTestCase extends TestCase
         $this->clearEventStore();
         $this->registerEventHandlers();
 
-        $this->userId = UserId::fromInt(1);
-        $this->nonExistentUserId = UserId::fromInt(1234);
         $this->login = 'test@domain.com';
         $this->password = 'password1234';
         $this->hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
+        $this->nonExistentUserId = UserId::generate()->setId(1234);
+
+        // after UserRegistered projection, registered UserId is stored in UserRegistry for reuse
+        $userRegistry = new InMemoryUserRegistry();
+        if ($userRegistry->exists($this->login)) {
+            $this->userId = $userRegistry->getByLogin($this->login);
+        } else {
+            $this->userId = UserId::generate()->setId(1);
+        }
 
         // init events stream
         $this->eventStore = new InMemoryEventStore();
@@ -104,6 +111,7 @@ abstract class UserServiceBaseTestCase extends TestCase
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
             [
+                'uuid' => $this->userId->getAggregateId(),
                 'id' => $this->userId->getId(),
                 'login' => $this->login,
                 'password' => $this->password,

@@ -25,11 +25,8 @@ class UserTest extends UserBaseTestCase
      */
     public function shouldRegisterUser(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
-
         $registeredUser = User::register(
-            $userId,
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password)
         );
@@ -54,10 +51,10 @@ class UserTest extends UserBaseTestCase
         bool $enabled
     ): void
     {
-        $history = new AggregateHistory(UserId::fromInt($this->userId), $events);
+        $history = new AggregateHistory($this->getUserId(), $events);
         $user = User::reconstituteFrom($history);
 
-        self::assertEquals(UserId::fromInt($history->getAggregateId()->getId()), $user->getId());
+        self::assertEquals(UserId::fromString($history->getAggregateId()->getAggregateId())->setId($history->getAggregateId()->getId()), $user->getId());
         self::assertAttributeEquals(new UserLogin($this->login), 'login', $user);
         self::assertAttributeEquals(new UserPassword($password), 'password', $user);
         self::assertAttributeEquals($active, 'active', $user);

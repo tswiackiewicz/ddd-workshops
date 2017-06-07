@@ -105,8 +105,9 @@ class UserRegisteredEvent extends UserEvent
     public function __toString(): string
     {
         return sprintf(
-            '[%s] User registered: id = %d, login = %s, password = %s',
+            '[%s] User registered: uuid = %s, id = %d, login = %s, password = %s',
             $this->occurredOn->format('Y-m-d H:i:s'),
+            $this->id->getAggregateId(),
             $this->id->getId(),
             $this->login,
             md5($this->password)

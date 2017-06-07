@@ -78,8 +78,6 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldEnableUser(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
         $repository = $this->getUserRepositoryMockReturningUser(
             $this->getUserMock(true, false)
         );
@@ -99,7 +97,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserPasswordServiceMock()
         );
         $service->enable(
-            new EnableUserCommand($userId)
+            new EnableUserCommand($this->getUserId())
         );
     }
 
@@ -108,9 +106,6 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldFailWhenEnabledUserNotExists(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
-
         $this->expectException(UserNotFoundException::class);
 
         $service = new UserService(
@@ -119,7 +114,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserPasswordServiceMock()
         );
         $service->enable(
-            new EnableUserCommand($userId)
+            new EnableUserCommand($this->getUserId())
         );
     }
 
@@ -128,8 +123,6 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldDisableUser(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
         $repository = $this->getUserRepositoryMockReturningUser(
             $this->getUserMock(true, true)
         );
@@ -149,7 +142,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserPasswordServiceMock()
         );
         $service->disable(
-            new DisableUserCommand($userId)
+            new DisableUserCommand($this->getUserId())
         );
     }
 
@@ -158,9 +151,6 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldFailWhenDisabledUserNotExists(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
-
         $this->expectException(UserNotFoundException::class);
 
         $service = new UserService(
@@ -169,7 +159,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserPasswordServiceMock()
         );
         $service->disable(
-            new DisableUserCommand($userId)
+            new DisableUserCommand($this->getUserId())
         );
     }
 
@@ -180,8 +170,6 @@ class UserServiceTest extends UserServiceBaseTestCase
     {
         $newPassword = 'new-VEEERY_StR0Ng_P@sSw0rD1!#';
 
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
         $repository = $this->getUserRepositoryMockReturningUser(
             $this->getUserMock(true, true)
         );
@@ -202,7 +190,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->changePassword(
             new ChangePasswordCommand(
-                $userId,
+                $this->getUserId(),
                 new UserPassword($newPassword)
             )
         );
@@ -213,9 +201,6 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldFailWhenChangedPasswordIsTooWeak(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
-
         $this->expectException(PasswordException::class);
 
         $service = new UserService(
@@ -225,7 +210,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->changePassword(
             new ChangePasswordCommand(
-                $userId,
+                $this->getUserId(),
                 new UserPassword('weak_password')
             )
         );
@@ -236,8 +221,6 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldFailWhenChangedPasswordEqualsWithCurrentPassword(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
         $repository = $this->getUserRepositoryMockReturningUser(
             $this->getUserMock(true, true)
         );
@@ -251,7 +234,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->changePassword(
             new ChangePasswordCommand(
-                $userId,
+                $this->getUserId(),
                 new UserPassword($this->password)
             )
         );
@@ -262,9 +245,6 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldFailWhenUserChangingPasswordNotExists(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
-
         $this->expectException(UserNotFoundException::class);
 
         $service = new UserService(
@@ -274,7 +254,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->changePassword(
             new ChangePasswordCommand(
-                $userId,
+                $this->getUserId(),
                 new UserPassword($this->password)
             )
         );
@@ -285,8 +265,6 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldRemoveUser(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
         $repository = $this->getUserRepositoryMockReturningUser(
             $this->getUserMock(true, true)
         );
@@ -306,7 +284,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserPasswordServiceMock()
         );
         $service->unregister(
-            new UnregisterUserCommand($userId)
+            new UnregisterUserCommand($this->getUserId())
         );
     }
 
@@ -315,9 +293,6 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldFailWhenRemovedUserNotExists(): void
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
-
         $this->expectException(UserNotFoundException::class);
 
         $service = new UserService(
@@ -326,7 +301,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             $this->getUserPasswordServiceMock()
         );
         $service->unregister(
-            new UnregisterUserCommand($userId)
+            new UnregisterUserCommand($this->getUserId())
         );
     }
 }

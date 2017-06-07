@@ -53,11 +53,8 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
      */
     protected function getUserMock(bool $active, bool $enabled): User
     {
-        /** @var UserId $userId */
-        $userId = UserId::fromInt($this->userId);
-
         $user = User::reconstituteFrom(
-            new AggregateHistory($userId, [])
+            new AggregateHistory($this->getUserId(), [])
         );
         $refUser = new \ReflectionObject($user);
         $refProperty = $refUser->getProperty('login');
@@ -96,16 +93,6 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
             ->willThrowException(UserNotFoundException::forUser($this->login));
 
         return $repository;
-    }
-
-    /**
-     * @return UserRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getUserRegistryMock(): UserRegistry
-    {
-        return $this->getMockBuilder(UserRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 
     /**

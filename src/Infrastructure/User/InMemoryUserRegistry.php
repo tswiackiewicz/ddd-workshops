@@ -50,9 +50,9 @@ class InMemoryUserRegistry implements UserRegistry
 
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
-            if (!empty($user['id']) && isset($user['login']) && $login === $user['login']) {
+            if (!empty($user['uuid']) && !empty($user['id']) && isset($user['login']) && $login === $user['login']) {
                 try {
-                    self::$identityMap[$login] = UserId::fromInt($user['id']);
+                    self::$identityMap[$login] = UserId::fromString($user['uuid'])->setId($user['id']);
 
                     return self::$identityMap[$login];
                 } catch (InvalidArgumentException $exception) {
@@ -78,9 +78,9 @@ class InMemoryUserRegistry implements UserRegistry
 
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
-            if (!empty($user['id']) && isset($user['hash']) && $hash === $user['hash']) {
+            if (!empty($user['uuid']) && !empty($user['id']) && isset($user['hash']) && $hash === $user['hash']) {
                 try {
-                    return UserId::fromInt($user['id']);
+                    return UserId::fromString($user['uuid'])->setId($user['id']);
                 } catch (InvalidArgumentException $exception) {
                     //
                 }

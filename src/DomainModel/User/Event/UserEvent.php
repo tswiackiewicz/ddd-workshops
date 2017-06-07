@@ -24,11 +24,12 @@ abstract class UserEvent extends Event
     }
 
     /**
+     * @param string $uuid
      * @param int $id
      * @return AggregateId
      */
-    protected function doUnserializeId(int $id): AggregateId
+    protected function doUnserializeId(string $uuid, int $id): AggregateId
     {
-        return UserId::fromInt($id);
+        return UserId::fromString($uuid)->setId($id);
     }
 }

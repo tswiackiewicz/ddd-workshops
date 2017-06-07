@@ -61,8 +61,9 @@ class User
      */
     public static function reconstituteFrom(AggregateHistory $aggregateHistory): User
     {
+        $aggregateId = $aggregateHistory->getAggregateId();
         /** @var UserId $userId */
-        $userId = UserId::fromInt($aggregateHistory->getAggregateId()->getId());
+        $userId = UserId::fromString($aggregateId->getAggregateId())->setId($aggregateId->getId());
 
         $user = new static($userId);
 
@@ -107,12 +108,7 @@ class User
         $user = new static($id);
 
         $user->recordThat(
-            new UserRegisteredEvent(
-                $id,
-                (string)$username,
-                (string)$password,
-                $user->doHash((string)$username)
-            )
+            new UserRegisteredEvent($id, (string)$username, (string)$password, $user->doHash((string)$username))
         );
 
         return $user;

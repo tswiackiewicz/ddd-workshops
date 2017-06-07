@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Infrastructure;
 
+use Ramsey\Uuid\Uuid;
 use TSwiackiewicz\DDD\Query\Sort\NullSort;
 use TSwiackiewicz\DDD\Query\Sort\Sort;
 
@@ -23,16 +24,6 @@ class InMemoryStorage
      * @var array
      */
     private static $nextIdentity = [];
-
-    /**
-     * @param string $type
-     * @param int $id
-     * @return array
-     */
-    public static function fetchById(string $type, int $id): array
-    {
-        return self::$storage[$type][$id] ?? [];
-    }
 
     /**
      * @param string $type
@@ -79,8 +70,10 @@ class InMemoryStorage
     public static function save(string $type, array $item): void
     {
         $id = $item['id'] ?? self::nextIdentity($type);
+        $uuid = $item['uuid'] ?? Uuid::uuid4()->toString();
 
         $item['id'] = $id;
+        $item['uuid'] = $uuid;
         foreach ($item as $property => $value) {
             self::$storage[$type][$id][$property] = $value;
         }

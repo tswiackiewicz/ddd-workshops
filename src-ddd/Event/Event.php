@@ -11,6 +11,7 @@ use TSwiackiewicz\DDD\AggregateId;
  */
 abstract class Event implements \Serializable
 {
+    protected const SERIALIZED_EVENT_AGGREGATE_UUID = 'uuid';
     protected const SERIALIZED_EVENT_AGGREGATE_ID = 'id';
     protected const SERIALIZED_EVENT_OCCURRED_ON = 'occurred_on';
 
@@ -59,6 +60,7 @@ abstract class Event implements \Serializable
         return json_encode(
             array_merge(
                 [
+                    self::SERIALIZED_EVENT_AGGREGATE_UUID => $this->id->getAggregateId(),
                     self::SERIALIZED_EVENT_AGGREGATE_ID => $this->id->getId(),
                     self::SERIALIZED_EVENT_OCCURRED_ON => $this->occurredOn
                 ],
@@ -84,7 +86,10 @@ abstract class Event implements \Serializable
     {
         $unserialized = json_decode($serialized, true);
 
-        $this->id = $this->doUnserializeId($unserialized[self::SERIALIZED_EVENT_AGGREGATE_ID]);
+        $this->id = $this->doUnserializeId(
+            $unserialized[self::SERIALIZED_EVENT_AGGREGATE_UUID],
+            $unserialized[self::SERIALIZED_EVENT_AGGREGATE_ID]
+        );
         $this->occurredOn = new \DateTimeImmutable(
             $unserialized[self::SERIALIZED_EVENT_OCCURRED_ON]['date'],
             new \DateTimeZone($unserialized[self::SERIALIZED_EVENT_OCCURRED_ON]['timezone'])
@@ -94,10 +99,11 @@ abstract class Event implements \Serializable
     }
 
     /**
+     * @param string $uuid
      * @param int $id
      * @return AggregateId
      */
-    abstract protected function doUnserializeId(int $id): AggregateId;
+    abstract protected function doUnserializeId(string $uuid, int $id): AggregateId;
 
     /**
      * This method can be overridden - custom event properties deserialization
