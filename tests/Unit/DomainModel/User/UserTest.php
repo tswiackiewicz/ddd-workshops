@@ -10,7 +10,6 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
-use TSwiackiewicz\DDD\EventSourcing\AggregateHistory;
 
 /**
  * Class UserTest
@@ -51,10 +50,15 @@ class UserTest extends UserBaseTestCase
         bool $enabled
     ): void
     {
-        $history = new AggregateHistory($this->getUserId(), $events);
+        $history = $this->buildAggregateHistory($events);
         $user = User::reconstituteFrom($history);
 
-        self::assertEquals(UserId::fromString($history->getAggregateId()->getAggregateId())->setId($history->getAggregateId()->getId()), $user->getId());
+        self::assertEquals(
+            UserId::fromString(
+                $history->getAggregateId()->getAggregateId())->setId($history->getAggregateId()->getId()
+            ),
+            $user->getId()
+        );
         self::assertAttributeEquals(new UserLogin($this->login), 'login', $user);
         self::assertAttributeEquals(new UserPassword($password), 'password', $user);
         self::assertAttributeEquals($active, 'active', $user);

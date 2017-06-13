@@ -7,7 +7,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Event\UserRegisteredEvent, Exception\UserNotFoundException
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryEventStore, User\InMemoryEventStoreUserRepository
+    InMemoryEventStore, InMemoryStorage, User\InMemoryEventStoreUserRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserRepositoryException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
@@ -17,8 +17,7 @@ use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
  * Class InMemoryEventStoreUserRepository
  * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Infrastructure\User
  *
- * @@coversDefaultClass InMemoryEventStoreUserRepository
- * @runTestsInSeparateProcesses
+ * @coversDefaultClass InMemoryEventStoreUserRepository
  */
 class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
 {
@@ -70,19 +69,17 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
 
     public function shouldFailWhenDataInStorageIsInvalid(): void
     {
+        $this->clearCache();
+
+        $events = new \ReflectionProperty(InMemoryEventStore::class, 'events');
+        $events->setAccessible(true);
+        $events->setValue(null, [
+
+        ]);
+
         $this->expectException(UserRepositoryException::class);
 
-        self::markTestSkipped('TODO: Implement shouldFailWhenDataInStorageIsInvalid() method test.');
-    }
-
-    public function shouldSaveUser(): void
-    {
-        self::markTestSkipped('TODO: Implement shouldSaveUser() method test.');
-    }
-
-    public function shouldRemoveUserById(): void
-    {
-        self::markTestSkipped('TODO: Implement shouldRemoveUserById() method test.');
+        $this->repository->getById($this->getUserId());
     }
 
     /**
@@ -90,11 +87,28 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
      */
     protected function setUp(): void
     {
+        $this->clearCache();
         $userId = $this->getUserId();
 
         $store = new InMemoryEventStore();
         $store->append($userId, new UserRegisteredEvent($userId, $this->login, $this->password, $this->hash));
 
         $this->repository = new InMemoryEventStoreUserRepository($store);
+    }
+
+    /**
+     * Clear cache
+     */
+    private function clearCache(): void
+    {
+        InMemoryStorage::clear();
+
+        $events = new \ReflectionProperty(InMemoryEventStore::class, 'events');
+        $events->setAccessible(true);
+        $events->setValue(null, []);
+
+        $identityMap = new \ReflectionProperty(InMemoryEventStoreUserRepository::class, 'identityMap');
+        $identityMap->setAccessible(true);
+        $identityMap->setValue(null, []);
     }
 }

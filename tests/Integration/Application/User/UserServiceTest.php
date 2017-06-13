@@ -94,35 +94,6 @@ class UserServiceTest extends UserServiceBaseTestCase
     /**
      * @test
      */
-    public function shouldEnableUser(): void
-    {
-        $this->disableUser();
-
-        $this->service->enable(
-            new EnableUserCommand($this->userId)
-        );
-
-        $repository = new InMemoryUserReadModelRepository();
-        $userDTO = $repository->findById($this->userId);
-
-        self::assertTrue($userDTO->isEnabled());
-    }
-
-    /**
-     * @test
-     */
-    public function shouldFailWhenEnabledUserNotExists(): void
-    {
-        $this->expectException(UserNotFoundException::class);
-
-        $this->service->enable(
-            new EnableUserCommand($this->nonExistentUserId)
-        );
-    }
-
-    /**
-     * @test
-     */
     public function shouldDisableUser(): void
     {
         $this->enableUser();
@@ -146,6 +117,35 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $this->service->disable(
             new DisableUserCommand($this->nonExistentUserId)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldEnableUser(): void
+    {
+        $this->disableUser();
+
+        $this->service->enable(
+            new EnableUserCommand($this->userId)
+        );
+
+        $repository = new InMemoryUserReadModelRepository();
+        $userDTO = $repository->findById($this->userId);
+
+        self::assertTrue($userDTO->isEnabled());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenEnabledUserNotExists(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        $this->service->enable(
+            new EnableUserCommand($this->nonExistentUserId)
         );
     }
 

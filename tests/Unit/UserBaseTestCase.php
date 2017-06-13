@@ -17,8 +17,11 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserProjector;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRegistry;
+use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryEventStore;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\AggregateId;
+use TSwiackiewicz\DDD\Event\Event;
+use TSwiackiewicz\DDD\EventSourcing\AggregateHistory;
 use TSwiackiewicz\DDD\EventStore\EventStore;
 
 /**
@@ -31,6 +34,11 @@ abstract class UserBaseTestCase extends TestCase
      * @var int
      */
     protected $userId = 1;
+
+    /**
+     * @var string
+     */
+    protected $uuid = '98a7debc-00c3-44cd-aaaf-cfe9e7ab31fc';
 
     /**
      * @var string
@@ -307,6 +315,23 @@ abstract class UserBaseTestCase extends TestCase
      */
     protected function getUserId(): UserId
     {
-        return UserId::fromString('98a7debc-00c3-44cd-aaaf-cfe9e7ab31fc')->setId($this->userId);
+        return UserId::fromString($this->uuid)->setId($this->userId);
+    }
+
+    /**
+     * @param Event[] $eventStream
+     * @return AggregateHistory
+     */
+    protected function buildAggregateHistory(array $eventStream): AggregateHistory
+    {
+        InMemoryEventStore::clear();
+        $eventStore = new InMemoryEventStore();
+
+        /** @var Event $event */
+        foreach ($eventStream as $event) {
+            $eventStore->append($event->getId(), $event);
+        }
+
+        return new AggregateHistory($this->getUserId(), $eventStore->load($this->getUserId()));
     }
 }

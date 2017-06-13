@@ -10,7 +10,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
-    UserId
+    Exception\InvalidArgumentException, UserId
 };
 use TSwiackiewicz\DDD\Event\EventBus;
 use TSwiackiewicz\DDD\EventSourcing\AggregateHistory;
@@ -58,6 +58,7 @@ class User
     /**
      * @param AggregateHistory $aggregateHistory
      * @return User
+     * @throws InvalidArgumentException
      */
     public static function reconstituteFrom(AggregateHistory $aggregateHistory): User
     {

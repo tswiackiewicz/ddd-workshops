@@ -18,10 +18,7 @@ class RuntimeException extends \RuntimeException
      * @param string $expectedEventType
      * @return RuntimeException
      */
-    public static function invalidHandledEventType(
-        Event $handledEvent,
-        string $expectedEventType
-    ): RuntimeException
+    public static function invalidHandledEventType(Event $handledEvent, string $expectedEventType): RuntimeException
     {
         return new static(
             sprintf(

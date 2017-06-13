@@ -7,6 +7,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRegistry;
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserRegistryException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\AggregateId;
 
@@ -40,6 +41,7 @@ class InMemoryUserRegistry implements UserRegistry
     /**
      * @param string $login
      * @return UserId|AggregateId
+     * @throws UserRegistryException
      * @throws UserNotFoundException
      */
     public function getByLogin(string $login): UserId
@@ -56,7 +58,7 @@ class InMemoryUserRegistry implements UserRegistry
 
                     return self::$identityMap[$login];
                 } catch (InvalidArgumentException $exception) {
-                    //
+                    throw UserRegistryException::fromPrevious($exception);
                 }
             }
         }
@@ -67,6 +69,7 @@ class InMemoryUserRegistry implements UserRegistry
     /**
      * @param string $hash
      * @return UserId|AggregateId
+     * @throws UserRegistryException
      * @throws UserNotFoundException
      */
     public function getByHash(string $hash): UserId
@@ -82,7 +85,7 @@ class InMemoryUserRegistry implements UserRegistry
                 try {
                     return UserId::fromString($user['uuid'])->setId($user['id']);
                 } catch (InvalidArgumentException $exception) {
-                    //
+                    throw UserRegistryException::fromPrevious($exception);
                 }
             }
         }
