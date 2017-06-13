@@ -34,7 +34,7 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
         $userId = $this->getUserId();
         $user = $this->repository->getById($userId);
 
-        self::assertEquals($userId, $user->getId());
+        self::assertTrue($user->getId()->equals($userId));
     }
 
     /**

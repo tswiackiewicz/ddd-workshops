@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\AggregateId;
 use TSwiackiewicz\DDD\Event\Event;
 
@@ -14,22 +13,12 @@ use TSwiackiewicz\DDD\Event\Event;
 abstract class UserEvent extends Event
 {
     /**
-     * UserEvent constructor.
-     * @param UserId $id
-     * @param null|\DateTimeImmutable $occurredOn
-     */
-    public function __construct(UserId $id, ?\DateTimeImmutable $occurredOn = null)
-    {
-        parent::__construct($id, $occurredOn);
-    }
-
-    /**
      * @param string $uuid
      * @param int $id
      * @return AggregateId
      */
     protected function doUnserializeId(string $uuid, int $id): AggregateId
     {
-        return UserId::fromString($uuid)->setId($id);
+        return AggregateId::fromString($uuid)->setId($id);
     }
 }

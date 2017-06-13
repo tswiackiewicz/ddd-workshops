@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\AggregateId;
 
 /**
  * Class UserPasswordChangedEvent
@@ -18,11 +18,11 @@ class UserPasswordChangedEvent extends UserEvent
 
     /**
      * UserPasswordChangedEvent constructor.
-     * @param UserId $id
+     * @param AggregateId $id
      * @param string $password
      * @param \DateTimeImmutable|null $occurredOn
      */
-    public function __construct(UserId $id, string $password, ?\DateTimeImmutable $occurredOn = null)
+    public function __construct(AggregateId $id, string $password, ?\DateTimeImmutable $occurredOn = null)
     {
         parent::__construct($id, $occurredOn);
         $this->password = $password;

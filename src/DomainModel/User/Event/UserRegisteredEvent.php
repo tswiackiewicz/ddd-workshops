@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\AggregateId;
 
 /**
  * Class UserRegisteredEvent
@@ -28,14 +29,14 @@ class UserRegisteredEvent extends UserEvent
 
     /**
      * UserRegisteredEvent constructor.
-     * @param UserId $id
+     * @param AggregateId $id
      * @param string $login
      * @param string $password
      * @param string $hash
      * @param \DateTimeImmutable|null $occurredOn
      */
     public function __construct(
-        UserId $id,
+        AggregateId $id,
         string $login,
         string $password,
         string $hash,

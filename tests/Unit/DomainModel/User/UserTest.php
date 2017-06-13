@@ -53,11 +53,10 @@ class UserTest extends UserBaseTestCase
         $history = $this->buildAggregateHistory($events);
         $user = User::reconstituteFrom($history);
 
-        self::assertEquals(
+        self::assertTrue(
             UserId::fromString(
                 $history->getAggregateId()->getAggregateId())->setId($history->getAggregateId()->getId()
-            ),
-            $user->getId()
+            )->equals($user->getId())
         );
         self::assertAttributeEquals(new UserLogin($this->login), 'login', $user);
         self::assertAttributeEquals(new UserPassword($password), 'password', $user);

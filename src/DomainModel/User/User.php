@@ -4,28 +4,20 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
-    UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
+    UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
-    Exception\InvalidArgumentException, UserId
-};
-use TSwiackiewicz\DDD\Event\EventBus;
-use TSwiackiewicz\DDD\EventSourcing\AggregateHistory;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\EventSourcing\EventSourcedAggregate;
 
 /**
  * Class User
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-class User
+class User extends EventSourcedAggregate
 {
-    /**
-     * @var UserId
-     */
-    private $id;
-
     /**
      * @var UserLogin
      */
@@ -47,56 +39,6 @@ class User
     private $enabled;
 
     /**
-     * User constructor.
-     * @param UserId $id
-     */
-    private function __construct(UserId $id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @param AggregateHistory $aggregateHistory
-     * @return User
-     * @throws InvalidArgumentException
-     */
-    public static function reconstituteFrom(AggregateHistory $aggregateHistory): User
-    {
-        $aggregateId = $aggregateHistory->getAggregateId();
-        /** @var UserId $userId */
-        $userId = UserId::fromString($aggregateId->getAggregateId())->setId($aggregateId->getId());
-
-        $user = new static($userId);
-
-        /** @var UserEvent[] $events */
-        $events = $aggregateHistory->getDomainEvents();
-        foreach ($events as $event) {
-            $user->apply($event);
-        }
-
-        return $user;
-    }
-
-    /**
-     * TODO: move to "DDD Framework"
-     *
-     * @param UserEvent $event
-     */
-    private function apply(UserEvent $event): void
-    {
-        $classParts = explode('\\', get_class($event));
-
-        $method = 'when' . end($classParts);
-        if ('Event' === substr($method, -5)) {
-            $method = substr($method, 0, -5);
-        }
-
-        if (method_exists($this, $method)) {
-            $this->$method($event);
-        }
-    }
-
-    /**
      * Register new user
      *
      * @param UserId $id
@@ -113,15 +55,6 @@ class User
         );
 
         return $user;
-    }
-
-    /**
-     * @param UserEvent $event
-     */
-    private function recordThat(UserEvent $event): void
-    {
-        $this->apply($event);
-        EventBus::publish($event);
     }
 
     /**
@@ -147,7 +80,7 @@ class User
     public function activate(): void
     {
         if ($this->active) {
-            throw UserException::alreadyActivated($this->id);
+            throw UserException::alreadyActivated(UserId::fromAggregateId($this->id));
         }
 
         $this->recordThat(
@@ -163,7 +96,7 @@ class User
     public function enable(): void
     {
         if (!$this->active || $this->enabled) {
-            throw UserException::enableNotAllowed($this->id);
+            throw UserException::enableNotAllowed(UserId::fromAggregateId($this->id));
         }
 
         $this->recordThat(
@@ -179,7 +112,7 @@ class User
     public function disable(): void
     {
         if (!$this->active || !$this->enabled) {
-            throw UserException::disableNotAllowed($this->id);
+            throw UserException::disableNotAllowed(UserId::fromAggregateId($this->id));
         }
 
         $this->recordThat(
@@ -197,11 +130,11 @@ class User
     public function changePassword(UserPassword $password): void
     {
         if (!$this->active || !$this->enabled) {
-            throw UserException::passwordChangeNotAllowed($this->id);
+            throw UserException::passwordChangeNotAllowed(UserId::fromAggregateId($this->id));
         }
 
         if ($this->password->equals($password)) {
-            throw PasswordException::newPasswordEqualsWithCurrentPassword($this->id);
+            throw PasswordException::newPasswordEqualsWithCurrentPassword(UserId::fromAggregateId($this->id));
         }
 
         $this->recordThat(
@@ -220,14 +153,6 @@ class User
     }
 
     /**
-     * @return UserId
-     */
-    public function getId(): UserId
-    {
-        return $this->id;
-    }
-
-    /**
      * Generate user hash string
      *
      * @return string
@@ -241,7 +166,7 @@ class User
     /**
      * @param UserRegisteredEvent $event
      */
-    private function whenUserRegistered(UserRegisteredEvent $event): void
+    protected function whenUserRegistered(UserRegisteredEvent $event): void
     {
         $this->login = new UserLogin($event->getLogin());
         $this->password = new UserPassword($event->getPassword());
@@ -253,7 +178,7 @@ class User
     /**
      * @param UserActivatedEvent $event
      */
-    private function whenUserActivated(UserActivatedEvent $event): void
+    protected function whenUserActivated(UserActivatedEvent $event): void
     {
         $this->active = $event->isActive();
         $this->enabled = $event->isEnabled();
@@ -263,7 +188,7 @@ class User
     /**
      * @param UserEnabledEvent $event
      */
-    private function whenUserEnabled(UserEnabledEvent $event): void
+    protected function whenUserEnabled(UserEnabledEvent $event): void
     {
         $this->enabled = $event->isEnabled();
     }
@@ -272,7 +197,7 @@ class User
     /**
      * @param UserDisabledEvent $event
      */
-    private function whenUserDisabled(UserDisabledEvent $event): void
+    protected function whenUserDisabled(UserDisabledEvent $event): void
     {
         $this->enabled = $event->isEnabled();
     }
@@ -281,7 +206,7 @@ class User
     /**
      * @param UserPasswordChangedEvent $event
      */
-    private function whenUserPasswordChanged(UserPasswordChangedEvent $event): void
+    protected function whenUserPasswordChanged(UserPasswordChangedEvent $event): void
     {
         $this->password = new UserPassword($event->getPassword());
     }
@@ -290,7 +215,7 @@ class User
     /**
      * @param UserUnregisteredEvent $event
      */
-    private function whenUserUnregistered(UserUnregisteredEvent $event): void
+    protected function whenUserUnregistered(UserUnregisteredEvent $event): void
     {
         $this->active = $event->isActive();
         $this->enabled = $event->isEnabled();

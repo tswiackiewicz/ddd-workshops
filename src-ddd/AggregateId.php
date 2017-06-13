@@ -11,7 +11,7 @@ use Ramsey\Uuid\UuidInterface;
  * Class AggregateId
  * @package TSwiackiewicz\DDD
  */
-abstract class AggregateId
+class AggregateId
 {
     /**
      * @var UuidInterface
@@ -84,5 +84,14 @@ abstract class AggregateId
         $aggregateId->id = $id;
 
         return $aggregateId;
+    }
+
+    /**
+     * @param AggregateId $aggregateId
+     * @return bool
+     */
+    public function equals(AggregateId $aggregateId): bool
+    {
+        return $aggregateId->getAggregateId() === $this->getAggregateId() && $aggregateId->getId() === $this->getId();
     }
 }
