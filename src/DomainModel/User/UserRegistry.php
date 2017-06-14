@@ -12,6 +12,8 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
  *
  * @see http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/
  * @sse https://seabites.wordpress.com/2010/11/11/consistent-indexes-constraints/
+ * @see https://stackoverflow.com/questions/9495985/cqrs-event-sourcing-validate-username-uniqueness
+ * @see https://groups.google.com/forum/#!topic/dddcqrs/aUltOB2a-3Y
  *
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */

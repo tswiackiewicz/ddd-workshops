@@ -10,7 +10,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Exception\PasswordException, Exception\UserAlreadyExistsException, Password\UserPasswordService, User, UserRegistry, UserRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\{
-    User\Exception\UserDomainModelException, User\Exception\ValidationException, User\UserId
+    User\Exception\UserDomainModelException, User\UserId
 };
 
 /**
@@ -117,7 +117,6 @@ class UserService
      *
      * @param ChangePasswordCommand $command
      * @throws UserDomainModelException
-     * @throws ValidationException
      */
     public function changePassword(ChangePasswordCommand $command): void
     {
