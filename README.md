@@ -1,6 +1,6 @@
 # DDD Workshops
 
-[![Build Status](https://travis-ci.org/tswiackiewicz/ddd-workshops.png?branch=master)](https://travis-ci.org/tswiackiewicz/ddd-workshops)
+[![Build Status](https://travis-ci.org/tswiackiewicz/ddd-workshops.png?branch=event-sourcing)](https://travis-ci.org/tswiackiewicz/ddd-workshops)
 
 Sample application for Domain Driven Design workshops 
 
