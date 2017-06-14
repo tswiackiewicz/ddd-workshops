@@ -48,12 +48,4 @@ class InMemoryEventStore implements EventStore
     {
         self::$events[$id->getAggregateId()][] = serialize($event);
     }
-
-    /**
-     * Clear store events
-     */
-    public static function clear(): void
-    {
-        self::$events = [];
-    }
 }

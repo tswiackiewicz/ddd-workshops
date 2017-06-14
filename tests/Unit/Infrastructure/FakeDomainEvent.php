@@ -19,6 +19,6 @@ class FakeDomainEvent extends Event
      */
     protected function doUnserializeId(string $uuid, int $id): AggregateId
     {
-        return FakeAggregateId::fromString($uuid)->setId($id);
+        return AggregateId::fromString($uuid)->setId($id);
     }
 }

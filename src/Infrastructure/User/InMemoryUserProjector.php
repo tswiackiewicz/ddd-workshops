@@ -95,17 +95,21 @@ class InMemoryUserProjector implements UserProjector
 
     /**
      * @param UserRegisteredEvent $event
+     * @return UserId
      */
-    public function projectUserRegistered(UserRegisteredEvent $event): void
+    public function projectUserRegistered(UserRegisteredEvent $event): UserId
     {
-        /** @var UserId|AggregateId $id */
-        $id = $event->getId()->setId(InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER));
+        $aggregateId = $event->getId()->getAggregateId();
+        $id = InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER);
+
+        /** @var UserId|AggregateId $registeredUserId */
+        $registeredUserId = UserId::fromString($aggregateId)->setId($id);
 
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,
             [
-                'uuid' => $id->getAggregateId(),
-                'id' => $id->getId(),
+                'uuid' => $registeredUserId->getAggregateId(),
+                'id' => $registeredUserId->getId(),
                 'login' => $event->getLogin(),
                 'password' => $event->getPassword(),
                 'hash' => $event->getHash(),
@@ -114,7 +118,9 @@ class InMemoryUserProjector implements UserProjector
             ]
         );
 
-        $this->registry->put($event->getLogin(), $id);
+        $this->registry->put($event->getLogin(), $registeredUserId);
+
+        return $registeredUserId;
     }
 
     /**

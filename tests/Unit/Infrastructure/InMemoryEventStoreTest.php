@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Infrastructure;
 
-use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryEventStore;
+use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 use TSwiackiewicz\DDD\AggregateId;
 use TSwiackiewicz\DDD\Event\Event;
 
@@ -14,7 +14,7 @@ use TSwiackiewicz\DDD\Event\Event;
  *
  * @@coversDefaultClass InMemoryEventStore
  */
-class InMemoryEventStoreTest extends TestCase
+class InMemoryEventStoreTest extends UserBaseTestCase
 {
     /**
      * @var AggregateId
@@ -61,7 +61,7 @@ class InMemoryEventStoreTest extends TestCase
      */
     public function shouldNotLoadEventsIfNotAppended(): void
     {
-        InMemoryEventStore::clear();
+        $this->clearCache();
 
         $store = new InMemoryEventStore();
         $events = $store->load($this->id);
@@ -74,7 +74,7 @@ class InMemoryEventStoreTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->id = FakeAggregateId::fromString('1ec7223b-cb08-46d0-9410-03d0b2b81d06')->setId(1);
+        $this->id = AggregateId::fromString('1ec7223b-cb08-46d0-9410-03d0b2b81d06')->setId(1);
         $this->events = array_fill(0, 10, new FakeDomainEvent($this->id));
     }
 }

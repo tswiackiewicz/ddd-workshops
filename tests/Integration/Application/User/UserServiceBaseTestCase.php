@@ -133,13 +133,21 @@ abstract class UserServiceBaseTestCase extends TestCase
      */
     protected function clearEventStore(): void
     {
-        $events = new \ReflectionProperty(InMemoryEventStore::class, 'events');
-        $events->setAccessible(true);
-        $events->setValue(null, []);
+        $storage = new \ReflectionProperty(InMemoryStorage::class, 'storage');
+        $storage->setAccessible(true);
+        $storage->setValue(null, []);
 
-        $identityMap = new \ReflectionProperty(InMemoryEventStoreUserRepository::class, 'identityMap');
-        $identityMap->setAccessible(true);
-        $identityMap->setValue(null, []);
+        $storageNextIdentity = new \ReflectionProperty(InMemoryStorage::class, 'nextIdentity');
+        $storageNextIdentity->setAccessible(true);
+        $storageNextIdentity->setValue(null, []);
+
+        $storedEvents = new \ReflectionProperty(InMemoryEventStore::class, 'events');
+        $storedEvents->setAccessible(true);
+        $storedEvents->setValue(null, []);
+
+        $repositoryIdentityMap = new \ReflectionProperty(InMemoryEventStoreUserRepository::class, 'identityMap');
+        $repositoryIdentityMap->setAccessible(true);
+        $repositoryIdentityMap->setValue(null, []);
     }
 
     /**
@@ -154,7 +162,7 @@ abstract class UserServiceBaseTestCase extends TestCase
 
         EventBus::subscribe(
             UserRegisteredEvent::class,
-            new UserRegisteredEventHandler($eventStore, $projector, $registry, $notifier)
+            new UserRegisteredEventHandler($eventStore, $projector, $notifier)
         );
 
         EventBus::subscribe(

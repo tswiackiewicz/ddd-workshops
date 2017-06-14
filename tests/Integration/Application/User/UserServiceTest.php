@@ -10,9 +10,8 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Exception\PasswordException, Exception\UserAlreadyExistsException, Exception\UserNotFoundException, Password\UserPassword, UserLogin
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryStorage, User\InMemoryUserReadModelRepository
+    User\InMemoryUserReadModelRepository
 };
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class UserServiceTest
@@ -27,7 +26,6 @@ class UserServiceTest extends UserServiceBaseTestCase
      */
     public function shouldRegisterUser(): void
     {
-        InMemoryStorage::clear();
         $this->clearEventStore();
 
         $registeredUserId = $this->service->register(

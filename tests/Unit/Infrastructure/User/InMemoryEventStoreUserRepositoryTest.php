@@ -7,7 +7,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Event\UserRegisteredEvent, Exception\UserNotFoundException
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryEventStore, InMemoryStorage, User\InMemoryEventStoreUserRepository
+    InMemoryEventStore, User\InMemoryEventStoreUserRepository
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserRepositoryException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
@@ -94,21 +94,5 @@ class InMemoryEventStoreUserRepositoryTest extends UserBaseTestCase
         $store->append($userId, new UserRegisteredEvent($userId, $this->login, $this->password, $this->hash));
 
         $this->repository = new InMemoryEventStoreUserRepository($store);
-    }
-
-    /**
-     * Clear cache
-     */
-    private function clearCache(): void
-    {
-        InMemoryStorage::clear();
-
-        $events = new \ReflectionProperty(InMemoryEventStore::class, 'events');
-        $events->setAccessible(true);
-        $events->setValue(null, []);
-
-        $identityMap = new \ReflectionProperty(InMemoryEventStoreUserRepository::class, 'identityMap');
-        $identityMap->setAccessible(true);
-        $identityMap->setValue(null, []);
     }
 }

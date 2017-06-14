@@ -97,18 +97,6 @@ class InMemoryUserRegistryTest extends UserBaseTestCase
     }
 
     /**
-     * Clear cache
-     */
-    private function clearCache(): void
-    {
-        InMemoryStorage::clear();
-
-        $identityMap = new \ReflectionProperty(InMemoryUserRegistry::class, 'identityMap');
-        $identityMap->setAccessible(true);
-        $identityMap->setValue(null, []);
-    }
-
-    /**
      * @test
      */
     public function shouldFindUserByHash(): void

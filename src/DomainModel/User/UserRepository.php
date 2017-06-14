@@ -4,12 +4,11 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
-    Exception\UserRepositoryException, UserId
-};
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserRepositoryException;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
- * Interface ActiveUserRepository
+ * Interface UserRepository
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
 interface UserRepository

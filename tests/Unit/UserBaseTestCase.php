@@ -18,6 +18,9 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserProjector;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRegistry;
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryEventStore;
+use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
+use TSwiackiewicz\AwesomeApp\Infrastructure\User\InMemoryEventStoreUserRepository;
+use TSwiackiewicz\AwesomeApp\Infrastructure\User\InMemoryUserRegistry;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\AggregateId;
 use TSwiackiewicz\DDD\Event\Event;
@@ -219,6 +222,14 @@ abstract class UserBaseTestCase extends TestCase
     }
 
     /**
+     * @return UserId|AggregateId
+     */
+    protected function getUserId(): UserId
+    {
+        return UserId::fromString($this->uuid)->setId($this->userId);
+    }
+
+    /**
      * @return User
      * @throws UserException
      */
@@ -311,20 +322,12 @@ abstract class UserBaseTestCase extends TestCase
     }
 
     /**
-     * @return UserId|AggregateId
-     */
-    protected function getUserId(): UserId
-    {
-        return UserId::fromString($this->uuid)->setId($this->userId);
-    }
-
-    /**
      * @param Event[] $eventStream
      * @return AggregateHistory
      */
     protected function buildAggregateHistory(array $eventStream): AggregateHistory
     {
-        InMemoryEventStore::clear();
+        $this->clearCache();
         $eventStore = new InMemoryEventStore();
 
         /** @var Event $event */
@@ -333,5 +336,28 @@ abstract class UserBaseTestCase extends TestCase
         }
 
         return new AggregateHistory($this->getUserId(), $eventStore->load($this->getUserId()));
+    }
+
+    protected function clearCache(): void
+    {
+        $storage = new \ReflectionProperty(InMemoryStorage::class, 'storage');
+        $storage->setAccessible(true);
+        $storage->setValue(null, []);
+
+        $storageNextIdentity = new \ReflectionProperty(InMemoryStorage::class, 'nextIdentity');
+        $storageNextIdentity->setAccessible(true);
+        $storageNextIdentity->setValue(null, []);
+
+        $storedEvents = new \ReflectionProperty(InMemoryEventStore::class, 'events');
+        $storedEvents->setAccessible(true);
+        $storedEvents->setValue(null, []);
+
+        $registryIdentityMap = new \ReflectionProperty(InMemoryUserRegistry::class, 'identityMap');
+        $registryIdentityMap->setAccessible(true);
+        $registryIdentityMap->setValue(null, []);
+
+        $repositoryIdentityMap = new \ReflectionProperty(InMemoryEventStoreUserRepository::class, 'identityMap');
+        $repositoryIdentityMap->setAccessible(true);
+        $repositoryIdentityMap->setValue(null, []);
     }
 }

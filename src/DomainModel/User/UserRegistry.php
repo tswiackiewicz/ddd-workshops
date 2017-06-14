@@ -6,7 +6,6 @@ namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserRegistryException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
-use TSwiackiewicz\DDD\AggregateId;
 
 /**
  * Interface UserRegistry
@@ -26,7 +25,7 @@ interface UserRegistry
 
     /**
      * @param string $login
-     * @return UserId|AggregateId
+     * @return UserId
      * @throws UserRegistryException
      * @throws UserNotFoundException
      */
@@ -34,7 +33,7 @@ interface UserRegistry
 
     /**
      * @param string $hash
-     * @return UserId|AggregateId
+     * @return UserId
      * @throws UserRegistryException
      * @throws UserNotFoundException
      */

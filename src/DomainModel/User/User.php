@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User;
 
+use TSwiackiewicz\AwesomeApp\DomainModel\User\{
+    Exception\PasswordException, Exception\UserException, Password\UserPassword
+};
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\EventSourcing\EventSourcedAggregate;
 
@@ -80,7 +80,7 @@ class User extends EventSourcedAggregate
     public function activate(): void
     {
         if ($this->active) {
-            throw UserException::alreadyActivated(UserId::fromAggregateId($this->id));
+            throw UserException::alreadyActivated($this->id);
         }
 
         $this->recordThat(
@@ -96,7 +96,7 @@ class User extends EventSourcedAggregate
     public function enable(): void
     {
         if (!$this->active || $this->enabled) {
-            throw UserException::enableNotAllowed(UserId::fromAggregateId($this->id));
+            throw UserException::enableNotAllowed($this->id);
         }
 
         $this->recordThat(
@@ -112,7 +112,7 @@ class User extends EventSourcedAggregate
     public function disable(): void
     {
         if (!$this->active || !$this->enabled) {
-            throw UserException::disableNotAllowed(UserId::fromAggregateId($this->id));
+            throw UserException::disableNotAllowed($this->id);
         }
 
         $this->recordThat(
@@ -130,11 +130,11 @@ class User extends EventSourcedAggregate
     public function changePassword(UserPassword $password): void
     {
         if (!$this->active || !$this->enabled) {
-            throw UserException::passwordChangeNotAllowed(UserId::fromAggregateId($this->id));
+            throw UserException::passwordChangeNotAllowed($this->id);
         }
 
         if ($this->password->equals($password)) {
-            throw PasswordException::newPasswordEqualsWithCurrentPassword(UserId::fromAggregateId($this->id));
+            throw PasswordException::newPasswordEqualsWithCurrentPassword($this->id);
         }
 
         $this->recordThat(

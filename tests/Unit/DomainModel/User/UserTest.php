@@ -10,6 +10,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
+use TSwiackiewicz\DDD\EventSourcing\EventSourcedAggregate;
 
 /**
  * Class UserTest
@@ -51,6 +52,7 @@ class UserTest extends UserBaseTestCase
     ): void
     {
         $history = $this->buildAggregateHistory($events);
+        /** @var User|EventSourcedAggregate $user */
         $user = User::reconstituteFrom($history);
 
         self::assertTrue(

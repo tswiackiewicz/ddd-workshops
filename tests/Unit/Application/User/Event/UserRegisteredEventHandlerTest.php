@@ -25,7 +25,6 @@ class UserRegisteredEventHandlerTest extends UserBaseTestCase
         $handler = new UserRegisteredEventHandler(
             $this->getEventStoreMock(),
             $this->getUserProjectorMock(),
-            $this->getUserRegistryMock(),
             $this->getUserNotifierMock()
         );
         $handler->handle(FakeUserEvent::create());

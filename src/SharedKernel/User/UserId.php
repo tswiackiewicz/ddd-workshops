@@ -13,15 +13,6 @@ use TSwiackiewicz\DDD\AggregateId;
 class UserId extends AggregateId
 {
     /**
-     * @param AggregateId $aggregateId
-     * @return UserId|AggregateId
-     */
-    public static function fromAggregateId(AggregateId $aggregateId): UserId
-    {
-        return static::fromString($aggregateId->getAggregateId())->setId($aggregateId->getId());
-    }
-
-    /**
      * @param int $id
      * @return AggregateId
      * @throws InvalidArgumentException

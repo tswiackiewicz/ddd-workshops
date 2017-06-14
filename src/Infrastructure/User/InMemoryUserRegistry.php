@@ -40,7 +40,7 @@ class InMemoryUserRegistry implements UserRegistry
 
     /**
      * @param string $login
-     * @return UserId|AggregateId
+     * @return UserId
      * @throws UserRegistryException
      * @throws UserNotFoundException
      */

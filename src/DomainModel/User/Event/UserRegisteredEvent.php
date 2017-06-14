@@ -57,6 +57,7 @@ class UserRegisteredEvent extends UserEvent
     {
         $event = clone $this;
         $event->id = $userId;
+
         return $event;
     }
 

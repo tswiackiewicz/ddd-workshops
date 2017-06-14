@@ -102,18 +102,4 @@ class InMemoryStorage
             unset(self::$storage[$type][$id]);
         }
     }
-
-    /**
-     * @param string $type
-     */
-    public static function clear(?string $type = null): void
-    {
-        if (null === $type) {
-            self::$storage = [];
-            self::$nextIdentity = [];
-        } else {
-            self::$storage[$type] = [];
-            self::$nextIdentity[$type] = 1;
-        }
-    }
 }

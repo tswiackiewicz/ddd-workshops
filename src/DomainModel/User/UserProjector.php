@@ -9,6 +9,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserEnabledEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserPasswordChangedEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserRegisteredEvent;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\UserUnregisteredEvent;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Interface UserProjector
@@ -38,8 +39,9 @@ interface UserProjector
 
     /**
      * @param UserRegisteredEvent $event
+     * @return UserId
      */
-    public function projectUserRegistered(UserRegisteredEvent $event): void;
+    public function projectUserRegistered(UserRegisteredEvent $event): UserId;
 
     /**
      * @param UserUnregisteredEvent $event
