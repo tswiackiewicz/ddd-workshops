@@ -11,10 +11,10 @@ use TSwiackiewicz\DDD\Event\Event;
 use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
- * Class EventSourcedAggregate
+ * Class EventSourcedAggregateRoot
  * @package TSwiackiewicz\DDD\EventSourcing
  */
-abstract class EventSourcedAggregate
+abstract class EventSourcedAggregateRoot
 {
     /**
      * @var AggregateId
@@ -22,7 +22,7 @@ abstract class EventSourcedAggregate
     protected $id;
 
     /**
-     * EventSourcedAggregate constructor.
+     * EventSourcedAggregateRoot constructor.
      * @param AggregateId $id
      */
     final protected function __construct(AggregateId $id)
@@ -32,10 +32,10 @@ abstract class EventSourcedAggregate
 
     /**
      * @param AggregateHistory $aggregateHistory
-     * @return EventSourcedAggregate
+     * @return EventSourcedAggregateRoot
      * @throws InvalidArgumentException
      */
-    final public static function reconstituteFrom(AggregateHistory $aggregateHistory): EventSourcedAggregate
+    final public static function reconstituteFrom(AggregateHistory $aggregateHistory): EventSourcedAggregateRoot
     {
         $aggregateId = $aggregateHistory->getAggregateId();
         $aggregate = new static(

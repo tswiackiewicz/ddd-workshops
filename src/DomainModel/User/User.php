@@ -10,13 +10,13 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
-use TSwiackiewicz\DDD\EventSourcing\EventSourcedAggregate;
+use TSwiackiewicz\DDD\EventSourcing\EventSourcedAggregateRoot;
 
 /**
  * Class User
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-class User extends EventSourcedAggregate
+class User extends EventSourcedAggregateRoot
 {
     /**
      * @var UserLogin

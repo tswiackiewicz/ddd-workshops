@@ -10,7 +10,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 use TSwiackiewicz\DDD\EventSourcing\AggregateHistory;
-use TSwiackiewicz\DDD\EventSourcing\EventSourcedAggregate;
+use TSwiackiewicz\DDD\EventSourcing\EventSourcedAggregateRoot;
 
 /**
  * Class UserServiceBaseTestCase
@@ -53,7 +53,7 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
      */
     protected function getUserMock(bool $active, bool $enabled): User
     {
-        /** @var User|EventSourcedAggregate $user */
+        /** @var User|EventSourcedAggregateRoot $user */
         $user = User::reconstituteFrom(
             new AggregateHistory($this->getUserId(), [])
         );
