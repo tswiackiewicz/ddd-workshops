@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
+namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Infrastructure;
 
 use TSwiackiewicz\DDD\AggregateId;
 use TSwiackiewicz\DDD\Event\Event;
 
 /**
- * Class UserEvent
- * @package TSwiackiewicz\AwesomeApp\DomainModel\User\Event
+ * Class FakeDomainEvent
+ * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Infrastructure
  */
-abstract class UserEvent extends Event
+class FakeDomainEvent extends Event
 {
     /**
      * @param string $uuid

@@ -12,19 +12,14 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
     Exception\InvalidArgumentException, UserId
 };
-use TSwiackiewicz\DDD\Event\EventBus;
+use TSwiackiewicz\DDD\AggregateRoot;
 
 /**
  * Class User
  * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
-class User
+class User extends AggregateRoot
 {
-    /**
-     * @var UserId
-     */
-    private $id;
-
     /**
      * @var UserLogin
      */
@@ -55,7 +50,7 @@ class User
      */
     public function __construct(UserId $id, UserLogin $login, UserPassword $password, bool $active, bool $enabled)
     {
-        $this->id = $id;
+        parent::__construct($id);
         $this->login = $login;
         $this->password = $password;
         $this->active = $active;
@@ -93,11 +88,25 @@ class User
     {
         $user = new static($id, $username, $password, false, false);
 
-        EventBus::publish(
-            new UserRegisteredEvent($id, (string)$username, (string)$password)
+        $user->recordThat(
+            new UserRegisteredEvent($id, (string)$username, (string)$password, $user->doHash((string)$username))
         );
 
         return $user;
+    }
+
+    /**
+     * @param string $login
+     * @return string
+     */
+    private function doHash(string $login): string
+    {
+        $hash = md5('::' . $login . '::');
+        // salt added to User's hash
+        return substr($hash, 0, 8) .
+            substr($hash, 24, 8) .
+            substr($hash, 16, 8) .
+            substr($hash, 8, 8);
     }
 
     /**
@@ -114,7 +123,7 @@ class User
         $this->active = true;
         $this->enabled = true;
 
-        EventBus::publish(
+        $this->recordThat(
             new UserActivatedEvent($this->id)
         );
     }
@@ -132,7 +141,7 @@ class User
 
         $this->enabled = true;
 
-        EventBus::publish(
+        $this->recordThat(
             new UserEnabledEvent($this->id)
         );
     }
@@ -150,7 +159,7 @@ class User
 
         $this->enabled = false;
 
-        EventBus::publish(
+        $this->recordThat(
             new UserDisabledEvent($this->id)
         );
     }
@@ -174,7 +183,7 @@ class User
 
         $this->password = $password;
 
-        EventBus::publish(
+        $this->recordThat(
             new UserPasswordChangedEvent($this->id, (string)$password)
         );
     }
@@ -187,17 +196,9 @@ class User
         $this->active = false;
         $this->enabled = false;
 
-        EventBus::publish(
+        $this->recordThat(
             new UserUnregisteredEvent($this->id)
         );
-    }
-
-    /**
-     * @return UserId
-     */
-    public function getId(): UserId
-    {
-        return $this->id;
     }
 
     /**
@@ -239,12 +240,7 @@ class User
      */
     public function hash(): string
     {
-        $hash = md5('::' . $this->login . '::');
-
-        // salt added to User's hash
-        return substr($hash, 0, 8) .
-            substr($hash, 24, 8) .
-            substr($hash, 16, 8) .
-            substr($hash, 8, 8);
+        return $this->doHash((string)$this->login);
     }
+
 }

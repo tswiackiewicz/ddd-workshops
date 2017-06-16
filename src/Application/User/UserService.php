@@ -13,8 +13,9 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\{
     PasswordException, UserAlreadyExistsException
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
-    Exception\UserDomainModelException, Exception\ValidationException, UserId
+    Exception\UserDomainModelException, UserId
 };
+use TSwiackiewicz\DDD\AggregateId;
 
 /**
  * Class UserService
@@ -47,7 +48,7 @@ class UserService
      * Register new user
      *
      * @param RegisterUserCommand $command
-     * @return UserId
+     * @return UserId|AggregateId
      * @throws UserDomainModelException
      */
     public function register(RegisterUserCommand $command): UserId

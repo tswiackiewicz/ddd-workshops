@@ -9,9 +9,11 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\{
     RuntimeException, UserDomainModelException
 };
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\{
     Event, EventHandler
 };
+use TSwiackiewicz\DDD\EventStore\EventStore;
 
 /**
  * Class UserRegisteredEventHandler
@@ -19,6 +21,11 @@ use TSwiackiewicz\DDD\Event\{
  */
 class UserRegisteredEventHandler implements EventHandler
 {
+    /**
+     * @var EventStore
+     */
+    private $eventStore;
+
     /**
      * @var UserRepository
      */
@@ -31,11 +38,13 @@ class UserRegisteredEventHandler implements EventHandler
 
     /**
      * UserRegisteredEventHandler constructor.
+     * @param EventStore $eventStore
      * @param UserRepository $repository
      * @param UserNotifier $notifier
      */
-    public function __construct(UserRepository $repository, UserNotifier $notifier)
+    public function __construct(EventStore $eventStore, UserRepository $repository, UserNotifier $notifier)
     {
+        $this->eventStore = $eventStore;
         $this->repository = $repository;
         $this->notifier = $notifier;
     }
@@ -50,9 +59,14 @@ class UserRegisteredEventHandler implements EventHandler
             throw RuntimeException::invalidHandledEventType($event, UserRegisteredEvent::class);
         }
 
+        $this->eventStore->append($event->getId(), $event);
+
+        /** @var UserId $userId */
+        $userId = $event->getId();
+
         $this->repository->save(
             new User(
-                $event->getId(),
+                $userId,
                 new UserLogin($event->getLogin()),
                 new UserPassword($event->getPassword()),
                 false,
@@ -62,6 +76,6 @@ class UserRegisteredEventHandler implements EventHandler
 
         $registeredUser = $this->repository->getByLogin($event->getLogin());
 
-        $this->notifier->notifyUser($event->withUserId($registeredUser->getId()));
+        $this->notifier->notifyUser($event->withAggregateId($registeredUser->getId()));
     }
 }

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Exception;
 
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\AggregateId;
 
 /**
  * Class PasswordException
@@ -15,10 +15,10 @@ class PasswordException extends UserException
     const NEW_PASSWORD_EQUALS_WITH_CURRENT_PASSWORD = self::NEW_PASSWORD_EQUALS_WITH_CURRENT_PASSWORD_ERROR_CODE;
 
     /**
-     * @param UserId $userId
+     * @param AggregateId $userId
      * @return static
      */
-    public static function weakPassword(UserId $userId)
+    public static function weakPassword(AggregateId $userId)
     {
         return new static(
             sprintf('Password for user (user_id = %d) is too weak', $userId->getId()),
@@ -27,10 +27,10 @@ class PasswordException extends UserException
     }
 
     /**
-     * @param UserId $userId
+     * @param AggregateId $userId
      * @return static
      */
-    public static function newPasswordEqualsWithCurrentPassword(UserId $userId)
+    public static function newPasswordEqualsWithCurrentPassword(AggregateId $userId)
     {
         return new static(
             sprintf('Changed password should be different from current password, user_id = %d', $userId->getId()),

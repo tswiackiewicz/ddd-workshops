@@ -23,6 +23,7 @@ class UserEnabledEventHandlerTest extends UserBaseTestCase
         $this->expectException(RuntimeException::class);
 
         $handler = new UserEnabledEventHandler(
+            $this->getEventStoreMock(),
             $this->getUserRepositoryMock(),
             $this->getUserNotifierMock()
         );

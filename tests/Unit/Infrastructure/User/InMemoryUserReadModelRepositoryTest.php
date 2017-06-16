@@ -125,7 +125,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
      */
     public function shouldReturnEmptyArrayWhenNoUsersDefined(): void
     {
-        InMemoryStorage::clear(self::USER_STORAGE_TYPE);
+        $this->clearCache();
 
         $users = $this->repository->getUsers(new QueryContext())->getItems();
 
@@ -199,7 +199,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
      */
     protected function setUp(): void
     {
-        InMemoryStorage::clear();
+        $this->clearCache();
 
         InMemoryStorage::save(
             self::USER_STORAGE_TYPE,

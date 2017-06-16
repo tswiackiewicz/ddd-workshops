@@ -98,7 +98,7 @@ class UserReadModelTest extends UserBaseTestCase
      */
     public function shouldReturnEmptyArrayWhenNoUsersDefined(): void
     {
-        InMemoryStorage::clear();
+        $this->clearCache();
 
         $userDTOCollection = $this->readModel->getUsers()->getItems();
 
@@ -110,7 +110,7 @@ class UserReadModelTest extends UserBaseTestCase
      */
     protected function setUp(): void
     {
-        InMemoryStorage::clear();
+        $this->clearCache();
 
         InMemoryStorage::save(
             InMemoryStorage::TYPE_USER,

@@ -127,11 +127,7 @@ class InMemoryUserRepository implements UserRepository
      */
     public function save(User $user): void
     {
-        if ($user->getId()->isNull()) {
-            $userId = $user->getId()->setId(InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER));
-        } else {
-            $userId = $user->getId();
-        }
+        $userId = $user->getId()->setId(InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER));
 
         $nativeUser = [
             'uuid' => $userId->getAggregateId(),

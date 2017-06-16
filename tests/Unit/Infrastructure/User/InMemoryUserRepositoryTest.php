@@ -244,7 +244,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
      */
     protected function setUp(): void
     {
-        InMemoryStorage::clear();
+        $this->clearCache();
 
         $this->repository = new InMemoryUserRepository();
 

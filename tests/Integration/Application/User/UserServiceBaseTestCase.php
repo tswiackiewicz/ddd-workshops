@@ -14,7 +14,7 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Event\{
     UserActivatedEvent, UserDisabledEvent, UserEnabledEvent, UserPasswordChangedEvent, UserRegisteredEvent, UserUnregisteredEvent
 };
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
-    InMemoryStorage, User\InMemoryUserRepository, User\StdOutUserNotifier
+    InMemoryEventStore, InMemoryStorage, User\InMemoryUserRepository, User\StdOutUserNotifier
 };
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
@@ -126,6 +126,7 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserRegisteredEvent::class,
             new UserRegisteredEventHandler(
+                new InMemoryEventStore(),
                 new InMemoryUserRepository(),
                 new StdOutUserNotifier()
             )
@@ -134,6 +135,7 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserActivatedEvent::class,
             new UserActivatedEventHandler(
+                new InMemoryEventStore(),
                 new InMemoryUserRepository(),
                 new StdOutUserNotifier()
             )
@@ -142,6 +144,7 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserEnabledEvent::class,
             new UserEnabledEventHandler(
+                new InMemoryEventStore(),
                 new InMemoryUserRepository(),
                 new StdOutUserNotifier()
             )
@@ -150,6 +153,7 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserDisabledEvent::class,
             new UserDisabledEventHandler(
+                new InMemoryEventStore(),
                 new InMemoryUserRepository(),
                 new StdOutUserNotifier()
             )
@@ -158,6 +162,7 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserUnregisteredEvent::class,
             new UserUnregisteredEventHandler(
+                new InMemoryEventStore(),
                 new InMemoryUserRepository(),
                 new StdOutUserNotifier()
             )
@@ -166,6 +171,7 @@ abstract class UserServiceBaseTestCase extends TestCase
         EventBus::subscribe(
             UserPasswordChangedEvent::class,
             new UserPasswordChangedEventHandler(
+                new InMemoryEventStore(),
                 new InMemoryUserRepository(),
                 new StdOutUserNotifier()
             )
@@ -185,7 +191,10 @@ abstract class UserServiceBaseTestCase extends TestCase
         $storageNextIdentity->setAccessible(true);
         $storageNextIdentity->setValue(null, []);
 
-        //InMemoryStorage::clear();
+        $events = new \ReflectionProperty(InMemoryEventStore::class, 'events');
+        $events->setAccessible(true);
+        $events->setValue(null, []);
+
         $repositoryIdentityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
         $repositoryIdentityMap->setAccessible(true);
         $repositoryIdentityMap->setValue(null, []);

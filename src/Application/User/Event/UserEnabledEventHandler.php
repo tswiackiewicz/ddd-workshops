@@ -9,9 +9,11 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\{
     RuntimeException, UserDomainModelException
 };
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\{
     Event, EventHandler
 };
+use TSwiackiewicz\DDD\EventStore\EventStore;
 
 /**
  * Class UserEnabledEventHandler
@@ -19,6 +21,11 @@ use TSwiackiewicz\DDD\Event\{
  */
 class UserEnabledEventHandler implements EventHandler
 {
+    /**
+     * @var EventStore
+     */
+    private $eventStore;
+
     /**
      * @var UserRepository
      */
@@ -31,11 +38,13 @@ class UserEnabledEventHandler implements EventHandler
 
     /**
      * UserEnabledEventHandler constructor.
+     * @param EventStore $eventStore
      * @param UserRepository $repository
      * @param UserNotifier $notifier
      */
-    public function __construct(UserRepository $repository, UserNotifier $notifier)
+    public function __construct(EventStore $eventStore, UserRepository $repository, UserNotifier $notifier)
     {
+        $this->eventStore = $eventStore;
         $this->repository = $repository;
         $this->notifier = $notifier;
     }
@@ -50,7 +59,12 @@ class UserEnabledEventHandler implements EventHandler
             throw RuntimeException::invalidHandledEventType($event, UserEnabledEvent::class);
         }
 
-        $user = $this->repository->getById($event->getId());
+        $this->eventStore->append($event->getId(), $event);
+
+        /** @var UserId $userId */
+        $userId = $event->getId();
+
+        $user = $this->repository->getById($userId);
         $this->repository->save($user);
 
         $this->notifier->notifyUser($event);

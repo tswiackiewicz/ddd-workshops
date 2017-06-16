@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\AggregateId;
 
 /**
  * Class UserRegisteredEvent
@@ -22,24 +22,37 @@ class UserRegisteredEvent extends UserEvent
     private $password;
 
     /**
+     * @var string
+     */
+    private $hash;
+
+    /**
      * UserRegisteredEvent constructor.
-     * @param UserId $id
+     * @param AggregateId $id
      * @param string $login
      * @param string $password
+     * @param string $hash
      * @param \DateTimeImmutable|null $occurredOn
      */
-    public function __construct(UserId $id, string $login, string $password, ?\DateTimeImmutable $occurredOn = null)
+    public function __construct(
+        AggregateId $id,
+        string $login,
+        string $password,
+        string $hash,
+        ?\DateTimeImmutable $occurredOn = null
+    )
     {
         parent::__construct($id, $occurredOn);
         $this->login = $login;
         $this->password = $password;
+        $this->hash = $hash;
     }
 
     /**
-     * @param UserId $userId
+     * @param AggregateId $userId
      * @return UserRegisteredEvent
      */
-    public function withUserId(UserId $userId): UserRegisteredEvent
+    public function withAggregateId(AggregateId $userId): UserRegisteredEvent
     {
         $event = clone $this;
         $event->id = $userId;
@@ -61,6 +74,14 @@ class UserRegisteredEvent extends UserEvent
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash(): string
+    {
+        return $this->hash;
     }
 
     /**

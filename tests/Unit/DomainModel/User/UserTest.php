@@ -23,6 +23,8 @@ class UserTest extends UserBaseTestCase
      */
     public function shouldRegisterUser(): void
     {
+        $this->clearCache();
+
         $registeredUser = User::register(
             $this->getUserId(),
             new UserLogin($this->login),

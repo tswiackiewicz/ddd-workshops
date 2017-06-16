@@ -6,10 +6,13 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRepository;
+use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryEventStore;
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\Infrastructure\User\InMemoryUserRepository;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\AggregateId;
+use TSwiackiewicz\DDD\Event\EventBus;
+use TSwiackiewicz\DDD\EventStore\EventStore;
 
 /**
  * Class UserBaseTestCase
@@ -121,6 +124,16 @@ abstract class UserBaseTestCase extends TestCase
     }
 
     /**
+     * @return EventStore|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getEventStoreMock(): EventStore
+    {
+        return $this->getMockBuilder(EventStore::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+    }
+
+    /**
      * @return UserId|AggregateId
      */
     protected function getUserId(): UserId
@@ -139,6 +152,7 @@ abstract class UserBaseTestCase extends TestCase
         $storage = new \ReflectionProperty(InMemoryStorage::class, 'storage');
         $storage->setAccessible(true);
         $storage->setValue(null, []);
+
         $storageNextIdentity = new \ReflectionProperty(InMemoryStorage::class, 'nextIdentity');
         $storageNextIdentity->setAccessible(true);
         $storageNextIdentity->setValue(null, []);
@@ -146,5 +160,13 @@ abstract class UserBaseTestCase extends TestCase
         $repositoryIdentityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
         $repositoryIdentityMap->setAccessible(true);
         $repositoryIdentityMap->setValue(null, []);
+
+        $eventBusHandlers = new \ReflectionProperty(EventBus::class, 'handlers');
+        $eventBusHandlers->setAccessible(true);
+        $eventBusHandlers->setValue(null, []);
+
+        $events = new \ReflectionProperty(InMemoryEventStore::class, 'events');
+        $events->setAccessible(true);
+        $events->setValue(null, []);
     }
 }

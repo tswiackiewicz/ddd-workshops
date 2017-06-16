@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Exception;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserDomainModelException;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\AggregateId;
 
 /**
  * Generic exception for user's exceptions / failures
@@ -28,10 +28,10 @@ class UserException extends \Exception implements UserDomainModelException
     protected const PASSWORD_CHANGE_NOT_ALLOWED = 1008;
 
     /**
-     * @param UserId $userId
+     * @param AggregateId $userId
      * @return UserException
      */
-    public static function alreadyActivated(UserId $userId): UserException
+    public static function alreadyActivated(AggregateId $userId): UserException
     {
         return new static(
             sprintf('User (user_id = %d) already activated', $userId->getId()),
@@ -40,10 +40,10 @@ class UserException extends \Exception implements UserDomainModelException
     }
 
     /**
-     * @param UserId $userId
+     * @param AggregateId $userId
      * @return UserException
      */
-    public static function enableNotAllowed(UserId $userId): UserException
+    public static function enableNotAllowed(AggregateId $userId): UserException
     {
         return new static(
             sprintf('Only active disabled user can be enabled, user_id = %d', $userId->getId()),
@@ -52,10 +52,10 @@ class UserException extends \Exception implements UserDomainModelException
     }
 
     /**
-     * @param UserId $userId
+     * @param AggregateId $userId
      * @return UserException
      */
-    public static function disableNotAllowed(UserId $userId): UserException
+    public static function disableNotAllowed(AggregateId $userId): UserException
     {
         return new static(
             sprintf('Only active enabled user can be disabled, user_id = %d', $userId->getId()),
@@ -64,10 +64,10 @@ class UserException extends \Exception implements UserDomainModelException
     }
 
     /**
-     * @param UserId $userId
+     * @param AggregateId $userId
      * @return UserException
      */
-    public static function passwordChangeNotAllowed(UserId $userId): UserException
+    public static function passwordChangeNotAllowed(AggregateId $userId): UserException
     {
         return new static(
             sprintf('Only active enabled user can change password, user_id = %d', $userId->getId()),

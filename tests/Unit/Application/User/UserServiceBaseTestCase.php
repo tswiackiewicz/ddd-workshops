@@ -138,11 +138,13 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
         /** @var UserRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder(UserRepository::class)
             ->setMethods([
-                'exists'
+                'exists',
+                'getByLogin'
             ])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $repository->expects(self::once())->method('exists')->willReturn($exists);
+        $repository->expects(self::any())->method('getByLogin')->willReturn($this->getUser(false, false));
 
         return $repository;
     }

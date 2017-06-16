@@ -36,6 +36,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         EventBus::subscribe(
             UserRegisteredEvent::class,
             new UserRegisteredEventHandler(
+                $this->getEventStoreMock(),
                 $this->getUserRepositoryMockForRegisterUser(
                     $this->getUser(false, false)
                 ),
@@ -82,6 +83,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         EventBus::subscribe(
             UserActivatedEvent::class,
             new UserActivatedEventHandler(
+                $this->getEventStoreMock(),
                 $this->getUserRepositoryMockForActivateUser(
                     $this->getUser(true, true)
                 ),
@@ -124,6 +126,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         EventBus::subscribe(
             UserEnabledEvent::class,
             new UserEnabledEventHandler(
+                $this->getEventStoreMock(),
                 $this->getUserRepositoryMockForEnableUser(),
                 $this->getUserNotifierMock(UserEnabledEvent::class)
             )
@@ -168,6 +171,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         EventBus::subscribe(
             UserDisabledEvent::class,
             new UserDisabledEventHandler(
+                $this->getEventStoreMock(),
                 $this->getUserRepositoryMockForEnableUser(),
                 $this->getUserNotifierMock(UserDisabledEvent::class)
             )
@@ -214,6 +218,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         EventBus::subscribe(
             UserPasswordChangedEvent::class,
             new UserPasswordChangedEventHandler(
+                $this->getEventStoreMock(),
                 $this->getUserRepositoryMockForEnableUser(),
                 $this->getUserNotifierMock(UserPasswordChangedEvent::class)
             )
@@ -279,6 +284,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         EventBus::subscribe(
             UserUnregisteredEvent::class,
             new UserUnregisteredEventHandler(
+                $this->getEventStoreMock(),
                 $this->getUserRepositoryMockForRemoveUser(),
                 $this->getUserNotifierMock(UserUnregisteredEvent::class)
             )

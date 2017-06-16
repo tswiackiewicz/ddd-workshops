@@ -7,10 +7,6 @@ The point is to show the idea without frameworks - pure PHP code (POPO), just th
 
 # TODO
 
-* clean up clear methods
-* serializable domain events
-* add event store
-* User - add method record that && doHash -> AggregateRoot abstract
 * update readme file
 
 ## License

@@ -29,12 +29,4 @@ class UserId extends AggregateId
             );
         }
     }
-
-    /**
-     * @return bool
-     */
-    public function isNull(): bool
-    {
-        return 0 === $this->id;
-    }
 }
