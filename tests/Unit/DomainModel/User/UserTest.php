@@ -8,7 +8,6 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\User;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
@@ -25,7 +24,7 @@ class UserTest extends UserBaseTestCase
     public function shouldRegisterUser(): void
     {
         $registeredUser = User::register(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password)
         );
@@ -40,7 +39,7 @@ class UserTest extends UserBaseTestCase
     public function shouldActivateUser(): void
     {
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             false,
@@ -59,7 +58,7 @@ class UserTest extends UserBaseTestCase
         $this->expectException(UserException::class);
 
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             true,
@@ -74,7 +73,7 @@ class UserTest extends UserBaseTestCase
     public function shouldEnableUser(): void
     {
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             true,
@@ -93,7 +92,7 @@ class UserTest extends UserBaseTestCase
         $this->expectException(UserException::class);
 
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             false,
@@ -110,7 +109,7 @@ class UserTest extends UserBaseTestCase
         $this->expectException(UserException::class);
 
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             true,
@@ -125,7 +124,7 @@ class UserTest extends UserBaseTestCase
     public function shouldDisableUser(): void
     {
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             true,
@@ -144,7 +143,7 @@ class UserTest extends UserBaseTestCase
         $this->expectException(UserException::class);
 
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             false,
@@ -161,7 +160,7 @@ class UserTest extends UserBaseTestCase
         $this->expectException(UserException::class);
 
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             true,
@@ -176,7 +175,7 @@ class UserTest extends UserBaseTestCase
     public function shouldChangePassword(): void
     {
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             true,
@@ -195,7 +194,7 @@ class UserTest extends UserBaseTestCase
         $this->expectException(UserException::class);
 
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             false,
@@ -212,7 +211,7 @@ class UserTest extends UserBaseTestCase
         $this->expectException(UserException::class);
 
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             true,
@@ -229,7 +228,7 @@ class UserTest extends UserBaseTestCase
         $this->expectException(PasswordException::class);
 
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             true,
@@ -244,7 +243,7 @@ class UserTest extends UserBaseTestCase
     public function shouldUnregisterUser(): void
     {
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             true,

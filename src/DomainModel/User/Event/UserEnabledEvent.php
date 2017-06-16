@@ -23,8 +23,9 @@ class UserEnabledEvent extends UserEvent
     public function __toString(): string
     {
         return sprintf(
-            '[%s] User enabled: id = %d',
+            '[%s] User enabled: uuid = %s, id = %d',
             $this->occurredOn->format('Y-m-d H:i:s'),
+            $this->id->getAggregateId(),
             $this->id->getId()
         );
     }

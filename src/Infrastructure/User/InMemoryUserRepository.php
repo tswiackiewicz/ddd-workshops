@@ -10,6 +10,7 @@ use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
     Exception\InvalidArgumentException, Exception\UserRepositoryException, UserId
 };
+use TSwiackiewicz\DDD\AggregateId;
 
 /**
  * Class InMemoryUserRepository
@@ -23,11 +24,11 @@ class InMemoryUserRepository implements UserRepository
     private static $identityMap = [];
 
     /**
-     * @return UserId
+     * @return UserId|AggregateId
      */
     public function nextIdentity(): UserId
     {
-        return UserId::nullInstance();
+        return UserId::generate();
     }
 
     /**
@@ -59,7 +60,7 @@ class InMemoryUserRepository implements UserRepository
         }
 
         $user = InMemoryStorage::fetchById(InMemoryStorage::TYPE_USER, $id->getId());
-        if (!empty($user['id'])) {
+        if (!empty($user['uuid']) && !empty($user['id']) && $id->getId() === $user['id']) {
             try {
                 self::$identityMap[$user['id']] = User::fromNative($user);
 
@@ -82,7 +83,7 @@ class InMemoryUserRepository implements UserRepository
     {
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
-            if (!empty($user['id']) && isset($user['login']) && $login === $user['login']) {
+            if (!empty($user['uuid']) && !empty($user['id']) && isset($user['login']) && $login === $user['login']) {
                 try {
                     self::$identityMap[$user['id']] = User::fromNative($user);
 
@@ -106,7 +107,7 @@ class InMemoryUserRepository implements UserRepository
     {
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
         foreach ($users as $user) {
-            if (!empty($user['id']) && isset($user['hash']) && $hash === $user['hash']) {
+            if (!empty($user['uuid']) && !empty($user['id']) && isset($user['hash']) && $hash === $user['hash']) {
                 try {
                     self::$identityMap[$user['id']] = User::fromNative($user);
 
@@ -127,13 +128,14 @@ class InMemoryUserRepository implements UserRepository
     public function save(User $user): void
     {
         if ($user->getId()->isNull()) {
-            $userId = InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER);
+            $userId = $user->getId()->setId(InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER));
         } else {
-            $userId = $user->getId()->getId();
+            $userId = $user->getId();
         }
 
         $nativeUser = [
-            'id' => $userId,
+            'uuid' => $userId->getAggregateId(),
+            'id' => $userId->getId(),
             'login' => (string)$user->getLogin(),
             'password' => (string)$user->getPassword(),
             'hash' => $user->hash(),

@@ -5,6 +5,13 @@
 Sample application for Domain Driven Design workshops
 The point is to show the idea without frameworks - pure PHP code (POPO), just the concept 
 
+# TODO
+
+* clean up clear methods
+* serializable domain events
+* add event store
+* User - add method record that && doHash
+* update readme file
 
 ## License
 

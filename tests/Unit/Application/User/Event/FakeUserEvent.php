@@ -18,7 +18,7 @@ class FakeUserEvent extends UserEvent
     public static function create(): FakeUserEvent
     {
         return new static(
-            UserId::fromInt(1234)
+            UserId::generate()->setId(1234)
         );
     }
 }

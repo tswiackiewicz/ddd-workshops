@@ -69,8 +69,11 @@ class User
      */
     public static function fromNative(array $user): User
     {
+        /** @var UserId $userId */
+        $userId = UserId::fromString($user['uuid'])->setId($user['id']);
+
         return new static(
-            UserId::fromInt($user['id']),
+            $userId,
             new UserLogin($user['login']),
             new UserPassword($user['password']),
             isset($user['active']) && true === $user['active'],

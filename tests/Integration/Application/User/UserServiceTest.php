@@ -12,7 +12,6 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
     User\InMemoryUserReadModelRepository
 };
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
 /**
  * Class UserServiceTest
@@ -36,7 +35,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             )
         );
 
-        self::assertEquals(UserId::fromInt($this->userId), $registeredUserId);
+        self::assertEquals(1, $registeredUserId->getId());
 
         $nextRegisteredUserId = $this->service->register(
             new RegisterUserCommand(
@@ -45,7 +44,7 @@ class UserServiceTest extends UserServiceBaseTestCase
             )
         );
 
-        self::assertEquals(UserId::fromInt($this->userId + 1), $nextRegisteredUserId);
+        self::assertEquals(2, $nextRegisteredUserId->getId());
     }
 
     /**
@@ -73,7 +72,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
 
         $repository = new InMemoryUserReadModelRepository();
-        $userDTO = $repository->findById(UserId::fromInt($this->userId));
+        $userDTO = $repository->findById($this->userId);
 
         self::assertTrue($userDTO->isActive());
         self::assertTrue($userDTO->isEnabled());
@@ -94,45 +93,16 @@ class UserServiceTest extends UserServiceBaseTestCase
     /**
      * @test
      */
-    public function shouldEnableUser(): void
-    {
-        $this->disableUser();
-
-        $this->service->enable(
-            new EnableUserCommand(UserId::fromInt($this->userId))
-        );
-
-        $repository = new InMemoryUserReadModelRepository();
-        $userDTO = $repository->findById(UserId::fromInt($this->userId));
-
-        self::assertTrue($userDTO->isEnabled());
-    }
-
-    /**
-     * @test
-     */
-    public function shouldFailWhenEnabledUserNotExists(): void
-    {
-        $this->expectException(UserNotFoundException::class);
-
-        $this->service->enable(
-            new EnableUserCommand(UserId::fromInt(1234))
-        );
-    }
-
-    /**
-     * @test
-     */
     public function shouldDisableUser(): void
     {
         $this->enableUser();
 
         $this->service->disable(
-            new DisableUserCommand(UserId::fromInt($this->userId))
+            new DisableUserCommand($this->userId)
         );
 
         $repository = new InMemoryUserReadModelRepository();
-        $userDTO = $repository->findById(UserId::fromInt($this->userId));
+        $userDTO = $repository->findById($this->userId);
 
         self::assertFalse($userDTO->isEnabled());
     }
@@ -145,7 +115,36 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $this->service->disable(
-            new DisableUserCommand(UserId::fromInt(1234))
+            new DisableUserCommand($this->nonExistentUserId)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldEnableUser(): void
+    {
+        $this->disableUser();
+
+        $this->service->enable(
+            new EnableUserCommand($this->userId)
+        );
+
+        $repository = new InMemoryUserReadModelRepository();
+        $userDTO = $repository->findById($this->userId);
+
+        self::assertTrue($userDTO->isEnabled());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFailWhenEnabledUserNotExists(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+
+        $this->service->enable(
+            new EnableUserCommand($this->nonExistentUserId)
         );
     }
 
@@ -159,13 +158,13 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $this->service->changePassword(
             new ChangePasswordCommand(
-                UserId::fromInt($this->userId),
+                $this->userId,
                 new UserPassword($newPassword)
             )
         );
 
         $repository = new InMemoryUserReadModelRepository();
-        $userDTO = $repository->findById(UserId::fromInt($this->userId));
+        $userDTO = $repository->findById($this->userId);
 
         self::assertEquals($newPassword, $userDTO->getPassword());
     }
@@ -181,7 +180,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $this->service->changePassword(
             new ChangePasswordCommand(
-                UserId::fromInt($this->userId),
+                $this->userId,
                 new UserPassword('weak_password')
             )
         );
@@ -196,7 +195,7 @@ class UserServiceTest extends UserServiceBaseTestCase
 
         $this->service->changePassword(
             new ChangePasswordCommand(
-                UserId::fromInt(1234),
+                $this->nonExistentUserId,
                 new UserPassword($this->password)
             )
         );
@@ -210,13 +209,11 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->enableUser();
 
         $this->service->unregister(
-            new UnregisterUserCommand(
-                UserId::fromInt($this->userId)
-            )
+            new UnregisterUserCommand($this->userId)
         );
 
         $repository = new InMemoryUserReadModelRepository();
-        $userDTO = $repository->findById(UserId::fromInt($this->userId));
+        $userDTO = $repository->findById($this->userId);
 
         self::assertNull($userDTO);
     }
@@ -229,9 +226,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         $this->expectException(UserNotFoundException::class);
 
         $this->service->unregister(
-            new UnregisterUserCommand(
-                UserId::fromInt(1234)
-            )
+            new UnregisterUserCommand($this->nonExistentUserId)
         );
     }
 }

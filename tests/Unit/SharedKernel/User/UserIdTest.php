@@ -18,24 +18,55 @@ class UserIdTest extends UserBaseTestCase
     /**
      * @test
      */
-    public function shouldCreateFromInt(): void
+    public function shouldCreateFromString(): void
     {
-        $userId = UserId::fromInt($this->userId);
+        $userId = UserId::fromString($this->uuid);
 
-        self::assertInstanceOf(UserId::class, $userId);
-        self::assertFalse($userId->isNull());
-        self::assertEquals($this->userId, $userId->getId());
+        self::assertEquals($this->uuid, $userId->getAggregateId());
     }
 
     /**
      * @test
      */
-    public function shouldCreateNullInstance(): void
+    public function shouldGenerateWithoutId(): void
     {
-        $userId = UserId::nullInstance();
+        $userId = UserId::generate();
 
-        self::assertInstanceOf(UserId::class, $userId);
-        self::assertTrue($userId->isNull());
+        self::assertEquals(0, $userId->getId());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCreateWithGivenId(): void
+    {
+        $userId = UserId::generate()->setId(1234);
+
+        self::assertEquals(1234, $userId->getId());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNotSetIdIfAlreadyExists(): void
+    {
+        $userId = UserId::generate()->setId(1234);
+        $newUserId = $userId->setId(2345);
+
+        self::assertSame($newUserId, $userId);
+        self::assertEquals(1234, $newUserId->getId());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSetIdIfNotExists(): void
+    {
+        $userId = UserId::generate();
+        $newUserId = $userId->setId(2345);
+
+        self::assertNotSame($newUserId, $userId);
+        self::assertEquals(2345, $newUserId->getId());
     }
 
     /**
@@ -45,6 +76,6 @@ class UserIdTest extends UserBaseTestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        UserId::fromInt(-1234);
+        UserId::generate()->setId(-1234);
     }
 }

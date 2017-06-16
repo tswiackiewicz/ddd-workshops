@@ -59,7 +59,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
     public function shouldReturnUserById(): void
     {
         $user = $this->repository->getById(
-            UserId::fromInt($this->userId)
+            $this->getUserId()
         );
 
         self::assertInstanceOf(User::class, $user);
@@ -71,12 +71,12 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
     public function shouldFetchUserByIdFromStorageOnlyOnce(): void
     {
         $firstAttemptUser = $this->repository->getById(
-            UserId::fromInt($this->userId)
+            $this->getUserId()
         );
 
         $repository = new InMemoryUserRepository();
         $secondAttemptUser = $repository->getById(
-            UserId::fromInt($this->userId)
+            $this->getUserId()
         );
 
         self::assertSame($firstAttemptUser, $secondAttemptUser);
@@ -101,7 +101,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         $this->expectException(UserRepositoryException::class);
 
         $this->repository->getById(
-            UserId::fromInt($this->userId)
+            $this->getUserId()
         );
     }
 
@@ -112,9 +112,10 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
     {
         $this->expectException(UserNotFoundException::class);
 
-        $this->repository->getById(
-            UserId::fromInt(1234)
-        );
+        /** @var UserId $nonExistentUserId */
+        $nonExistentUserId = UserId::generate()->setId($this->nonExistentUserId);
+
+        $this->repository->getById($nonExistentUserId);
     }
 
     /**
@@ -205,7 +206,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
     public function shouldSaveUser(): void
     {
         $user = new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             true,
@@ -215,7 +216,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
 
         self::assertEquals(
             $this->login,
-            (string)$this->repository->getById(UserId::fromInt($this->userId))->getLogin()
+            (string)$this->repository->getById($this->getUserId())->getLogin()
         );
     }
 
@@ -226,13 +227,13 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
     {
         self::assertEquals(
             $this->login,
-            (string)$this->repository->getById(UserId::fromInt($this->userId))->getLogin()
+            (string)$this->repository->getById($this->getUserId())->getLogin()
         );
 
-        $this->repository->remove(UserId::fromInt($this->userId));
+        $this->repository->remove($this->getUserId());
 
         try {
-            $this->repository->getById(UserId::fromInt($this->userId));
+            $this->repository->getById($this->getUserId());
         } catch (UserNotFoundException $exception) {
             // user not found
         }
@@ -249,7 +250,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
 
         $this->repository->save(
             new User(
-                UserId::fromInt($this->userId),
+                $this->getUserId(),
                 new UserLogin($this->login),
                 new UserPassword($this->password),
                 true,

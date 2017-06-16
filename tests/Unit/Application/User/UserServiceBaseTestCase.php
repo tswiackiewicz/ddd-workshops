@@ -9,7 +9,6 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserNotFoundException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
 /**
@@ -46,7 +45,7 @@ abstract class UserServiceBaseTestCase extends UserBaseTestCase
     protected function getUser(bool $active, bool $enabled): User
     {
         return new User(
-            UserId::fromInt($this->userId),
+            $this->getUserId(),
             new UserLogin($this->login),
             new UserPassword($this->password),
             $active,

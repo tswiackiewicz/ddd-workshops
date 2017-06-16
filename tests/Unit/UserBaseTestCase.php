@@ -6,6 +6,10 @@ namespace TSwiackiewicz\AwesomeApp\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserRepository;
+use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
+use TSwiackiewicz\AwesomeApp\Infrastructure\User\InMemoryUserRepository;
+use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\DDD\AggregateId;
 
 /**
  * Class UserBaseTestCase
@@ -17,6 +21,16 @@ abstract class UserBaseTestCase extends TestCase
      * @var int
      */
     protected $userId = 1;
+
+    /**
+     * @var int
+     */
+    protected $nonExistentUserId = 1234;
+
+    /**
+     * @var string
+     */
+    protected $uuid = '98a7debc-00c3-44cd-aaaf-cfe9e7ab31fc';
 
     /**
      * @var string
@@ -99,10 +113,38 @@ abstract class UserBaseTestCase extends TestCase
     /**
      * @return UserRepository|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getUserRepositoryMock()
+    protected function getUserRepositoryMock(): UserRepository
     {
         return $this->getMockBuilder(UserRepository::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
+    }
+
+    /**
+     * @return UserId|AggregateId
+     */
+    protected function getUserId(): UserId
+    {
+        static $userId = null;
+
+        if (null === $userId) {
+            $userId = UserId::generate()->setId($this->userId);
+        }
+
+        return $userId;
+    }
+
+    protected function clearCache(): void
+    {
+        $storage = new \ReflectionProperty(InMemoryStorage::class, 'storage');
+        $storage->setAccessible(true);
+        $storage->setValue(null, []);
+        $storageNextIdentity = new \ReflectionProperty(InMemoryStorage::class, 'nextIdentity');
+        $storageNextIdentity->setAccessible(true);
+        $storageNextIdentity->setValue(null, []);
+
+        $repositoryIdentityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
+        $repositoryIdentityMap->setAccessible(true);
+        $repositoryIdentityMap->setValue(null, []);
     }
 }

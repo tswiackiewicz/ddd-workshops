@@ -109,7 +109,6 @@ class UserService
      *
      * @param ChangePasswordCommand $command
      * @throws UserDomainModelException
-     * @throws ValidationException
      */
     public function changePassword(ChangePasswordCommand $command): void
     {

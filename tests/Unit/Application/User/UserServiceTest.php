@@ -18,7 +18,6 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\{
 };
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
 
 /**
@@ -138,7 +137,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->enable(
             new EnableUserCommand(
-                UserId::fromInt($this->userId)
+                $this->getUserId()
             )
         );
     }
@@ -156,7 +155,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->enable(
             new EnableUserCommand(
-                UserId::fromInt($this->userId)
+                $this->getUserId()
             )
         );
     }
@@ -182,7 +181,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->disable(
             new DisableUserCommand(
-                UserId::fromInt($this->userId)
+                $this->getUserId()
             )
         );
     }
@@ -200,7 +199,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->disable(
             new DisableUserCommand(
-                UserId::fromInt($this->userId)
+                $this->getUserId()
             )
         );
     }
@@ -228,7 +227,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->changePassword(
             new ChangePasswordCommand(
-                UserId::fromInt($this->userId),
+                $this->getUserId(),
                 new UserPassword($newPassword)
             )
         );
@@ -247,7 +246,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->changePassword(
             new ChangePasswordCommand(
-                UserId::fromInt($this->userId),
+                $this->getUserId(),
                 new UserPassword('weak_password')
             )
         );
@@ -266,7 +265,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->changePassword(
             new ChangePasswordCommand(
-                UserId::fromInt($this->userId),
+                $this->getUserId(),
                 new UserPassword($this->password)
             )
         );
@@ -293,7 +292,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->unregister(
             new UnregisterUserCommand(
-                UserId::fromInt($this->userId)
+                $this->getUserId()
             )
         );
     }
@@ -311,7 +310,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
         $service->unregister(
             new UnregisterUserCommand(
-                UserId::fromInt($this->userId)
+                $this->getUserId()
             )
         );
     }

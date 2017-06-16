@@ -26,24 +26,29 @@ use TSwiackiewicz\DDD\Event\EventBus;
 abstract class UserServiceBaseTestCase extends TestCase
 {
     /**
-     * @var int
+     * @var UserId
      */
-    protected $userId = 1;
+    protected $userId;
+
+    /**
+     * @var UserId
+     */
+    protected $nonExistentUserId;
 
     /**
      * @var string
      */
-    protected $login = 'test@domain.com';
+    protected $login;
 
     /**
      * @var string
      */
-    protected $password = 'password1234';
+    protected $password;
 
     /**
      * @var string
      */
-    protected $hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
+    protected $hash;
 
     /**
      * @var UserService
@@ -58,7 +63,7 @@ abstract class UserServiceBaseTestCase extends TestCase
         $repository = new InMemoryUserRepository();
         $repository->save(
             new User(
-                UserId::fromInt($this->userId),
+                $this->userId,
                 new UserLogin($this->login),
                 new UserPassword($this->password),
                 true,
@@ -75,7 +80,7 @@ abstract class UserServiceBaseTestCase extends TestCase
         $repository = new InMemoryUserRepository();
         $repository->save(
             new User(
-                UserId::fromInt($this->userId),
+                $this->userId,
                 new UserLogin($this->login),
                 new UserPassword($this->password),
                 true,
@@ -89,13 +94,20 @@ abstract class UserServiceBaseTestCase extends TestCase
      */
     protected function setUp(): void
     {
-        $this->registerEventHandlers();
         $this->clearCache();
+        $this->registerEventHandlers();
+
+        $this->login = 'test@domain.com';
+        $this->password = 'password1234';
+        $this->hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
+        $this->nonExistentUserId = UserId::generate()->setId(1234);
+
+        $this->userId = UserId::generate()->setId(1);
 
         $repository = new InMemoryUserRepository();
         $repository->save(
             new User(
-                UserId::fromInt($this->userId),
+                $this->userId,
                 new UserLogin($this->login),
                 new UserPassword($this->password),
                 false,
@@ -165,9 +177,17 @@ abstract class UserServiceBaseTestCase extends TestCase
      */
     protected function clearCache(): void
     {
-        InMemoryStorage::clear();
-        $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
-        $identityMap->setAccessible(true);
-        $identityMap->setValue(null, []);
+        $storage = new \ReflectionProperty(InMemoryStorage::class, 'storage');
+        $storage->setAccessible(true);
+        $storage->setValue(null, []);
+
+        $storageNextIdentity = new \ReflectionProperty(InMemoryStorage::class, 'nextIdentity');
+        $storageNextIdentity->setAccessible(true);
+        $storageNextIdentity->setValue(null, []);
+
+        //InMemoryStorage::clear();
+        $repositoryIdentityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
+        $repositoryIdentityMap->setAccessible(true);
+        $repositoryIdentityMap->setValue(null, []);
     }
 }
