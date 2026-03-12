@@ -11,29 +11,12 @@ use TSwiackiewicz\DDD\Event\{
     Event, EventHandler
 };
 
-/**
- * Class UserEnabledEventHandler
- * @package TSwiackiewicz\AwesomeApp\Application\User\Event
- */
 class UserEnabledEventHandler implements EventHandler
 {
-    /**
-     * @var UserNotifier
-     */
-    private $notifier;
-
-    /**
-     * UserEnabledEventHandler constructor.
-     * @param UserNotifier $notifier
-     */
-    public function __construct(UserNotifier $notifier)
+    public function __construct(private readonly UserNotifier $notifier)
     {
-        $this->notifier = $notifier;
     }
 
-    /**
-     * @param Event $event
-     */
     public function handle(Event $event): void
     {
         if (!$event instanceof UserEnabledEvent) {

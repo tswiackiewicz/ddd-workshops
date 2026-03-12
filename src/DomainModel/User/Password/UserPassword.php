@@ -5,22 +5,13 @@ namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Password;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 
-/**
- * Class UserPassword
- * @package TSwiackiewicz\AwesomeApp\DomainModel\User\Password
- */
 class UserPassword
 {
     private const MIN_PASSWORD_LENGTH = 8;
 
-    /**
-     * @var string
-     */
-    private $password;
+    private readonly string $password;
 
     /**
-     * UserPassword constructor.
-     * @param string $password
      * @throws InvalidArgumentException
      */
     public function __construct(string $password)
@@ -31,7 +22,6 @@ class UserPassword
     }
 
     /**
-     * @param string $password
      * @throws InvalidArgumentException
      */
     private function assertPassword(string $password): void
@@ -43,26 +33,16 @@ class UserPassword
         // TODO: other password assertion rules
     }
 
-    /**
-     * @return string
-     */
     public function getPassword(): string
     {
         return $this->password;
     }
 
-    /**
-     * @param UserPassword $password
-     * @return bool
-     */
     public function equals(UserPassword $password): bool
     {
         return $this->password === (string)$password;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->password;

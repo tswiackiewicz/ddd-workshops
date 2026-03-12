@@ -12,16 +12,8 @@ use TSwiackiewicz\DDD\Query\{
     PaginatedResult, QueryContext, Sort\Sort
 };
 
-/**
- * Class InMemoryUserReadModelRepository
- * @package TSwiackiewicz\AwesomeApp\Infrastructure\User
- */
 class InMemoryUserReadModelRepository implements UserReadModelRepository
 {
-    /**
-     * @param UserId $id
-     * @return null|UserDTO
-     */
     public function findById(UserId $id): ?UserDTO
     {
         $users = $this->fetchAllUsers();
@@ -29,10 +21,6 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
         return $users[$id->getId()] ?? null;
     }
 
-    /**
-     * @param null|Sort $sort
-     * @return array
-     */
     private function fetchAllUsers(?Sort $sort = null): array
     {
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER, $sort);
@@ -42,11 +30,6 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
         }, $users);
     }
 
-    /**
-     * @param UserQuery $query
-     * @param QueryContext $context
-     * @return PaginatedResult
-     */
     public function findByQuery(UserQuery $query, QueryContext $context): PaginatedResult
     {
         $users = $this->fetchAllUsers($context->getSort());
@@ -62,10 +45,6 @@ class InMemoryUserReadModelRepository implements UserReadModelRepository
         return PaginatedResult::withPagination($filteredUsers, $context->getPagination());
     }
 
-    /**
-     * @param QueryContext $context
-     * @return PaginatedResult
-     */
     public function getUsers(QueryContext $context): PaginatedResult
     {
         $users = $this->fetchAllUsers($context->getSort());

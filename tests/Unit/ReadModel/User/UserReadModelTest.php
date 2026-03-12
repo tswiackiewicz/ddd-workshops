@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\ReadModel\User;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\Infrastructure\InMemoryStorage;
 use TSwiackiewicz\AwesomeApp\Infrastructure\User\InMemoryUserReadModelRepository;
 use TSwiackiewicz\AwesomeApp\ReadModel\User\UserQuery;
@@ -10,22 +12,12 @@ use TSwiackiewicz\AwesomeApp\ReadModel\User\UserReadModel;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
-/**
- * Class UserReadModelTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\ReadModel\User
- *
- * @coversDefaultClass UserReadModel
- */
+#[CoversClass(UserReadModel::class)]
 class UserReadModelTest extends UserBaseTestCase
 {
-    /**
-     * @var UserReadModel
-     */
-    private $readModel;
+    private UserReadModel $readModel;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFindUserById(): void
     {
         $userDTO = $this->readModel->findById(UserId::fromInt(1));
@@ -37,9 +29,7 @@ class UserReadModelTest extends UserBaseTestCase
         self::assertEquals(true, $userDTO->isEnabled());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnNullWhenUnableToFindUserById(): void
     {
         $userDTO = $this->readModel->findById(UserId::fromInt(123));
@@ -47,9 +37,7 @@ class UserReadModelTest extends UserBaseTestCase
         self::assertNull($userDTO);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFindUsersByQuery(): void
     {
         $userDTOCollection = $this->readModel->findByQuery(new UserQuery(true, true));
@@ -70,9 +58,7 @@ class UserReadModelTest extends UserBaseTestCase
         self::assertCount(2, $userDTOCollection->getItems());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnEmptyArrayWhenUnableToFindUsersByQuery(): void
     {
         $userDTOCollection = $this->readModel->findByQuery(new UserQuery(true, false));
@@ -80,9 +66,7 @@ class UserReadModelTest extends UserBaseTestCase
         self::assertEquals([], $userDTOCollection->getItems());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnAllUsers(): void
     {
         $userDTOCollection = $this->readModel->getUsers();
@@ -90,9 +74,7 @@ class UserReadModelTest extends UserBaseTestCase
         self::assertCount(3, $userDTOCollection->getItems());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnEmptyArrayWhenNoUsersDefined(): void
     {
         InMemoryStorage::clear();
@@ -102,9 +84,6 @@ class UserReadModelTest extends UserBaseTestCase
         self::assertEquals([], $userDTOCollection);
     }
 
-    /**
-     * Setup fixtures
-     */
     protected function setUp(): void
     {
         InMemoryStorage::clear();

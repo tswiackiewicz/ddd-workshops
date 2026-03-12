@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\PasswordException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Exception\UserException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
@@ -11,17 +13,10 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
-/**
- * Class UserTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User
- *
- * @coversDefaultClass User
- */
+#[CoversClass(User::class)]
 class UserTest extends UserBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldRegisterUser(): void
     {
         $registeredUser = User::register(
@@ -38,9 +33,7 @@ class UserTest extends UserBaseTestCase
         self::assertEquals($this->hash, $registeredUser->hash());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldCreateFromNative(): void
     {
         $user = User::fromNative(
@@ -54,9 +47,7 @@ class UserTest extends UserBaseTestCase
         self::assertInstanceOf(User::class, $user);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldActivateUser(): void
     {
         $user = $this->createInactiveUser();
@@ -66,9 +57,7 @@ class UserTest extends UserBaseTestCase
         self::assertTrue($user->isEnabled());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenActivateAlreadyActivatedUser(): void
     {
         $this->expectException(UserException::class);
@@ -77,9 +66,7 @@ class UserTest extends UserBaseTestCase
         $user->activate();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldEnableUser(): void
     {
         $user = $this->createDisabledUser();
@@ -88,9 +75,7 @@ class UserTest extends UserBaseTestCase
         self::assertTrue($user->isEnabled());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenEnableInactiveUser(): void
     {
         $this->expectException(UserException::class);
@@ -99,9 +84,7 @@ class UserTest extends UserBaseTestCase
         $user->enable();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenEnableAlreadyEnabledUser(): void
     {
         $this->expectException(UserException::class);
@@ -110,9 +93,7 @@ class UserTest extends UserBaseTestCase
         $user->enable();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldDisableUser(): void
     {
         $user = $this->createEnabledUser();
@@ -121,9 +102,7 @@ class UserTest extends UserBaseTestCase
         self::assertFalse($user->isEnabled());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenDisableInactiveUser(): void
     {
         $this->expectException(UserException::class);
@@ -132,9 +111,7 @@ class UserTest extends UserBaseTestCase
         $user->disable();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenDisableAlreadyDisabledUser(): void
     {
         $this->expectException(UserException::class);
@@ -143,9 +120,7 @@ class UserTest extends UserBaseTestCase
         $user->disable();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldChangePassword(): void
     {
         $user = $this->createEnabledUser();
@@ -154,9 +129,7 @@ class UserTest extends UserBaseTestCase
         self::assertTrue($user->getPassword()->equals(new UserPassword('newPassword1234')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenPasswordChangedByInactiveUser(): void
     {
         $this->expectException(UserException::class);
@@ -165,9 +138,7 @@ class UserTest extends UserBaseTestCase
         $user->changePassword(new UserPassword('newPassword1234'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenPasswordChangedByDisabledUser(): void
     {
         $this->expectException(UserException::class);
@@ -176,9 +147,7 @@ class UserTest extends UserBaseTestCase
         $user->changePassword(new UserPassword('newPassword1234'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenChangedPasswordEqualsWithCurrentPassword(): void
     {
         $this->expectException(PasswordException::class);

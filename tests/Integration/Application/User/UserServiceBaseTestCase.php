@@ -19,40 +19,18 @@ use TSwiackiewicz\AwesomeApp\Infrastructure\{
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
 
-/**
- * Class UserServiceBaseTestCase
- * @package TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User
- */
 abstract class UserServiceBaseTestCase extends TestCase
 {
-    /**
-     * @var int
-     */
-    protected $userId = 1;
+    protected int $userId = 1;
 
-    /**
-     * @var string
-     */
-    protected $login = 'test@domain.com';
+    protected string $login = 'test@domain.com';
 
-    /**
-     * @var string
-     */
-    protected $password = 'password1234';
+    protected string $password = 'password1234';
 
-    /**
-     * @var string
-     */
-    protected $hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
+    protected string $hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
 
-    /**
-     * @var UserService
-     */
-    protected $service;
+    protected UserService $service;
 
-    /**
-     * Disable user
-     */
     protected function disableUser(): void
     {
         $repository = new InMemoryUserRepository();
@@ -67,9 +45,6 @@ abstract class UserServiceBaseTestCase extends TestCase
         );
     }
 
-    /**
-     * Enable user
-     */
     protected function enableUser(): void
     {
         $repository = new InMemoryUserRepository();
@@ -84,9 +59,6 @@ abstract class UserServiceBaseTestCase extends TestCase
         );
     }
 
-    /**
-     * Setup fixtures
-     */
     protected function setUp(): void
     {
         $this->registerEventHandlers();
@@ -109,9 +81,6 @@ abstract class UserServiceBaseTestCase extends TestCase
         );
     }
 
-    /**
-     * Register event handlers
-     */
     private function registerEventHandlers(): void
     {
         EventBus::subscribe(
@@ -152,14 +121,10 @@ abstract class UserServiceBaseTestCase extends TestCase
         );
     }
 
-    /**
-     * Clear cache
-     */
     protected function clearCache(): void
     {
         InMemoryStorage::clear();
         $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
-        $identityMap->setAccessible(true);
         $identityMap->setValue(null, []);
     }
 }

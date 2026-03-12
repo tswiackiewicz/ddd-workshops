@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Infrastructure\User;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Exception\UserNotFoundException, Password\UserPassword, User, UserLogin
 };
@@ -13,23 +16,13 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\UserRepositoryException
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
-/**
- * Class InMemoryUserRepositoryTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Infrastructure\User
- *
- * @@coversDefaultClass InMemoryUserRepository
- * @runTestsInSeparateProcesses
- */
+#[CoversClass(InMemoryUserRepository::class)]
+#[RunTestsInSeparateProcesses]
 class InMemoryUserRepositoryTest extends UserBaseTestCase
 {
-    /**
-     * @var InMemoryUserRepository
-     */
-    private $repository;
+    private InMemoryUserRepository $repository;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnNextIdentity(): void
     {
         $userId = $this->repository->nextIdentity();
@@ -37,25 +30,19 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         self::assertInstanceOf(UserId::class, $userId);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnTrueWhenUserExists(): void
     {
         self::assertTrue($this->repository->exists($this->login));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnFalseWhenUserNotExists(): void
     {
         self::assertFalse($this->repository->exists('non_existent_user'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnUserById(): void
     {
         $this->clearIdentityMap();
@@ -67,19 +54,13 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         self::assertInstanceOf(User::class, $user);
     }
 
-    /**
-     * Clear identity map
-     */
     private function clearIdentityMap(): void
     {
         $identityMap = new \ReflectionProperty(InMemoryUserRepository::class, 'identityMap');
-        $identityMap->setAccessible(true);
         $identityMap->setValue(null, []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFetchUserByIdFromStorageOnlyOnce(): void
     {
         $firstAttemptUser = $this->repository->getById(
@@ -94,9 +75,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         self::assertSame($firstAttemptUser, $secondAttemptUser);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenInvalidStorageDataForUserById(): void
     {
         $this->clearIdentityMap();
@@ -120,9 +99,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenUserByIdNotFound(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -132,9 +109,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnUserByHash(): void
     {
         $user = $this->repository->getByHash($this->hash);
@@ -142,9 +117,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         self::assertInstanceOf(User::class, $user);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenInvalidStorageDataForUserByHash(): void
     {
         $this->clearIdentityMap();
@@ -166,9 +139,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         $this->repository->getByHash($this->hash);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenUserByHashNotFound(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -176,9 +147,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         $this->repository->getByHash('not_found_user_hash');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSaveUser(): void
     {
         $user = new User(
@@ -193,9 +162,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         self::assertTrue($this->repository->getById(UserId::fromInt(1))->isActive());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSaveUserWithNullId(): void
     {
         InMemoryStorage::nextIdentity(InMemoryStorage::TYPE_USER);
@@ -212,9 +179,7 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         self::assertTrue($this->repository->getById($userId)->isActive());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldRemoveUserById(): void
     {
         self::assertEquals(
@@ -231,9 +196,6 @@ class InMemoryUserRepositoryTest extends UserBaseTestCase
         }
     }
 
-    /**
-     * Setup fixtures
-     */
     protected function setUp(): void
     {
         InMemoryStorage::clear();

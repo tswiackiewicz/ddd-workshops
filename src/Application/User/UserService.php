@@ -14,38 +14,17 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\{
 };
 use TSwiackiewicz\DDD\Event\EventBus;
 
-/**
- * Class UserService
- * @package TSwiackiewicz\AwesomeApp\Application\User
- */
 class UserService
 {
-    /**
-     * @var UserRepository
-     */
-    private $repository;
-
-    /**
-     * @var UserPasswordService
-     */
-    private $passwordService;
-
-    /**
-     * UserService constructor.
-     * @param UserRepository $repository
-     * @param UserPasswordService $passwordService
-     */
-    public function __construct(UserRepository $repository, UserPasswordService $passwordService)
-    {
-        $this->repository = $repository;
-        $this->passwordService = $passwordService;
+    public function __construct(
+        private readonly UserRepository $repository,
+        private readonly UserPasswordService $passwordService
+    ) {
     }
 
     /**
      * Register new user
      *
-     * @param RegisterUserCommand $command
-     * @return UserId
      * @throws UserDomainModelException
      */
     public function register(RegisterUserCommand $command): UserId
@@ -76,7 +55,6 @@ class UserService
     /**
      * Activate user
      *
-     * @param ActivateUserCommand $command
      * @throws UserDomainModelException
      */
     public function activate(ActivateUserCommand $command): void
@@ -92,7 +70,6 @@ class UserService
     /**
      * Enable user
      *
-     * @param EnableUserCommand $command
      * @throws UserDomainModelException
      */
     public function enable(EnableUserCommand $command): void
@@ -108,7 +85,6 @@ class UserService
     /**
      * Disable user
      *
-     * @param DisableUserCommand $command
      * @throws UserDomainModelException
      */
     public function disable(DisableUserCommand $command): void
@@ -125,7 +101,6 @@ class UserService
      * Change user's password
      * Example usage of domain service (UserPasswordService)
      *
-     * @param ChangePasswordCommand $command
      * @throws UserDomainModelException
      * @throws ValidationException
      */
@@ -147,7 +122,6 @@ class UserService
      * Unregister user
      *
      * @see http://udidahan.com/2009/09/01/dont-delete-just-dont/
-     * @param UnregisterUserCommand $command
      * @throws UserDomainModelException
      */
     public function unregister(UnregisterUserCommand $command): void

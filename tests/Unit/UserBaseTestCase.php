@@ -10,77 +10,36 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserNotifier;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
-/**
- * Class UserBaseTestCase
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit
- */
 abstract class UserBaseTestCase extends TestCase
 {
-    /**
-     * @var int
-     */
-    protected $userId = 1;
+    protected int $userId = 1;
 
-    /**
-     * @var string
-     */
-    protected $login = 'test@domain.com';
+    protected string $login = 'test@domain.com';
 
-    /**
-     * @var string
-     */
-    protected $password = 'password1234';
+    protected string $password = 'password1234';
 
-    /**
-     * @var string
-     */
-    protected $hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
+    protected string $hash = '94b3e2c871ff1b3e4e03c74cd9c501f5';
 
-    /**
-     * @return array
-     */
-    public function getInvalidLoginDataProvider(): array
+    public static function getInvalidLoginDataProvider(): array
     {
         return [
-            [
-                ''
-            ],
-            [
-                'test'
-            ],
-            [
-                'test@'
-            ],
-            [
-                '@test'
-            ],
-            [
-                'test@domain'
-            ],
-            [
-                'test@domain.'
-            ]
+            [''],
+            ['test'],
+            ['test@'],
+            ['@test'],
+            ['test@domain'],
+            ['test@domain.']
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getInvalidPasswordDataProvider(): array
+    public static function getInvalidPasswordDataProvider(): array
     {
         return [
-            [
-                ''
-            ],
-            [
-                'test123'
-            ]
+            [''],
+            ['test123']
         ];
     }
 
-    /**
-     * @return User
-     */
     protected function createActiveUser(): User
     {
         return new User(
@@ -92,9 +51,6 @@ abstract class UserBaseTestCase extends TestCase
         );
     }
 
-    /**
-     * @return User
-     */
     protected function createInactiveUser(): User
     {
         return new User(
@@ -106,9 +62,6 @@ abstract class UserBaseTestCase extends TestCase
         );
     }
 
-    /**
-     * @return User
-     */
     protected function createEnabledUser(): User
     {
         return new User(
@@ -120,9 +73,6 @@ abstract class UserBaseTestCase extends TestCase
         );
     }
 
-    /**
-     * @return User
-     */
     protected function createDisabledUser(): User
     {
         return new User(
@@ -134,18 +84,11 @@ abstract class UserBaseTestCase extends TestCase
         );
     }
 
-    /**
-     * @param null|string $eventName
-     * @return UserNotifier|\PHPUnit_Framework_MockObject_MockObject
-     */
     protected function getUserNotifierMock(?string $eventName = null): UserNotifier
     {
-        /** @var UserNotifier|\PHPUnit_Framework_MockObject_MockObject $notifier */
         $notifier = $this->getMockBuilder(UserNotifier::class)
             ->disableOriginalConstructor()
-            ->setMethods([
-                'notifyUser'
-            ])
+            ->onlyMethods(['notifyUser'])
             ->getMock();
         if ($eventName !== null) {
             $notifier->expects(self::once())

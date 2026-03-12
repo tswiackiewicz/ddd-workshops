@@ -3,20 +3,15 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User\Password;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPasswordService;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
-/**
- * Class UserPasswordServiceTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User\Password
- *
- * @coversDefaultClass UserPasswordService
- */
+#[CoversClass(UserPasswordService::class)]
 class UserPasswordServiceTest extends UserBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldCheckIfPasswordIsWeak(): void
     {
         $password = 'weak_password';
@@ -27,9 +22,7 @@ class UserPasswordServiceTest extends UserBaseTestCase
         self::assertFalse($service->isStrong($password));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldCheckIfPasswordIsStrong(): void
     {
         $password = 'StRoNg_PasSw0rD1';
@@ -41,9 +34,7 @@ class UserPasswordServiceTest extends UserBaseTestCase
         self::assertFalse($service->isVeryStrong($password));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldCheckIfPasswordIsVeryStrong(): void
     {
         $password = 'VEEERY_StR0Ng_P@sSw0rD1!#';
@@ -55,9 +46,7 @@ class UserPasswordServiceTest extends UserBaseTestCase
         self::assertTrue($service->isVeryStrong($password));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldGenerateStrongPassword(): void
     {
         $service = new UserPasswordService();

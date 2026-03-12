@@ -3,59 +3,18 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\ReadModel\User;
 
-/**
- * Class UserDTO
- * @package TSwiackiewicz\AwesomeApp\ReadModel\User
- */
 class UserDTO
 {
-    /**
-     * @var int
-     */
-    private $id;
-
-    /**
-     * @var string
-     */
-    private $login;
-
-    /**
-     * @var string
-     */
-    private $password;
-
-    /**
-     * @var bool
-     */
-    private $active;
-
-    /**
-     * @var bool
-     */
-    private $enabled;
-
-    /**
-     * UserDTO constructor.
-     * @param int $id
-     * @param string $login
-     * @param string $password
-     * @param bool $active
-     * @param bool $enabled
-     */
-    public function __construct($id, $login, $password, $active, $enabled)
-    {
-        $this->id = $id;
-        $this->login = $login;
-        $this->password = $password;
-        $this->active = $active;
-        $this->enabled = $enabled;
+    public function __construct(
+        private readonly int $id,
+        private readonly string $login,
+        private readonly string $password,
+        private readonly bool $active,
+        private readonly bool $enabled
+    ) {
     }
 
-    /**
-     * @param array $user
-     * @return UserDTO
-     */
-    public static function fromArray(array $user) : UserDTO
+    public static function fromArray(array $user): UserDTO
     {
         return new static(
             $user['id'],
@@ -66,41 +25,26 @@ class UserDTO
         );
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getLogin(): string
     {
         return $this->login;
     }
 
-    /**
-     * @return string
-     */
     public function getPassword(): string
     {
         return $this->password;
     }
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;

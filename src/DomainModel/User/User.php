@@ -9,57 +9,18 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
-/**
- * Class User
- * @package TSwiackiewicz\AwesomeApp\DomainModel\User
- */
 class User
 {
-    /**
-     * @var UserId
-     */
-    private $id;
-
-    /**
-     * @var UserLogin
-     */
-    private $login;
-
-    /**
-     * @var UserPassword
-     */
-    private $password;
-
-    /**
-     * @var bool
-     */
-    private $active;
-
-    /**
-     * @var bool
-     */
-    private $enabled;
-
-    /**
-     * User constructor.
-     * @param UserId $id
-     * @param UserLogin $login
-     * @param UserPassword $password
-     * @param bool $active
-     * @param bool $enabled
-     */
-    public function __construct(UserId $id, UserLogin $login, UserPassword $password, bool $active, bool $enabled)
-    {
-        $this->id = $id;
-        $this->login = $login;
-        $this->password = $password;
-        $this->active = $active;
-        $this->enabled = $enabled;
+    public function __construct(
+        private UserId $id,
+        private UserLogin $login,
+        private UserPassword $password,
+        private bool $active,
+        private bool $enabled
+    ) {
     }
 
     /**
-     * @param array $user
-     * @return User
      * @throws InvalidArgumentException
      */
     public static function fromNative(array $user): User
@@ -75,11 +36,6 @@ class User
 
     /**
      * Register new user
-     *
-     * @param UserId $id
-     * @param UserLogin $username
-     * @param UserPassword $password
-     * @return User
      */
     public static function register(UserId $id, UserLogin $username, UserPassword $password): User
     {
@@ -132,7 +88,6 @@ class User
     /**
      * Change user's password
      *
-     * @param UserPassword $password
      * @throws UserException
      * @throws PasswordException
      */
@@ -149,41 +104,26 @@ class User
         $this->password = $password;
     }
 
-    /**
-     * @return UserId
-     */
     public function getId(): UserId
     {
         return $this->id;
     }
 
-    /**
-     * @return UserLogin
-     */
     public function getLogin(): UserLogin
     {
         return $this->login;
     }
 
-    /**
-     * @return UserPassword
-     */
     public function getPassword(): UserPassword
     {
         return $this->password;
     }
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
@@ -191,8 +131,6 @@ class User
 
     /**
      * Generate user hash string
-     *
-     * @return string
      */
     public function hash(): string
     {

@@ -6,27 +6,17 @@ namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Password;
 /**
  * Example of domain service - responsible for strong password generation and
  * verification whether password is weak, strong or very strong
- *
- * @package TSwiackiewicz\AwesomeApp\DomainModel\User\Password
  */
 class UserPasswordService
 {
     private const STRONG_PASSWORD_THRESHOLD = 20;
     private const VERY_STRONG_PASSWORD_THRESHOLD = 40;
 
-    /**
-     * @param string $password
-     * @return bool
-     */
     public function isWeak(string $password): bool
     {
         return $this->calculatePasswordStrength($password) < self::STRONG_PASSWORD_THRESHOLD;
     }
 
-    /**
-     * @param string $password
-     * @return int
-     */
     private function calculatePasswordStrength(string $password): int
     {
         $strength = 0;
@@ -68,27 +58,16 @@ class UserPasswordService
         return $strength;
     }
 
-    /**
-     * @param string $password
-     * @return bool
-     */
     public function isStrong(string $password): bool
     {
         return $this->calculatePasswordStrength($password) >= self::STRONG_PASSWORD_THRESHOLD;
     }
 
-    /**
-     * @param string $password
-     * @return bool
-     */
     public function isVeryStrong(string $password): bool
     {
         return $this->calculatePasswordStrength($password) >= self::VERY_STRONG_PASSWORD_THRESHOLD;
     }
 
-    /**
-     * @return string
-     */
     public function generateStrongPassword(): string
     {
         // this is only sample generated strong password,

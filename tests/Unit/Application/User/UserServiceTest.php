@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\ActivateUserCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\ChangePasswordCommand;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\DisableUserCommand;
@@ -30,17 +32,10 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\DDD\Event\EventBus;
 
-/**
- * Class UserService
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User
- *
- * @coversDefaultClass UserService
- */
+#[CoversClass(UserService::class)]
 class UserServiceTest extends UserServiceBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldRegisterUser(): void
     {
         EventBus::subscribe(
@@ -59,9 +54,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenRegisteredUserAlreadyExists(): void
     {
         $this->expectException(UserAlreadyExistsException::class);
@@ -75,9 +68,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldActivateUser(): void
     {
         EventBus::subscribe(
@@ -96,9 +87,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenActivatedUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -112,9 +101,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldEnableUser(): void
     {
         $disabledUser = $this->getUser(true, false);
@@ -135,9 +122,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenEnabledUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -151,9 +136,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldDisableUser(): void
     {
         $enabledUser = $this->getUser(true, true);
@@ -174,9 +157,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenDisabledUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -190,9 +171,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldChangePassword(): void
     {
         $newPassword = 'new-VEEERY_StR0Ng_P@sSw0rD1!#';
@@ -217,9 +196,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenChangedPasswordIsTooWeak(): void
     {
         $this->expectException(PasswordException::class);
@@ -236,9 +213,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenUserChangingPasswordNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -255,9 +230,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldRemoveUser(): void
     {
         $enabledUser = $this->getUser(true, true);
@@ -278,9 +251,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenRemovedUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
