@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Application\User\Command;
 
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\AwesomeApp\Domain\User\ValueObject\UserId;
 
 class EnableUserCommand implements UserCommand
 {

@@ -15,30 +15,37 @@ A PHP workshop project demonstrating Domain-Driven Design (DDD) and CQRS pattern
 
 ```
 src/
-├── Application/User/         # Application layer (UserService, Commands, Event Handlers)
+├── Application/User/         # Application layer (Command Handlers, Event Handlers, Queries)
 │   ├── Command/              # Command objects (RegisterUserCommand, etc.)
-│   └── Event/                # Domain event handlers
-├── DomainModel/User/         # Domain model (User entity, Value Objects, Events, Repository interface)
+│   ├── Handler/              # Command and Event handlers (RegisterUserHandler, etc.)
+│   └── Query/                # Read model (UserDTO, UserReadModel, UserReadModelRepository)
+├── Domain/User/              # Domain model
+│   ├── Entity/               # User aggregate root
 │   ├── Event/                # Domain events
 │   ├── Exception/            # Domain exceptions
-│   └── Password/             # UserPassword value object
-├── Infrastructure/           # Infrastructure layer (InMemory implementations)
-│   └── User/                 # InMemoryUserRepository, InMemoryUserReadModelRepository
-├── ReadModel/User/           # Read model (UserDTO, UserReadModelRepository interface)
-└── SharedKernel/User/        # Shared kernel (UserId, interfaces, base exceptions)
+│   ├── Repository/           # Repository and Notifier interfaces
+│   ├── Service/              # UserPasswordService (domain service)
+│   └── ValueObject/          # UserId, UserLogin, UserPassword, UserStatus (enum)
+├── Infrastructure/           # Infrastructure layer
+│   ├── Notification/         # StdOutUserNotifier
+│   └── Persistence/          # InMemoryStorage, InMemoryUserRepository, InMemoryUserReadModelRepository
+└── SharedKernel/             # Shared kernel
+    └── Exception/            # Base exceptions (InvalidArgumentException, RuntimeException, etc.)
 
 tests/
-├── Unit/                     # Unit tests (mock dependencies)
-│   ├── Application/User/     # UserService unit tests
-│   ├── DomainModel/User/     # Domain model unit tests
-│   └── Infrastructure/User/ # Repository unit tests
-└── Integration/              # Integration tests (real in-memory storage)
-    └── Application/User/     # UserService integration tests
+├── Application/User/         # Application layer tests
+│   ├── Handler/              # Command/Event handler tests
+│   └── Query/                # Read model tests
+├── Domain/User/              # Domain model tests
+│   ├── Entity/               # User entity tests
+│   ├── Service/              # Domain service tests
+│   └── ValueObject/          # Value object tests
+└── Infrastructure/User/      # Infrastructure and integration tests
 ```
 
 ## Environment
 
-- **PHP**: ^8.4
+- **PHP**: ^8.5
 - **PHPUnit**: ^11.0
 - **No external runtime dependencies** (uses in-memory storage for all tests)
 
@@ -51,11 +58,14 @@ composer install
 # Run all tests
 vendor/bin/phpunit
 
-# Run only unit tests
-vendor/bin/phpunit --testsuite unit
+# Run only domain tests
+vendor/bin/phpunit --testsuite domain
 
-# Run only integration tests
-vendor/bin/phpunit --testsuite integration
+# Run only application tests
+vendor/bin/phpunit --testsuite application
+
+# Run only infrastructure tests
+vendor/bin/phpunit --testsuite infrastructure
 ```
 
 ## Coding Conventions
@@ -66,6 +76,8 @@ vendor/bin/phpunit --testsuite integration
 - PHP 8 attributes for PHPUnit: `#[Test]`, `#[DataProvider]`, `#[CoversClass]`
 - Data provider methods must be `static`
 - No `@var`, `@param`, `@return` PHPDoc — use native PHP type declarations instead
+- PHP 8.5 features: `abstract readonly class` for events, `final readonly class` for value objects, enums for domain status
+- Command handlers use `__invoke()` pattern instead of service methods
 
 ## Branches
 

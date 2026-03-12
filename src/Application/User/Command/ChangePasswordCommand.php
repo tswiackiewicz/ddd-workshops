@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Application\User\Command;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
-use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
+use TSwiackiewicz\AwesomeApp\Domain\User\ValueObject\UserPassword;
+use TSwiackiewicz\AwesomeApp\Domain\User\ValueObject\UserId;
 
 class ChangePasswordCommand implements UserCommand
 {
