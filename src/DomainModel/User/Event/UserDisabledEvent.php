@@ -3,23 +3,13 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
-/**
- * Class UserDisabledEvent
- * @package TSwiackiewicz\AwesomeApp\DomainModel\User\Event
- */
 class UserDisabledEvent extends UserEvent
 {
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return false;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return sprintf(

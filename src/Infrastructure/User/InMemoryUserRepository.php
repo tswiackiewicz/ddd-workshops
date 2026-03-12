@@ -11,29 +11,15 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\{
     Exception\InvalidArgumentException, Exception\UserRepositoryException, UserId
 };
 
-/**
- * Class InMemoryUserRepository
- * @package TSwiackiewicz\AwesomeApp\Infrastructure\User
- */
 class InMemoryUserRepository implements UserRepository
 {
-    /**
-     * @var array
-     */
-    private static $identityMap = [];
+    private static array $identityMap = [];
 
-    /**
-     * @return UserId
-     */
     public function nextIdentity(): UserId
     {
         return UserId::nullInstance();
     }
 
-    /**
-     * @param string $login
-     * @return bool
-     */
     public function exists(string $login): bool
     {
         $users = InMemoryStorage::fetchAll(InMemoryStorage::TYPE_USER);
@@ -47,8 +33,6 @@ class InMemoryUserRepository implements UserRepository
     }
 
     /**
-     * @param UserId $id
-     * @return User
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
@@ -73,8 +57,6 @@ class InMemoryUserRepository implements UserRepository
     }
 
     /**
-     * @param string $hash
-     * @return User
      * @throws UserRepositoryException
      * @throws UserNotFoundException
      */
@@ -97,8 +79,6 @@ class InMemoryUserRepository implements UserRepository
     }
 
     /**
-     * @param User $user
-     * @return UserId
      * @throws UserRepositoryException
      */
     public function save(User $user): UserId
@@ -129,9 +109,6 @@ class InMemoryUserRepository implements UserRepository
         }
     }
 
-    /**
-     * @param UserId $id
-     */
     public function remove(UserId $id): void
     {
         InMemoryStorage::removeById(InMemoryStorage::TYPE_USER, $id->getId());

@@ -11,29 +11,12 @@ use TSwiackiewicz\DDD\Event\{
     Event, EventHandler
 };
 
-/**
- * Class UserPasswordChangedEventHandler
- * @package TSwiackiewicz\AwesomeApp\Application\User\Event
- */
 class UserPasswordChangedEventHandler implements EventHandler
 {
-    /**
-     * @var UserNotifier
-     */
-    private $notifier;
-
-    /**
-     * UserPasswordChangedEventHandler constructor.
-     * @param UserNotifier $notifier
-     */
-    public function __construct(UserNotifier $notifier)
+    public function __construct(private readonly UserNotifier $notifier)
     {
-        $this->notifier = $notifier;
     }
 
-    /**
-     * @param Event $event
-     */
     public function handle(Event $event): void
     {
         if (!$event instanceof UserPasswordChangedEvent) {

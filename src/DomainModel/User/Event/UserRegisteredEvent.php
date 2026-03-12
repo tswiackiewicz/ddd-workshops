@@ -5,55 +5,27 @@ namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
-/**
- * Class UserRegisteredEvent
- * @package TSwiackiewicz\AwesomeApp\DomainModel\User\Event
- */
 class UserRegisteredEvent extends UserEvent
 {
-    /**
-     * @var string
-     */
-    private $login;
-
-    /**
-     * @var string
-     */
-    private $password;
-
-    /**
-     * UserRegisteredEvent constructor.
-     * @param UserId $id
-     * @param string $login
-     * @param string $password
-     * @param \DateTimeImmutable|null $occurredOn
-     */
-    public function __construct(UserId $id, string $login, string $password, ?\DateTimeImmutable $occurredOn = null)
-    {
+    public function __construct(
+        UserId $id,
+        private readonly string $login,
+        private readonly string $password,
+        ?\DateTimeImmutable $occurredOn = null
+    ) {
         parent::__construct($id, $occurredOn);
-        $this->login = $login;
-        $this->password = $password;
     }
 
-    /**
-     * @return string
-     */
     public function getLogin(): string
     {
         return $this->login;
     }
 
-    /**
-     * @return string
-     */
     public function getPassword(): string
     {
         return $this->password;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return sprintf(

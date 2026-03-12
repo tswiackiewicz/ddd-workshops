@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Infrastructure\User;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\Infrastructure\{
     InMemoryStorage, User\InMemoryUserReadModelRepository
 };
@@ -16,24 +19,14 @@ use TSwiackiewicz\DDD\Query\Pagination\Pagination;
 use TSwiackiewicz\DDD\Query\QueryContext;
 use TSwiackiewicz\DDD\Query\Sort\Sort;
 
-/**
- * Class InMemoryUserReadModelRepositoryTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Infrastructure\User
- *
- * @@coversDefaultClass  InMemoryUserReadModelRepository
- */
+#[CoversClass(InMemoryUserReadModelRepository::class)]
 class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
 {
     private const USER_STORAGE_TYPE = 'user';
 
-    /**
-     * @var InMemoryUserReadModelRepository
-     */
-    private $repository;
+    private InMemoryUserReadModelRepository $repository;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFindUserById(): void
     {
         $user = $this->repository->findById(UserId::fromInt($this->userId));
@@ -41,9 +34,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
         self::assertInstanceOf(UserDTO::class, $user);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnNullWhenUserNotFoundById(): void
     {
         $user = $this->repository->findById(UserId::fromInt(1234));
@@ -51,9 +42,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
         self::assertNull($user);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFindUsersByQuery(): void
     {
         $users = $this->repository->findByQuery(
@@ -65,9 +54,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
         self::assertInstanceOf(UserDTO::class, $users->getItems()[0]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnEmptyArrayWhenUsersNotFoundByQuery(): void
     {
         $users = $this->repository->findByQuery(
@@ -78,9 +65,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
         self::assertEquals([], $users->getItems());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnAllUsers(): void
     {
         $users = $this->repository->getUsers(new QueryContext());
@@ -91,14 +76,8 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
         }
     }
 
-    /**
-     * @test
-     * @dataProvider getQueryContextDataProvider
-     *
-     * @param QueryContext $context
-     * @param int $itemsCount
-     * @param int $totalItemsCount
-     */
+    #[Test]
+    #[DataProvider('getQueryContextDataProvider')]
     public function shouldReturnUsersWithQueryContext(
         QueryContext $context,
         int $itemsCount,
@@ -117,9 +96,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnEmptyArrayWhenNoUsersDefined(): void
     {
         InMemoryStorage::clear(self::USER_STORAGE_TYPE);
@@ -129,10 +106,7 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
         self::assertEquals([], $users);
     }
 
-    /**
-     * @return array
-     */
-    public function getQueryContextDataProvider(): array
+    public static function getQueryContextDataProvider(): array
     {
         return [
             [
@@ -191,9 +165,6 @@ class InMemoryUserReadModelRepositoryTest extends UserBaseTestCase
         ];
     }
 
-    /**
-     * Setup fixtures
-     */
     protected function setUp(): void
     {
         InMemoryStorage::clear();

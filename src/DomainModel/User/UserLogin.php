@@ -9,19 +9,12 @@ use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentExceptio
  * Example of Value Object, very convenient way for data validation
  * In this particular case, user login validation can be implemented
  * with command validator
- *
- * @package TSwiackiewicz\AwesomeApp\DomainModel\User
  */
 class UserLogin
 {
-    /**
-     * @var string
-     */
-    private $login;
+    private readonly string $login;
 
     /**
-     * UserLogin constructor.
-     * @param string $login
      * @throws InvalidArgumentException
      */
     public function __construct(string $login)
@@ -33,17 +26,11 @@ class UserLogin
         $this->login = $login;
     }
 
-    /**
-     * @return string
-     */
     public function getLogin(): string
     {
         return $this->login;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->login;

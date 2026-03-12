@@ -3,21 +3,16 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User\Event;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\Application\User\Event\UserEnabledEventHandler;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\RuntimeException;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
-/**
- * Class UserEnabledEventHandlerTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\Application\User\Event
- *
- * @coversDefaultClass UserEnabledEventHandler
- */
+#[CoversClass(UserEnabledEventHandler::class)]
 class UserEnabledEventHandlerTest extends UserBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenHandledEventIsInvalid(): void
     {
         $this->expectException(RuntimeException::class);

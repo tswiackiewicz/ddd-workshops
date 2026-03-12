@@ -3,44 +3,19 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\ReadModel\User;
 
-/**
- * Class UserQuery
- * @package TSwiackiewicz\AwesomeApp\ReadModel\User
- */
 class UserQuery
 {
-    /**
-     * @var bool
-     */
-    private $active;
-
-    /**
-     * @var bool
-     */
-    private $enabled;
-
-    /**
-     * UserQuery constructor.
-     * @param bool $active
-     * @param bool $enabled
-     */
-    public function __construct(bool $active, bool $enabled)
-    {
-        $this->active = $active;
-        $this->enabled = $enabled;
+    public function __construct(
+        private readonly bool $active,
+        private readonly bool $enabled
+    ) {
     }
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;

@@ -3,21 +3,17 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User\Password;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\Password\UserPassword;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
-/**
- * Class UserPasswordTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User\Password
- *
- * @coversDefaultClass UserPassword
- */
+#[CoversClass(UserPassword::class)]
 class UserPasswordTest extends UserBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldCreateUserPassword(): void
     {
         $password = new UserPassword('password1234');
@@ -27,12 +23,8 @@ class UserPasswordTest extends UserBaseTestCase
         self::assertEquals('password1234', (string)$password);
     }
 
-    /**
-     * @test
-     * @dataProvider getInvalidPasswordDataProvider
-     *
-     * @param string $invalidPassword
-     */
+    #[Test]
+    #[DataProvider('getInvalidPasswordDataProvider')]
     public function shouldFailWhileCreationInvalidUserPassword(string $invalidPassword): void
     {
         $this->expectException(InvalidArgumentException::class);

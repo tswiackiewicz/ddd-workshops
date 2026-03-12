@@ -3,21 +3,16 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\User;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
-/**
- * Class UserIdTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\SharedKernel\User
- *
- * @coversDefaultClass UserId
- */
+#[CoversClass(UserId::class)]
 class UserIdTest extends UserBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldCreateFromInt(): void
     {
         $userId = UserId::fromInt($this->userId);
@@ -27,9 +22,7 @@ class UserIdTest extends UserBaseTestCase
         self::assertEquals($this->userId, $userId->getId());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldCreateNullInstance(): void
     {
         $userId = UserId::nullInstance();
@@ -38,9 +31,7 @@ class UserIdTest extends UserBaseTestCase
         self::assertTrue($userId->isNull());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhileCreationInvalidUserId(): void
     {
         $this->expectException(InvalidArgumentException::class);

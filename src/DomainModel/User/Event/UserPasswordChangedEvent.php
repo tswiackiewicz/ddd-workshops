@@ -5,40 +5,21 @@ namespace TSwiackiewicz\AwesomeApp\DomainModel\User\Event;
 
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
-/**
- * Class UserPasswordChangedEvent
- * @package TSwiackiewicz\AwesomeApp\DomainModel\User\Event
- */
 class UserPasswordChangedEvent extends UserEvent
 {
-    /**
-     * @var string
-     */
-    private $password;
-
-    /**
-     * UserPasswordChangedEvent constructor.
-     * @param UserId $id
-     * @param string $password
-     * @param \DateTimeImmutable|null $occurredOn
-     */
-    public function __construct(UserId $id, string $password, ?\DateTimeImmutable $occurredOn = null)
-    {
+    public function __construct(
+        UserId $id,
+        private readonly string $password,
+        ?\DateTimeImmutable $occurredOn = null
+    ) {
         parent::__construct($id, $occurredOn);
-        $this->password = $password;
     }
 
-    /**
-     * @return string
-     */
     public function getPassword(): string
     {
         return $this->password;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return sprintf(

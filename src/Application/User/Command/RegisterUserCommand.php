@@ -7,44 +7,19 @@ use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Password\UserPassword, UserLogin
 };
 
-/**
- * Class RegisterUserCommand
- * @package TSwiackiewicz\AwesomeApp\Application\User\Command
- */
 class RegisterUserCommand implements UserCommand
 {
-    /**
-     * @var UserLogin
-     */
-    private $login;
-
-    /**
-     * @var UserPassword
-     */
-    private $password;
-
-    /**
-     * RegisterUserCommand constructor.
-     * @param UserLogin $login
-     * @param UserPassword $password
-     */
-    public function __construct(UserLogin $login, UserPassword $password)
-    {
-        $this->login = $login;
-        $this->password = $password;
+    public function __construct(
+        private readonly UserLogin $login,
+        private readonly UserPassword $password
+    ) {
     }
 
-    /**
-     * @return UserLogin
-     */
     public function getLogin(): UserLogin
     {
         return $this->login;
     }
 
-    /**
-     * @return UserPassword
-     */
     public function getPassword(): UserPassword
     {
         return $this->password;

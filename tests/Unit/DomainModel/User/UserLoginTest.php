@@ -3,21 +3,17 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\UserLogin;
 use TSwiackiewicz\AwesomeApp\Tests\Unit\UserBaseTestCase;
 
-/**
- * Class UserLoginTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Unit\DomainModel\User
- *
- * @coversDefaultClass UserLogin
- */
+#[CoversClass(UserLogin::class)]
 class UserLoginTest extends UserBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldCreateUserLogin(): void
     {
         $login = new UserLogin('test@domain.com');
@@ -27,12 +23,8 @@ class UserLoginTest extends UserBaseTestCase
         self::assertEquals('test@domain.com', (string)$login);
     }
 
-    /**
-     * @test
-     * @dataProvider getInvalidLoginDataProvider
-     *
-     * @param string $invalidLogin
-     */
+    #[Test]
+    #[DataProvider('getInvalidLoginDataProvider')]
     public function shouldFailWhileCreationInvalidUserLogin(string $invalidLogin): void
     {
         $this->expectException(InvalidArgumentException::class);

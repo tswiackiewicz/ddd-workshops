@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use TSwiackiewicz\AwesomeApp\Application\User\Command\{
     ActivateUserCommand, ChangePasswordCommand, DisableUserCommand, EnableUserCommand, RegisterUserCommand, UnregisterUserCommand
 };
+use TSwiackiewicz\AwesomeApp\Application\User\UserService;
 use TSwiackiewicz\AwesomeApp\DomainModel\User\{
     Exception\PasswordException, Exception\UserAlreadyExistsException, Exception\UserNotFoundException, Password\UserPassword, UserLogin
 };
@@ -15,17 +18,10 @@ use TSwiackiewicz\AwesomeApp\Infrastructure\{
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\Exception\InvalidArgumentException;
 use TSwiackiewicz\AwesomeApp\SharedKernel\User\UserId;
 
-/**
- * Class UserServiceTest
- * @package TSwiackiewicz\AwesomeApp\Tests\Integration\Application\User
- *
- * @coversDefaultClass UserService
- */
+#[CoversClass(UserService::class)]
 class UserServiceTest extends UserServiceBaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldRegisterUser(): void
     {
         $this->clearCache();
@@ -49,9 +45,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         self::assertEquals(UserId::fromInt($this->userId + 1), $nextRegisteredUserId);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenRegisteredUserAlreadyExists(): void
     {
         $this->expectException(UserAlreadyExistsException::class);
@@ -64,9 +58,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenRegisteredUserLoginIsInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -79,9 +71,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldActivateUser(): void
     {
         $this->service->activate(
@@ -94,9 +84,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         self::assertTrue($userDTO->isActive());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenActivatedUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -106,9 +94,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldEnableUser(): void
     {
         $this->disableUser();
@@ -123,9 +109,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         self::assertTrue($userDTO->isEnabled());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenEnabledUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -135,9 +119,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldDisableUser(): void
     {
         $this->enableUser();
@@ -152,9 +134,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         self::assertFalse($userDTO->isEnabled());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenDisabledUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -164,9 +144,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldChangePassword(): void
     {
         $this->enableUser();
@@ -185,9 +163,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         self::assertEquals($newPassword, $userDTO->getPassword());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenChangedPasswordIsTooWeak(): void
     {
         $this->enableUser();
@@ -202,9 +178,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenChangedPasswordEqualsWithCurrentPassword(): void
     {
         $this->enableUser();
@@ -219,9 +193,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenUserThatChangedPasswordNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);
@@ -234,9 +206,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldRemoveUser(): void
     {
         $this->enableUser();
@@ -253,9 +223,7 @@ class UserServiceTest extends UserServiceBaseTestCase
         self::assertNull($userDTO);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenRemovedUserNotExists(): void
     {
         $this->expectException(UserNotFoundException::class);

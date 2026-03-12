@@ -6,39 +6,19 @@ namespace TSwiackiewicz\AwesomeApp\Infrastructure;
 use TSwiackiewicz\DDD\Query\Sort\NullSort;
 use TSwiackiewicz\DDD\Query\Sort\Sort;
 
-/**
- * Class InMemoryStorage
- * @package TSwiackiewicz\AwesomeApp\Infrastructure
- */
 class InMemoryStorage
 {
     const TYPE_USER = 'user';
 
-    /**
-     * @var array
-     */
-    private static $storage = [];
+    private static array $storage = [];
 
-    /**
-     * @var array
-     */
-    private static $nextIdentity = [];
+    private static array $nextIdentity = [];
 
-    /**
-     * @param string $type
-     * @param int $id
-     * @return array
-     */
     public static function fetchById(string $type, int $id): array
     {
         return self::$storage[$type][$id] ?? [];
     }
 
-    /**
-     * @param string $type
-     * @param null|Sort $sort
-     * @return array
-     */
     public static function fetchAll(string $type, ?Sort $sort = null): array
     {
         return self::sort(
@@ -47,11 +27,6 @@ class InMemoryStorage
         );
     }
 
-    /**
-     * @param array $records
-     * @param Sort $sort
-     * @return array
-     */
     private static function sort(array $records, Sort $sort): array
     {
         if ($sort instanceof NullSort) {
@@ -72,10 +47,6 @@ class InMemoryStorage
         return $sortedRecords;
     }
 
-    /**
-     * @param string $type
-     * @param array $item
-     */
     public static function save(string $type, array $item): void
     {
         $id = $item['id'] ?? self::nextIdentity($type);
@@ -86,10 +57,6 @@ class InMemoryStorage
         }
     }
 
-    /**
-     * @param string $type
-     * @return int
-     */
     public static function nextIdentity(string $type): int
     {
         if (!isset(self::$nextIdentity[$type])) {
@@ -99,10 +66,6 @@ class InMemoryStorage
         return self::$nextIdentity[$type]++;
     }
 
-    /**
-     * @param string $type
-     * @param int $id
-     */
     public static function removeById(string $type, int $id): void
     {
         if (isset(self::$storage[$type][$id])) {
@@ -110,9 +73,6 @@ class InMemoryStorage
         }
     }
 
-    /**
-     * @param string $type
-     */
     public static function clear(?string $type = null): void
     {
         if (null === $type) {
