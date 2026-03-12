@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace TSwiackiewicz\AwesomeApp\Application\User\Command;
 
-use TSwiackiewicz\AwesomeApp\DomainModel\User\{
-    Password\UserPassword, UserLogin
-};
+use TSwiackiewicz\AwesomeApp\Domain\User\ValueObject\UserLogin;
+use TSwiackiewicz\AwesomeApp\Domain\User\ValueObject\UserPassword;
 
 class RegisterUserCommand implements UserCommand
 {
