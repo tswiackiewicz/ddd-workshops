@@ -83,15 +83,17 @@ abstract class UserBaseTestCase extends TestCase
 
     protected function getUserNotifierMock(?string $eventName = null): UserNotifier
     {
+        if ($eventName === null) {
+            return $this->createStub(UserNotifier::class);
+        }
+
         $notifier = $this->getMockBuilder(UserNotifier::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['notifyUser'])
             ->getMock();
-        if ($eventName !== null) {
-            $notifier->expects(self::once())
-                ->method('notifyUser')
-                ->with(self::isInstanceOf($eventName));
-        }
+        $notifier->expects(self::once())
+            ->method('notifyUser')
+            ->with(self::isInstanceOf($eventName));
 
         return $notifier;
     }

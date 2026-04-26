@@ -56,7 +56,7 @@ abstract class UserHandlerBaseTestCase extends UserBaseTestCase
 
     protected function getUserRepositoryMock(): UserRepository
     {
-        return $this->createMock(UserRepository::class);
+        return $this->createStub(UserRepository::class);
     }
 
     protected function getUserRepositoryMockReturningUser(?User $user = null): UserRepository
@@ -90,7 +90,7 @@ abstract class UserHandlerBaseTestCase extends UserBaseTestCase
 
     protected function getUserPasswordServiceMock(): UserPasswordService
     {
-        return $this->createMock(UserPasswordService::class);
+        return $this->createStub(UserPasswordService::class);
     }
 
     protected function getUserPasswordServiceMockForWeakPasswordVerification(): UserPasswordService
